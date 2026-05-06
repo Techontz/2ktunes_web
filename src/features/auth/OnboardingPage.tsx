@@ -1,11 +1,8 @@
-'use client';
-
 import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Check, ArrowLeft, Music, MapPin, Phone, User, Search, ChevronDown, X, Mail, MessageSquare, Apple } from "lucide-react";
 import { useLanguage } from "@/lib/LanguageContext";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { Link, useNavigate } from "react-router-dom";
 import { countries } from "countries-list";
 import Card from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
@@ -19,7 +16,7 @@ const countryList = Object.entries(countries).map(([code, country]) => ({
 
 export default function OnboardingPage() {
   const { t } = useLanguage();
-  const router = useRouter();
+  const navigate = useNavigate();
   const [search, setSearch] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const [selectedCountry, setSelectedCountry] = useState(countryList.find(c => c.name === "Tanzania") || countryList[0]);
@@ -217,7 +214,7 @@ export default function OnboardingPage() {
         <div className="w-full max-w-md mx-auto">
           <div className="flex items-center justify-between mb-8 px-1">
             <button
-              onClick={() => router.back()}
+              onClick={() => navigate(-1)}
               className="flex items-center gap-2 text-white/50 hover:text-brand-yellow transition-colors text-xs font-bold uppercase tracking-widest cursor-pointer"
             >
               <ArrowLeft className="w-4 h-4" />
@@ -482,9 +479,7 @@ export default function OnboardingPage() {
                   {otp.map((digit, i) => (
                     <input
                       key={i}
-                      ref={(el) => {
-                        otpInputs.current[i] = el;
-                      }}
+                      ref={(el) => (otpInputs.current[i] = el)}
                       type="text"
                       inputMode="numeric"
                       pattern="[0-9]*"
@@ -499,12 +494,15 @@ export default function OnboardingPage() {
               </div>
 
               <div className="flex flex-col items-center gap-6 md:gap-8">
-                  <button 
-                    onClick={() => router.push('/dashboard')}
-                    className="w-full bg-brand-yellow text-brand-black py-4 md:py-5 rounded-sm font-black text-sm md:text-base uppercase tracking-[0.2em] hover:bg-white transition-all shadow-[0_10px_40px_rgba(255,255,0,0.2)] active:scale-[0.98] cursor-pointer"
-                  >
-                    {t('otp.verify_btn')}
-                  </button>
+                <button 
+                  onClick={() => {
+                    setShowOTP(false);
+                    setShowPlans(true);
+                  }}
+                  className="w-full bg-brand-yellow text-brand-black py-4 md:py-5 rounded-sm font-black text-sm md:text-base uppercase tracking-[0.2em] hover:bg-white transition-all shadow-[0_10px_40px_rgba(255,255,0,0.2)] active:scale-[0.98] cursor-pointer"
+                >
+                  {t('otp.verify_btn')}
+                </button>
 
                 <div className="flex items-center gap-2 group cursor-pointer">
                   <span className="text-white/40 font-bold text-xs md:text-sm">{t('otp.resend_text')}</span>
@@ -569,7 +567,7 @@ export default function OnboardingPage() {
                   </div>
 
                   <button 
-                    onClick={() => router.push('/dashboard')}
+                    onClick={() => navigate('/dashboard')}
                     className="text-white/40 hover:text-white text-[10px] font-black uppercase tracking-[0.2em] transition-all cursor-pointer border-b border-transparent hover:border-white/20 pb-0.5"
                   >
                     {t('common.skip')}
@@ -798,7 +796,7 @@ export default function OnboardingPage() {
 
                 <div className="space-y-6">
                   <button 
-                    onClick={() => router.push('/dashboard')}
+                    onClick={() => navigate('/dashboard')}
                     className="w-full bg-brand-yellow text-brand-black py-5 md:py-6 rounded-sm font-black text-sm md:text-base uppercase tracking-widest hover:bg-white transition-all shadow-xl active:scale-[0.98] cursor-pointer"
                   >
                     {t('payment.pay_btn')}

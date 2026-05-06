@@ -1,11 +1,8 @@
-'use client';
-
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Search, Globe, Menu, X } from "lucide-react";
 import { useLanguage } from "@/lib/LanguageContext";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { Link, useLocation } from "react-router-dom";
 
 type HeaderProps = {
   navLinks?: { name: string; href: string }[];
@@ -15,8 +12,8 @@ type HeaderProps = {
 
 export default function Header({ navLinks = [], languages = [] }: HeaderProps) {
   const { language: selectedLang, setLanguage: setSelectedLang, t } = useLanguage();
-  const pathname = usePathname();
-  const isAuthPage = pathname === '/auth';
+  const location = useLocation();
+  const isAuthPage = location.pathname === '/auth';
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -91,7 +88,7 @@ export default function Header({ navLinks = [], languages = [] }: HeaderProps) {
         className="bg-brand-black text-white px-4 md:px-8 h-20 flex items-center justify-between fixed top-0 w-full z-50 transition-colors shadow-2xl"
       >
         <div className="flex items-center gap-3 lg:gap-12">
-          <Link href="/" className="flex items-center flex-shrink-0 z-[60]">
+          <Link to="/" className="flex items-center flex-shrink-0 z-[60]">
             <span className="font-display font-bold text-xl sm:text-2xl md:text-3xl tracking-tighter text-white whitespace-nowrap">2kTunes</span>
           </Link>
 
@@ -155,11 +152,11 @@ export default function Header({ navLinks = [], languages = [] }: HeaderProps) {
 
           {!isAuthPage && (
             <>
-              <Link href="/auth?mode=login" className="hidden lg:flex items-center gap-1 hover:text-brand-primary cursor-pointer active:scale-95 transition-transform">
+              <Link to="/auth?mode=login" className="hidden lg:flex items-center gap-1 hover:text-brand-primary cursor-pointer active:scale-95 transition-transform">
                 <span className="text-[11px] font-bold uppercase tracking-[0.2em] whitespace-nowrap">{t('nav.signin')}</span>
               </Link>
 
-              <Link href="/auth?mode=signup" className="bg-white text-brand-black px-4 md:px-6 py-2 md:py-2.5 font-bold rounded-sm text-[10px] md:text-xs uppercase tracking-tight hover:bg-brand-primary hover:text-white transition-all whitespace-nowrap shadow-lg active:scale-95 text-center">
+              <Link to="/auth?mode=signup" className="bg-white text-brand-black px-4 md:px-6 py-2 md:py-2.5 font-bold rounded-sm text-[10px] md:text-xs uppercase tracking-tight hover:bg-brand-primary hover:text-white transition-all whitespace-nowrap shadow-lg active:scale-95 text-center">
                 {t('nav.getstarted')}
               </Link>
             </>
@@ -263,14 +260,14 @@ export default function Header({ navLinks = [], languages = [] }: HeaderProps) {
                 className="flex flex-col gap-4"
               >
                  <Link
-                   href="/auth?mode=login"
+                   to="/auth?mode=login"
                    onClick={() => setIsMenuOpen(false)}
                    className="text-white font-bold text-lg sm:text-xl tracking-widest hover:text-brand-primary transition-colors"
                  >
                    {t('nav.signin')}
                  </Link>
                  <Link
-                   href="/auth?mode=signup"
+                   to="/auth?mode=signup"
                    onClick={() => setIsMenuOpen(false)}
                    className="bg-white text-brand-black text-center py-4 rounded-sm font-black text-lg tracking-widest hover:bg-brand-primary hover:text-white transition-all mt-4"
                  >

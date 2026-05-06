@@ -10,38 +10,17 @@
       "DOM.Iterable"
     ],
     "skipLibCheck": true,
-    "baseUrl": ".", // ✅ ADD THIS
+    "moduleResolution": "bundler",
+    "isolatedModules": true,
+    "moduleDetection": "force",
+    "allowJs": true,
+    "jsx": "react-jsx",
     "paths": {
       "@/*": [
         "./src/*"
       ]
     },
-    "moduleResolution": "node",
-    "isolatedModules": true,
-    "moduleDetection": "force",
-    "allowJs": true,
-    "jsx": "react-jsx",
     "allowImportingTsExtensions": true,
-    "noEmit": true,
-    "strict": false,
-    "incremental": true,
-    "esModuleInterop": true,
-    "resolveJsonModule": true,
-    "plugins": [
-      {
-        "name": "next"
-      }
-    ]
-  },
-  "include": [
-    "next-env.d.ts",
-    ".next/types/**/*.ts",
-    "**/*.ts",
-    "**/*.tsx",
-    ".next/dev/types/**/*.ts"
-  ],
-  "exclude": [
-    "node_modules",
-    "source_repo"
-  ]
+    "noEmit": true
+  }
 }

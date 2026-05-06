@@ -1,7 +1,5 @@
-'use client';
-
 import { motion } from "motion/react";
-import Link from "next/link";
+import { Link } from "react-router-dom";
 import Button from "@/components/ui/Button";
 import { useLanguage } from "@/lib/LanguageContext";
 
@@ -32,7 +30,7 @@ export default function CallToAction() {
             </p>
           </div>
 
-          <Link href="/auth">
+          <Link to="/auth">
             <Button variant="yellow" size="xl">
               {t('cta.btn')}
             </Button>

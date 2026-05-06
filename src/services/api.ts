@@ -1,10 +1,11 @@
+/// <reference types="vite/client" />
 import axios from 'axios';
 
 /**
  * Custom Axios instance for Laravel Backend
  */
 const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL,
+  baseURL: import.meta.env.VITE_API_URL,
   headers: {
     'Content-Type': 'application/json',
     'Accept': 'application/json',

@@ -1,5 +1,3 @@
-'use client';
-
 import { motion } from "motion/react";
 import { Check, SmartphoneNfc, CreditCard, Wallet } from "lucide-react";
 import Button from "@/components/ui/Button";

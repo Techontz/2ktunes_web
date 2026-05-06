@@ -1,5 +1,3 @@
-'use client';
-
 import { motion } from "motion/react";
 import { CreditCard, Smartphone, Wallet } from "lucide-react";
 import { useLanguage } from "@/lib/LanguageContext";
