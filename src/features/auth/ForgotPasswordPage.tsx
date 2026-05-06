@@ -1,12 +1,15 @@
+'use client';
+
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Check, ArrowLeft, Mail, X } from "lucide-react";
 import { useLanguage } from "@/lib/LanguageContext";
-import { Link, useNavigate } from "react-router-dom";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function ForgotPasswordPage() {
   const { t } = useLanguage();
-  const navigate = useNavigate();
+  const router = useRouter();
   const [showSuccess, setShowSuccess] = useState(false);
   const [email, setEmail] = useState("");
 
@@ -55,7 +58,7 @@ export default function ForgotPasswordPage() {
                 </p>
 
                 <button 
-                  onClick={() => navigate('/auth?mode=login')}
+                  onClick={() => router.push('/auth?mode=login')}
                   className="w-full bg-white text-black py-4 rounded-sm font-black text-[10px] uppercase tracking-[0.2em] hover:bg-[#E5F522] transition-colors active:scale-[0.98]"
                 >
                   Return to Login
@@ -112,7 +115,7 @@ export default function ForgotPasswordPage() {
       <div className="lg:w-[45%] flex flex-col justify-center px-8 md:px-16 lg:px-20 py-16 lg:py-32">
         <div className="w-full max-w-md mx-auto">
           <button
-            onClick={() => navigate('/auth?mode=login')}
+            onClick={() => router.push('/auth?mode=login')}
             className="flex items-center gap-2 text-white/50 hover:text-white transition-colors mb-10 group cursor-pointer"
           >
             <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
@@ -157,7 +160,7 @@ export default function ForgotPasswordPage() {
       </div>
 
       <div className="lg:hidden p-8 border-t border-white/5 bg-brand-grey text-center">
-         <Link to="/" className="inline-block mb-4">
+         <Link href="/" className="inline-block mb-4">
             <span className="font-display font-bold text-xl tracking-tighter text-white">2kTunes</span>
          </Link>
          <p className="text-[10px] text-white/30 uppercase tracking-widest">© 2026 All Rights Reserved</p>

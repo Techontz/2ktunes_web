@@ -1,7 +1,9 @@
+'use client';
+
 import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Check } from "lucide-react";
-import { Link } from "react-router-dom";
+import Link from "next/link";
 import Card from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
 import { useLanguage } from "@/lib/LanguageContext";
@@ -153,7 +155,7 @@ export default function PricingSection() {
                 </div>
               ))}
             </div>
-            <Link to="/auth">
+            <Link href="/auth">
               <Button variant={plan.popular ? "primary" : "outline"} className="w-full">
                 {plan.cta}
               </Button>

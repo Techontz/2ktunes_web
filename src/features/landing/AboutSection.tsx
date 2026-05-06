@@ -1,3 +1,5 @@
+'use client';
+
 import { motion } from "motion/react";
 import { Globe, Check } from "lucide-react";
 import Button from "@/components/ui/Button";

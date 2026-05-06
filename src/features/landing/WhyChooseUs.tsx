@@ -1,3 +1,5 @@
+'use client';
+
 import { motion } from "motion/react";
 import { SmartphoneNfc, CreditCard, Wallet } from "lucide-react";
 import Card from "@/components/ui/Card";

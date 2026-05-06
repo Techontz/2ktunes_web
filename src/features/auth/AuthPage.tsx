@@ -1,17 +1,20 @@
+'use client';
+
 import { useState, useEffect, FormEvent } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Check, Apple, Chrome } from "lucide-react";
 import { useLanguage } from "@/lib/LanguageContext";
-import { Link, useSearchParams, useNavigate } from "react-router-dom";
+import Link from "next/link";
+import { useSearchParams, useRouter } from "next/navigation";
 
 export default function AuthPage() {
   const { t } = useLanguage();
-  const navigate = useNavigate();
-  const [searchParams, setSearchParams] = useSearchParams();
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const mode = searchParams.get('mode') === 'login' ? 'login' : 'signup';
 
   const setMode = (newMode: 'login' | 'signup') => {
-    setSearchParams({ mode: newMode });
+    router.push(`/auth?mode=${newMode}`);
   };
 
   const features = [
@@ -24,17 +27,17 @@ export default function AuthPage() {
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     if (mode === 'signup') {
-      navigate('/onboarding');
+      router.push('/onboarding');
     } else {
-      navigate('/dashboard');
+      router.push('/dashboard');
     }
   };
 
   const handleSocialAuth = () => {
     if (mode === 'signup') {
-      navigate('/onboarding');
+      router.push('/onboarding');
     } else {
-      navigate('/dashboard');
+      router.push('/dashboard');
     }
   };
 
@@ -148,7 +151,7 @@ export default function AuthPage() {
                 />
                 <button 
                   type="button" 
-                  onClick={() => navigate('/forgot-password')}
+                  onClick={() => router.push('/forgot-password')}
                   className="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-black text-white/30 hover:text-brand-yellow uppercase tracking-widest cursor-pointer"
                 >
                   {t('auth.forgot_password')}
@@ -175,7 +178,7 @@ export default function AuthPage() {
       </div>
 
       <div className="lg:hidden p-8 border-t border-white/5 bg-brand-grey text-center">
-         <Link to="/" className="inline-block mb-4">
+         <Link href="/" className="inline-block mb-4">
             <span className="font-display font-bold text-xl tracking-tighter text-white">2kTunes</span>
          </Link>
          <p className="text-[10px] text-white/30 uppercase tracking-widest">© 2026 All Rights Reserved</p>
