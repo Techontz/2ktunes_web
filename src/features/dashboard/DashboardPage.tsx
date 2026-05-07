@@ -1,44 +1,38 @@
-import { useState, lazy, Suspense } from "react";
+import { useState, Suspense } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { 
-  Music, 
-  BarChart3, 
-  Wallet, 
-  Plus, 
-  LayoutDashboard, 
-  Settings, 
-  LogOut, 
-  User, 
-  Search,
+import {
+  Music,
+  BarChart3,
+  Wallet,
+  Plus,
+  Settings,
+  LogOut,
   Bell,
-  Menu,
   X,
-  CreditCard,
-  Layers,
   ChevronRight,
   Sparkles,
-  TrendingUp,
-  PlayCircle,
   ShieldCheck,
   Globe,
   ChevronDown,
-  AlertTriangle
+  AlertTriangle,
+  Menu,
 } from "lucide-react";
 import { useLanguage } from "@/lib/LanguageContext";
 import { Link, useNavigate, useLocation, Routes, Route } from "react-router-dom";
-import Card from "@/components/ui/Card";
-import OverviewTab from "./OverviewTab";
+
 import MusicTab from "./MusicTab";
 import AnalyticsTab from "./AnalyticsTab";
 import RoyaltiesTab from "./RoyaltiesTab";
 import SettingsTab from "./SettingsTab";
 
-type Language = 'EN' | 'FR' | 'PT' | 'ES' | 'SW';
+type Language = "EN" | "FR" | "PT" | "ES" | "SW";
 
 export default function DashboardPage() {
-  const { t, language, setLanguage } = useLanguage();
+  const { language, setLanguage } = useLanguage();
+
   const navigate = useNavigate();
   const location = useLocation();
+
   const [isLangOpen, setIsLangOpen] = useState(false);
   const [showPlansModal, setShowPlansModal] = useState(false);
   const [showLogoutDialog, setShowLogoutDialog] = useState(false);
@@ -46,140 +40,231 @@ export default function DashboardPage() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const menuItems = [
-    { id: 'music', label: 'Music', icon: Music, path: '/dashboard/music' },
-    { id: 'overview', label: 'Artist', icon: User, path: '/dashboard/artist' },
-    { id: 'analytics', label: 'Insights', icon: BarChart3, path: '/dashboard/analytics' },
-    { id: 'royalties', label: 'Wallet', icon: Wallet, path: '/dashboard/royalties' },
-    { id: 'settings', label: 'Settings', icon: Settings, path: '/dashboard/settings' },
+    {
+      id: "music",
+      label: "Music",
+      icon: Music,
+      path: "/dashboard/music",
+    },
+    {
+      id: "analytics",
+      label: "Insights",
+      icon: BarChart3,
+      path: "/dashboard/analytics",
+    },
+    {
+      id: "royalties",
+      label: "Wallet",
+      icon: Wallet,
+      path: "/dashboard/royalties",
+    },
+    {
+      id: "settings",
+      label: "Settings",
+      icon: Settings,
+      path: "/dashboard/settings",
+    },
   ];
 
   const languages: { code: Language; name: string }[] = [
-    { code: 'EN', name: 'English' },
-    { code: 'FR', name: 'Français' },
-    { code: 'PT', name: 'Português' },
-    { code: 'ES', name: 'Español' },
-    { code: 'SW', name: 'Kiswahili' },
+    { code: "EN", name: "English" },
+    { code: "FR", name: "Français" },
+    { code: "PT", name: "Português" },
+    { code: "ES", name: "Español" },
+    { code: "SW", name: "Kiswahili" },
   ];
 
   const currentPath = location.pathname;
 
   const handleLogout = () => {
-    navigate('/auth?mode=login');
+    navigate("/auth?mode=login");
   };
 
   const handleDeleteAccount = () => {
-    // In a real app, call API to delete account
-    console.log("Account deleted");
-    navigate('/auth?mode=login');
+    navigate("/auth?mode=login");
   };
 
-  const activeLang = languages.find(l => l.code === language);
+  const activeLang = languages.find((l) => l.code === language);
 
   const plans = [
     {
-      id: 'basic',
-      name: 'Basic',
-      price: 'Free',
-      features: ['2 Stores', '15% Royalties Fee', '7 Days Support'],
-      current: false
+      id: "basic",
+      name: "Basic",
+      price: "Free",
+      features: [
+        "2 Stores",
+        "15% Royalties Fee",
+        "7 Days Support",
+      ],
+      current: false,
     },
     {
-      id: 'pro',
-      name: 'PRO PLAN',
-      price: '$19.99/yr',
-      features: ['Unlimited Stores', '0% Royalties Fee', '24h Priority Support', 'Smart Links', 'Custom Release Dates'],
+      id: "pro",
+      name: "PRO PLAN",
+      price: "$19.99/yr",
+      features: [
+        "Unlimited Stores",
+        "0% Royalties Fee",
+        "24h Priority Support",
+        "Smart Links",
+        "Custom Release Dates",
+      ],
       current: true,
-      popular: true
+      popular: true,
     },
     {
-      id: 'label',
-      name: 'Label',
-      price: '$45.00/yr',
-      features: ['Multiple Artists', 'Analytics Export', 'Dedicated Manager', 'Team Access'],
-      current: false
-    }
+      id: "label",
+      name: "Label",
+      price: "$45.00/yr",
+      features: [
+        "Multiple Artists",
+        "Analytics Export",
+        "Dedicated Manager",
+        "Team Access",
+      ],
+      current: false,
+    },
   ];
 
   return (
-    <div className="flex min-h-screen bg-brand-black text-white font-sans overflow-x-hidden selection:bg-brand-yellow selection:text-black">
-      {/* PLANS MODAL */}
+    <div className="flex min-h-screen bg-[#111111] text-white overflow-x-hidden">
+
+      {/* MODALS */}
+
       <AnimatePresence>
         {showPlansModal && (
-          <div className="fixed inset-0 z-[1000] flex items-center justify-center p-4 md:p-6 bg-brand-black/95 backdrop-blur-xl">
-            <motion.div 
-              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+          <div className="fixed inset-0 z-[1000] bg-black/90 backdrop-blur-xl flex items-center justify-center p-4">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 15 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              className="bg-[#111111] border border-white/10 rounded-2xl max-w-4xl w-full relative shadow-2xl overflow-hidden max-h-[90vh] flex flex-col"
+              exit={{ opacity: 0, scale: 0.95, y: 15 }}
+              className="
+                w-full
+                max-w-5xl
+                bg-[#141414]
+                border
+                border-white/[0.05]
+                rounded-[2px]
+                overflow-hidden
+                max-h-[92vh]
+                flex
+                flex-col
+              "
             >
-              <div className="p-8 border-b border-white/5 flex items-center justify-between sticky top-0 bg-[#111111] z-20">
+              {/* TOP */}
+              <div className="p-5 sm:p-7 border-b border-white/[0.05] flex items-center justify-between">
+
                 <div>
-                  <h3 className="text-2xl font-display font-medium text-white tracking-tight">Artist Subscription Plans</h3>
-                  <p className="text-[10px] text-white/30 font-black uppercase tracking-[0.2em] mt-1">Scale your music career with 2kTunes Pro</p>
+                  <h2 className="text-[24px] sm:text-[30px] font-bold">
+                    Subscription Plans
+                  </h2>
+
+                  <p className="text-white/35 text-sm mt-2">
+                    Upgrade your artist experience.
+                  </p>
                 </div>
-                <button 
+
+                <button
                   onClick={() => setShowPlansModal(false)}
-                  className="p-3 bg-white/5 rounded-full hover:bg-white/10 transition-colors"
+                  className="
+                    w-11
+                    h-11
+                    rounded-[2px]
+                    bg-[#1F1F1F]
+                    border
+                    border-white/[0.05]
+                    flex
+                    items-center
+                    justify-center
+                    hover:border-white/[0.08]
+                    transition-all
+                  "
                 >
-                  <X className="w-5 h-5 text-white/40" />
+                  <X className="w-5 h-5 text-white/50" />
                 </button>
               </div>
 
-              <div className="flex-1 overflow-y-auto p-8 lg:p-12">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {/* BODY */}
+              <div className="overflow-y-auto p-5 sm:p-7">
+
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+
                   {plans.map((plan) => (
-                    <div 
+                    <div
                       key={plan.id}
-                      className={`relative p-8 rounded-[4px] border transition-all flex flex-col ${
-                        plan.current 
-                          ? "bg-brand-primary/[0.03] border-brand-primary shadow-[0_0_40px_rgba(124,58,237,0.1)]" 
-                          : "bg-white/[0.02] border-white/5 hover:border-white/10"
-                      }`}
+                      className={`
+                        relative
+                        rounded-[2px]
+                        border
+                        p-6
+                        ${
+                          plan.current
+                            ? "border-[#F5F500]/20 bg-[#F5F500]/[0.03]"
+                            : "border-white/[0.05] bg-[#1A1A1A]"
+                        }
+                      `}
                     >
                       {plan.popular && (
-                        <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-brand-yellow text-black text-[8px] font-black uppercase tracking-[0.2em] px-4 py-1.5 rounded-full">
-                          Most Popular
+                        <div className="
+                          absolute
+                          top-4
+                          right-4
+                          px-3
+                          py-1
+                          rounded-[2px]
+                          bg-[#F5F500]
+                          text-black
+                          text-[10px]
+                          font-semibold
+                        ">
+                          Popular
                         </div>
                       )}
 
-                      <div className="mb-8">
-                        <h4 className="text-[11px] font-black uppercase tracking-[0.2em] text-white/40 mb-2">{plan.name}</h4>
-                        <div className="flex items-end gap-1">
-                          <span className="text-3xl font-display font-medium italic">{plan.price}</span>
-                        </div>
-                      </div>
+                      <p className="text-[11px] uppercase tracking-[0.18em] text-white/35 mb-4">
+                        {plan.name}
+                      </p>
 
-                      <div className="flex-1 space-y-4 mb-10">
-                        {plan.features.map((feature, idx) => (
-                          <div key={idx} className="flex items-center gap-3">
-                            <ShieldCheck className="w-3.5 h-3.5 text-brand-primary" />
-                            <span className="text-[10px] font-medium text-white/60 tracking-wide uppercase">{feature}</span>
+                      <h3 className="text-[36px] font-bold mb-8">
+                        {plan.price}
+                      </h3>
+
+                      <div className="space-y-4 mb-8">
+                        {plan.features.map((feature, i) => (
+                          <div
+                            key={i}
+                            className="flex items-center gap-3"
+                          >
+                            <ShieldCheck className="w-4 h-4 text-[#F5F500]" />
+
+                            <span className="text-sm text-white/60">
+                              {feature}
+                            </span>
                           </div>
                         ))}
                       </div>
 
-                      <button 
-                        disabled={plan.current}
-                        className={`w-full py-4 rounded-[2px] font-black text-[9px] uppercase tracking-[0.25em] transition-all ${
-                          plan.current 
-                            ? "bg-white/10 text-white cursor-default" 
-                            : "bg-brand-primary hover:bg-brand-primary/80 text-white shadow-xl shadow-brand-primary/20 active:scale-95"
-                        }`}
+                      <button
+                        className={`
+                          h-[46px]
+                          w-full
+                          rounded-[2px]
+                          text-sm
+                          font-medium
+                          transition-all
+                          ${
+                            plan.current
+                              ? "bg-white/[0.05] text-white/40"
+                              : "bg-[#F5F500] hover:bg-white text-black"
+                          }
+                        `}
                       >
-                        {plan.current ? "Current Plan" : `Upgrade to ${plan.name}`}
+                        {plan.current
+                          ? "Current Plan"
+                          : `Upgrade`}
                       </button>
                     </div>
                   ))}
-                </div>
-
-                <div className="mt-12 p-8 bg-white/[0.02] border border-white/5 rounded-[4px] text-center">
-                   <p className="text-[9px] text-white/20 font-black uppercase tracking-[0.3em] mb-4">Trusted by over 50,000 global independent artists</p>
-                   <div className="flex flex-wrap justify-center gap-8 opacity-20 grayscale filter">
-                      {/* Placeholder logos */}
-                      <span className="font-display font-black text-xl">MUSIC</span>
-                      <span className="font-display font-black text-xl">SOUND</span>
-                      <span className="font-display font-black text-xl">GLOBAL</span>
-                   </div>
                 </div>
               </div>
             </motion.div>
@@ -187,39 +272,75 @@ export default function DashboardPage() {
         )}
       </AnimatePresence>
 
-      {/* LOGOUT DIALOG */}
+      {/* LOGOUT */}
       <AnimatePresence>
         {showLogoutDialog && (
-          <div className="fixed inset-0 z-[1000] flex items-center justify-center p-6 bg-brand-black/90 backdrop-blur-md">
-            <motion.div 
-              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+          <div className="fixed inset-0 z-[1000] bg-black/90 backdrop-blur-xl flex items-center justify-center p-4">
+
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 10 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              className="bg-[#1A1A1A] border border-white/10 p-8 md:p-10 rounded-2xl max-w-sm w-full relative shadow-2xl"
+              exit={{ opacity: 0, scale: 0.95, y: 10 }}
+              className="
+                w-full
+                max-w-md
+                bg-[#141414]
+                border
+                border-white/[0.05]
+                rounded-[2px]
+                p-7
+              "
             >
               <div className="flex flex-col items-center text-center">
-                <div className="w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center mb-6 border border-red-500/20">
-                  <LogOut className="w-8 h-8 text-red-500" />
+
+                <div className="
+                  w-16
+                  h-16
+                  rounded-[2px]
+                  bg-red-500/10
+                  border
+                  border-red-500/20
+                  flex
+                  items-center
+                  justify-center
+                  mb-6
+                ">
+                  <LogOut className="w-7 h-7 text-red-400" />
                 </div>
-                
-                <h3 className="text-2xl font-display font-medium text-white tracking-tight mb-3">
-                  Logging out?
+
+                <h3 className="text-[28px] font-bold mb-3">
+                  Logout?
                 </h3>
-                
-                <p className="text-white/40 text-xs mb-8 leading-relaxed italic">
-                  Are you sure you want to end your current session? You'll need to log back in to manage your releases.
+
+                <p className="text-white/40 text-sm leading-relaxed mb-8">
+                  You’ll need to login again to access your artist dashboard.
                 </p>
 
                 <div className="grid grid-cols-2 gap-4 w-full">
-                  <button 
+
+                  <button
                     onClick={() => setShowLogoutDialog(false)}
-                    className="py-4 rounded-[2px] border border-white/10 text-white font-black text-[9px] uppercase tracking-[0.2em] hover:bg-white/5 transition-colors"
+                    className="
+                      h-[48px]
+                      rounded-[2px]
+                      border
+                      border-white/[0.06]
+                      text-white/60
+                      hover:text-white
+                    "
                   >
                     Cancel
                   </button>
-                  <button 
+
+                  <button
                     onClick={handleLogout}
-                    className="py-4 rounded-[2px] bg-red-600 text-white font-black text-[9px] uppercase tracking-[0.2em] hover:bg-red-500 transition-colors shadow-lg active:scale-95"
+                    className="
+                      h-[48px]
+                      rounded-[2px]
+                      bg-red-500
+                      hover:bg-red-400
+                      text-white
+                    "
                   >
                     Logout
                   </button>
@@ -230,44 +351,79 @@ export default function DashboardPage() {
         )}
       </AnimatePresence>
 
-      {/* DELETE ACCOUNT DIALOG */}
+      {/* DELETE */}
       <AnimatePresence>
         {showDeleteDialog && (
-          <div className="fixed inset-0 z-[1000] flex items-center justify-center p-6 bg-brand-black/95 backdrop-blur-xl">
-            <motion.div 
-              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+          <div className="fixed inset-0 z-[1000] bg-black/90 backdrop-blur-xl flex items-center justify-center p-4">
+
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 10 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              className="bg-[#111111] border border-red-500/20 p-8 md:p-12 rounded-2xl max-w-md w-full relative shadow-[0_0_50px_rgba(220,38,38,0.15)]"
+              exit={{ opacity: 0, scale: 0.95, y: 10 }}
+              className="
+                w-full
+                max-w-lg
+                bg-[#141414]
+                border
+                border-red-500/20
+                rounded-[2px]
+                p-7
+              "
             >
               <div className="flex flex-col items-center text-center">
-                <div className="w-20 h-20 bg-red-500/10 rounded-full flex items-center justify-center mb-8 border-2 border-red-500/30 animate-pulse">
-                  <AlertTriangle className="w-10 h-10 text-red-500" />
-                </div>
-                
-                <h3 className="text-3xl font-display font-medium text-white tracking-tighter mb-4">
-                  Delete Account?
-                </h3>
-                
-                <div className="bg-red-500/5 border border-red-500/10 p-6 rounded-[4px] mb-10">
-                  <p className="text-red-400/80 text-[11px] font-black uppercase tracking-[0.15em] mb-3">Irreversible Action</p>
-                  <p className="text-white/40 text-[12px] leading-relaxed italic">
-                    This will permanently remove your artist handle <span className="text-white font-bold">DOBI MUSIC</span>, your entire music catalog, and all pending royalties. This cannot be undone.
-                  </p>
+
+                <div className="
+                  w-20
+                  h-20
+                  rounded-[2px]
+                  bg-red-500/10
+                  border
+                  border-red-500/20
+                  flex
+                  items-center
+                  justify-center
+                  mb-7
+                ">
+                  <AlertTriangle className="w-10 h-10 text-red-400" />
                 </div>
 
+                <h3 className="text-[32px] font-bold mb-4">
+                  Delete Account?
+                </h3>
+
+                <p className="text-white/40 leading-relaxed text-sm mb-8">
+                  This action permanently removes your releases, royalties and account history.
+                </p>
+
                 <div className="flex flex-col gap-4 w-full">
-                  <button 
+
+                  <button
                     onClick={handleDeleteAccount}
-                    className="w-full py-5 rounded-[2px] bg-red-600 text-white font-black text-[10px] uppercase tracking-[0.25em] hover:bg-red-500 transition-all shadow-xl shadow-red-600/20 active:scale-[0.98]"
+                    className="
+                      h-[52px]
+                      rounded-[2px]
+                      bg-red-500
+                      hover:bg-red-400
+                      text-white
+                      text-sm
+                      font-medium
+                    "
                   >
-                    Confirm Permanent Deletion
+                    Confirm Delete
                   </button>
-                  <button 
+
+                  <button
                     onClick={() => setShowDeleteDialog(false)}
-                    className="w-full py-5 rounded-[2px] border border-white/5 bg-white/[0.02] text-white/40 font-black text-[10px] uppercase tracking-[0.25em] hover:bg-white/5 hover:text-white transition-all"
+                    className="
+                      h-[52px]
+                      rounded-[2px]
+                      border
+                      border-white/[0.06]
+                      text-white/50
+                      hover:text-white
+                    "
                   >
-                    I changed my mind
+                    Cancel
                   </button>
                 </div>
               </div>
@@ -277,85 +433,200 @@ export default function DashboardPage() {
       </AnimatePresence>
 
       {/* SIDEBAR */}
-      <aside className="hidden lg:flex flex-col w-64 bg-[#111111]/40 border-r border-white/5 sticky top-0 h-screen z-50 backdrop-blur-2xl">
-        {/* User Info */}
+
+      <aside className="
+        hidden
+        lg:flex
+        flex-col
+        w-[260px]
+        bg-[#181818]
+        border-r
+        border-white/[0.05]
+        sticky
+        top-0
+        h-screen
+        z-50
+      ">
+
+        {/* USER */}
         <div className="p-6 flex items-center gap-4">
-          <div className="w-8 h-8 rounded-full bg-brand-primary flex items-center justify-center border border-white/10 shadow-[0_0_15px_rgba(124,58,237,0.3)] text-white font-bold text-xs uppercase">
+
+          {/* PURPLE AVATAR */}
+          <div className="
+            w-10
+            h-10
+            rounded-[2px]
+            bg-gradient-to-br
+            from-purple-500
+            to-violet-700
+            border
+            border-white/[0.08]
+            flex
+            items-center
+            justify-center
+            text-white
+            text-[12px]
+            font-bold
+            shadow-lg
+            shadow-purple-500/20
+          ">
             DM
           </div>
-          <div className="flex flex-col overflow-hidden">
-            <span className="text-[10px] font-black text-white uppercase tracking-[0.1em] truncate">DOBI MUSIC</span>
-            <span className="text-[8px] font-black text-white/20 uppercase tracking-[0.1em] truncate">Verified Artist</span>
+
+          <div className="min-w-0">
+            <p className="text-[11px] font-semibold truncate">
+              DOBI MUSIC
+            </p>
+
+            <p className="text-[10px] text-white/30 mt-1 truncate">
+              Verified Artist
+            </p>
           </div>
         </div>
 
-        {/* Release Button */}
+        {/* RELEASE BUTTON */}
         <div className="px-5 mb-8">
-          <button className="w-full bg-brand-yellow hover:bg-white text-black py-4 px-6 rounded-[2px] flex items-center justify-between group transition-all cursor-pointer shadow-xl shadow-brand-yellow/5 active:scale-[0.98]">
+
+          <button className="
+            h-[50px]
+            w-full
+            rounded-[2px]
+            bg-[#F5F500]
+            hover:bg-white
+            text-black
+            flex
+            items-center
+            justify-between
+            px-5
+            transition-all
+          ">
             <div className="flex items-center gap-3">
               <Plus className="w-4 h-4" />
-              <span className="text-[10px] font-black uppercase tracking-[0.2em]">Release</span>
+
+              <span className="text-[11px] font-semibold">
+                New Release
+              </span>
             </div>
-            <ChevronRight className="w-3.5 h-3.5 opacity-40 group-hover:opacity-100 transition-opacity" />
+
+            <ChevronRight className="w-4 h-4" />
           </button>
         </div>
 
-        <nav className="flex-1 space-y-0.5">
-          <p className="px-8 text-[7px] font-black uppercase tracking-[0.3em] text-white/10 mb-4">Main Menu</p>
+        {/* NAV */}
+        <nav className="flex-1 px-3 space-y-1">
+
           {menuItems.map((item) => {
-            const isActive = currentPath === item.path || (item.id === 'music' && currentPath === '/dashboard');
+            const isActive =
+              currentPath === item.path ||
+              (item.id === "music" &&
+                currentPath === "/dashboard");
+
             return (
-              <Link 
-                key={item.id} 
+              <Link
+                key={item.id}
                 to={item.path}
-                className={`flex items-center gap-4 px-8 py-4 transition-all relative group ${
-                  isActive 
-                    ? "bg-brand-primary/5 text-brand-primary" 
-                    : "text-white/40 hover:text-white"
-                }`}
+                className={`
+                  h-[52px]
+                  px-5
+                  rounded-[2px]
+                  flex
+                  items-center
+                  gap-4
+                  transition-all
+                  ${
+                    isActive
+                      ? "bg-[#F5F500] text-black"
+                      : "text-white/40 hover:bg-white/[0.03] hover:text-white"
+                  }
+                `}
               >
-                {isActive && <div className="absolute left-0 top-0 bottom-0 w-[3px] bg-brand-primary shadow-[0_0_15px_rgba(124,58,237,0.5)]" />}
-                <item.icon className={`w-4 h-4 transition-transform ${isActive ? "scale-110" : "group-hover:scale-110"}`} />
-                <span className="text-[10px] font-black uppercase tracking-[0.2em]">{item.label}</span>
+                <item.icon className="w-4 h-4" />
+
+                <span className="text-sm font-medium">
+                  {item.label}
+                </span>
               </Link>
             );
           })}
         </nav>
 
-        {/* Footer Sidebar Actions */}
-        <div className="mt-auto p-5 space-y-2 border-t border-white/5">
-           {/* Upgrade Widget */}
-          <div 
+        {/* FOOTER */}
+        <div className="p-5 border-t border-white/[0.05] space-y-3">
+
+          {/* PRO */}
+          <button
             onClick={() => setShowPlansModal(true)}
-            className="bg-brand-primary/5 p-4 rounded-[4px] border border-brand-primary/20 relative overflow-hidden group cursor-pointer hover:bg-brand-primary/10 transition-all mb-4"
+            className="
+              w-full
+              p-4
+              rounded-[2px]
+              bg-[#F5F500]/5
+              border
+              border-[#F5F500]/10
+              text-left
+            "
           >
             <div className="flex items-center gap-2 mb-2">
-              <Sparkles className="w-3.5 h-3.5 text-brand-primary" />
-              <span className="text-[9px] font-black uppercase tracking-[0.15em] text-brand-primary">PRO Plan</span>
-            </div>
-            <p className="text-[8px] text-white/30 font-bold leading-relaxed uppercase tracking-[0.1em]">Unlimited uploads active</p>
-          </div>
+              <Sparkles className="w-4 h-4 text-[#F5F500]" />
 
-          {/* Language Selector */}
+              <span className="text-[11px] font-semibold text-[#F5F500]">
+                PRO PLAN
+              </span>
+            </div>
+
+            <p className="text-[11px] text-white/35">
+              Unlimited uploads enabled.
+            </p>
+          </button>
+
+          {/* LANGUAGE */}
           <div className="relative">
-            <button 
+
+            <button
               onClick={() => setIsLangOpen(!isLangOpen)}
-              className={`flex items-center justify-between w-full p-4 rounded-[2px] border border-white/5 transition-all group cursor-pointer ${isLangOpen ? "bg-white/5 text-white" : "bg-white/[0.02] text-white/30 hover:text-white"}`}
+              className="
+                h-[48px]
+                w-full
+                rounded-[2px]
+                bg-[#1F1F1F]
+                border
+                border-white/[0.05]
+                px-4
+                flex
+                items-center
+                justify-between
+              "
             >
               <div className="flex items-center gap-3">
-                <Globe className="w-3.5 h-3.5" />
-                <span className="text-[9px] font-black uppercase tracking-[0.2em]">{activeLang?.name}</span>
+
+                <Globe className="w-4 h-4 text-[#F5F500]" />
+
+                <span className="text-sm text-white/70">
+                  {activeLang?.name}
+                </span>
               </div>
-              <ChevronDown className={`w-3 h-3 transition-transform ${isLangOpen ? "rotate-180" : ""}`} />
+
+              <ChevronDown className="w-4 h-4 text-white/30" />
             </button>
-            
+
             <AnimatePresence>
               {isLangOpen && (
-                <motion.div 
-                  initial={{ opacity: 0, y: -10 }}
+                <motion.div
+                  initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  className="absolute bottom-full left-0 right-0 mb-2 bg-[#1A1A1A] border border-white/10 rounded-[4px] shadow-2xl overflow-hidden z-[60]"
+                  exit={{ opacity: 0, y: 8 }}
+                  className="
+                    absolute
+                    bottom-full
+                    mb-2
+                    left-0
+                    right-0
+                    bg-[#1A1A1A]
+                    border
+                    border-white/[0.05]
+                    rounded-[2px]
+                    overflow-hidden
+                  "
                 >
                   {languages.map((lang) => (
                     <button
@@ -364,9 +635,19 @@ export default function DashboardPage() {
                         setLanguage(lang.code);
                         setIsLangOpen(false);
                       }}
-                      className={`w-full text-left px-5 py-3 text-[9px] font-black uppercase tracking-[0.15em] transition-colors border-b border-white/5 last:border-0 ${
-                        language === lang.code ? "bg-brand-primary text-white" : "hover:bg-white/5 text-white/40 hover:text-white"
-                      }`}
+                      className={`
+                        h-[46px]
+                        px-4
+                        w-full
+                        text-left
+                        text-sm
+                        transition-all
+                        ${
+                          language === lang.code
+                            ? "bg-[#F5F500] text-black"
+                            : "text-white/50 hover:bg-white/[0.03] hover:text-white"
+                        }
+                      `}
                     >
                       {lang.name}
                     </button>
@@ -378,101 +659,330 @@ export default function DashboardPage() {
         </div>
       </aside>
 
-      {/* MOBILE MENU OVERLAY */}
+      {/* MOBILE MENU */}
+
       <AnimatePresence>
         {isMobileMenuOpen && (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[200] lg:hidden bg-brand-black/95 backdrop-blur-xl p-8 pt-24"
+            className="
+              fixed
+              inset-0
+              z-[300]
+              lg:hidden
+              bg-black/95
+              backdrop-blur-xl
+            "
           >
-            <nav className="space-y-6">
-               {menuItems.map((item) => (
-                 <Link 
-                   key={item.id} 
-                   to={item.path}
-                   onClick={() => setIsMobileMenuOpen(false)}
-                   className="flex items-center gap-6 text-2xl font-display font-medium text-white/40 hover:text-white tracking-tight"
-                 >
-                   <item.icon className="w-8 h-8" />
-                   {item.label}
-                 </Link>
-               ))}
-            </nav>
+            <div className="p-6">
+
+              <div className="flex items-center justify-between mb-10">
+
+                <Link
+                  to="/dashboard/music"
+                  className="text-[28px] font-black"
+                >
+                  2k<span className="text-[#F5F500]">Tunes</span>
+                </Link>
+
+                <button
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="
+                    w-11
+                    h-11
+                    rounded-[2px]
+                    bg-[#1F1F1F]
+                    border
+                    border-white/[0.05]
+                    flex
+                    items-center
+                    justify-center
+                  "
+                >
+                  <X className="w-5 h-5 text-white/60" />
+                </button>
+              </div>
+
+              <nav className="space-y-3">
+
+                {menuItems.map((item) => (
+                  <Link
+                    key={item.id}
+                    to={item.path}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="
+                      h-[56px]
+                      px-5
+                      rounded-[2px]
+                      bg-[#1A1A1A]
+                      border
+                      border-white/[0.05]
+                      flex
+                      items-center
+                      gap-4
+                    "
+                  >
+                    <item.icon className="w-5 h-5 text-[#F5F500]" />
+
+                    <span className="text-white text-sm font-medium">
+                      {item.label}
+                    </span>
+                  </Link>
+                ))}
+              </nav>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* MAIN CONTENT AREA */}
-      <main className="flex-1 flex flex-col min-h-screen bg-brand-black overflow-x-hidden relative">
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-brand-primary/[0.03] rounded-full blur-[120px] pointer-events-none" />
-        <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-brand-yellow/[0.01] rounded-full blur-[120px] pointer-events-none" />
+      {/* MAIN */}
+
+      <main className="flex-1 flex flex-col min-h-screen overflow-hidden">
 
         {/* HEADER */}
-        <header className="h-16 px-6 lg:px-12 flex items-center justify-between border-b border-white/5 sticky top-0 bg-brand-black/80 backdrop-blur-xl z-[150]">
-          <div className="flex items-center gap-5">
-            <Link to="/dashboard" className="text-lg lg:text-2xl font-display font-black italic tracking-tighter text-white group">
-              2k<span className="text-brand-primary group-hover:text-brand-yellow transition-colors">Tunes</span>
+
+        <header className="
+          h-[68px]
+          px-4
+          sm:px-6
+          lg:px-10
+          border-b
+          border-white/[0.04]
+          bg-[#181818]
+          sticky
+          top-0
+          z-[150]
+          flex
+          items-center
+          justify-between
+        ">
+
+          {/* LEFT */}
+          <div className="flex items-center gap-4">
+
+            {/* MOBILE MENU BTN */}
+            <button
+              onClick={() => setIsMobileMenuOpen(true)}
+              className="
+                lg:hidden
+                w-10
+                h-10
+                rounded-[2px]
+                bg-[#1F1F1F]
+                border
+                border-white/[0.05]
+                flex
+                items-center
+                justify-center
+              "
+            >
+              <Menu className="w-5 h-5 text-white/60" />
+            </button>
+
+            <Link
+              to="/dashboard/music"
+              className="text-[24px] sm:text-[28px] font-black"
+            >
+              2k<span className="text-[#F5F500]">Tunes</span>
             </Link>
           </div>
 
-          <div className="flex items-center gap-6 md:gap-10">
-            <button className="flex items-center gap-3 text-white/30 hover:text-white transition-colors cursor-pointer group relative">
-              <div className="absolute -top-1 -right-1 w-2 h-2 bg-brand-yellow rounded-full shadow-[0_0_10px_#FFFF00]" />
-              <Bell className="w-4 h-4 group-hover:scale-110 transition-transform" />
-              <span className="hidden sm:inline text-[9px] font-black uppercase tracking-[0.25em]">Alerts</span>
+          {/* RIGHT */}
+          <div className="flex items-center gap-3 sm:gap-4">
+
+            {/* NOTIFICATION */}
+            <button className="
+              relative
+              w-10
+              h-10
+              rounded-[2px]
+              bg-[#1F1F1F]
+              border
+              border-white/[0.05]
+              flex
+              items-center
+              justify-center
+            ">
+              <div className="
+                absolute
+                top-[10px]
+                right-[10px]
+                w-[6px]
+                h-[6px]
+                rounded-full
+                bg-[#F5F500]
+              " />
+
+              <Bell className="w-4 h-4 text-white/50" />
             </button>
-            
-            <div className="flex items-center gap-3 p-1 pl-4 rounded-full bg-white/5 border border-white/5 group cursor-pointer hover:border-white/10 transition-all">
-               <span className="hidden md:inline text-[9px] font-black uppercase tracking-[0.2em] text-white/60">DOBI MUSIC</span>
-               <div className="w-8 h-8 rounded-full bg-gradient-to-br from-brand-primary to-indigo-600 flex items-center justify-center font-bold text-[10px]">DM</div>
+
+            {/* PROFILE */}
+            <div className="
+              h-10
+              pl-2
+              pr-4
+              rounded-[2px]
+              bg-[#1F1F1F]
+              border
+              border-white/[0.05]
+              flex
+              items-center
+              gap-3
+            ">
+
+              {/* PURPLE PROFILE */}
+              <div className="
+                w-8
+                h-8
+                rounded-[2px]
+                bg-gradient-to-br
+                from-purple-500
+                to-violet-700
+                flex
+                items-center
+                justify-center
+                text-white
+                text-[11px]
+                font-bold
+              ">
+                DM
+              </div>
+
+              <div className="hidden md:flex flex-col leading-none">
+                <span className="text-[12px] font-semibold">
+                  DOBI MUSIC
+                </span>
+
+                <span className="text-[10px] text-white/35 mt-1">
+                  Verified Artist
+                </span>
+              </div>
             </div>
           </div>
         </header>
 
-        {/* PAGE CONTENT */}
-        <div className="flex-1 pb-28 lg:pb-12 relative z-10">
-          <Suspense fallback={
-            <div className="flex-1 flex items-center justify-center min-h-[60vh]">
-               <div className="w-12 h-12 border-2 border-brand-primary/20 border-t-brand-primary rounded-full animate-spin"></div>
-            </div>
-          }>
+        {/* CONTENT */}
+
+        <div className="flex-1 pb-28 lg:pb-10">
+
+          <Suspense
+            fallback={
+              <div className="min-h-[60vh] flex items-center justify-center">
+                <div className="
+                  w-12
+                  h-12
+                  rounded-full
+                  border-2
+                  border-[#F5F500]/20
+                  border-t-[#F5F500]
+                  animate-spin
+                " />
+              </div>
+            }
+          >
             <Routes>
               <Route index element={<MusicTab />} />
+
               <Route path="music" element={<MusicTab />} />
-              <Route path="artist" element={<OverviewTab />} />
-              <Route path="analytics" element={<AnalyticsTab />} />
-              <Route path="royalties" element={<RoyaltiesTab />} />
-              <Route path="settings" element={<SettingsTab 
-                onLogout={() => setShowLogoutDialog(true)} 
-                onDeleteAccount={() => setShowDeleteDialog(true)}
-                onManageSubscription={() => setShowPlansModal(true)}
-              />} />
+
+              <Route
+                path="analytics"
+                element={<AnalyticsTab />}
+              />
+
+              <Route
+                path="royalties"
+                element={<RoyaltiesTab />}
+              />
+
+              <Route
+                path="settings"
+                element={
+                  <SettingsTab
+                    onLogout={() =>
+                      setShowLogoutDialog(true)
+                    }
+                    onDeleteAccount={() =>
+                      setShowDeleteDialog(true)
+                    }
+                    onManageSubscription={() =>
+                      setShowPlansModal(true)
+                    }
+                  />
+                }
+              />
             </Routes>
           </Suspense>
         </div>
 
-        {/* MOBILE BOTTOM NAV */}
-        <nav className="lg:hidden fixed bottom-6 left-6 right-6 bg-[#1A1A1A]/80 backdrop-blur-2xl border border-white/10 z-[180] px-4 py-3 rounded-2xl flex justify-around items-center shadow-2xl safe-bottom">
+        {/* MOBILE NAV */}
+
+        <nav className="
+          lg:hidden
+          fixed
+          bottom-4
+          left-4
+          right-4
+          z-[200]
+          bg-[#1A1A1A]/90
+          backdrop-blur-xl
+          border
+          border-white/[0.05]
+          rounded-[2px]
+          px-2
+          py-2
+          flex
+          items-center
+          justify-around
+        ">
+
           {menuItems.map((item) => {
-            const isActive = currentPath === item.path || (item.id === 'music' && currentPath === '/dashboard');
+            const isActive =
+              currentPath === item.path ||
+              (item.id === "music" &&
+                currentPath === "/dashboard");
+
             return (
-              <Link 
-                key={item.id} 
+              <Link
+                key={item.id}
                 to={item.path}
-                className={`flex flex-col items-center gap-2 transition-all flex-1 py-1 rounded-xl relative ${
-                  isActive ? "text-brand-yellow" : "text-white/20"
-                }`}
+                className={`
+                  relative
+                  flex
+                  flex-col
+                  items-center
+                  justify-center
+                  gap-1
+                  py-2
+                  px-3
+                  rounded-[2px]
+                  transition-all
+                  ${
+                    isActive
+                      ? "text-[#F5F500]"
+                      : "text-white/25"
+                  }
+                `}
               >
                 {isActive && (
-                  <motion.div 
-                    layoutId="mobile-nav-indicator"
-                    className="absolute -top-1 w-6 h-1 bg-brand-yellow rounded-full shadow-[0_0_10px_#FFFF00]"
+                  <motion.div
+                    layoutId="mobileNav"
+                    className="
+                      absolute
+                      inset-0
+                      rounded-[2px]
+                      bg-[#F5F500]/10
+                    "
                   />
                 )}
-                <item.icon className={`w-4 h-4 ${isActive ? "scale-110" : ""}`} />
-                <span className="text-[7px] font-black uppercase tracking-widest whitespace-nowrap">{item.label}</span>
+
+                <item.icon className="w-4 h-4 relative z-10" />
+
+                <span className="text-[9px] relative z-10">
+                  {item.label}
+                </span>
               </Link>
             );
           })}

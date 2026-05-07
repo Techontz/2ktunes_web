@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { 
-  Plus, 
+import {
+  Plus,
   Search,
   MoreVertical,
   CheckCircle,
@@ -11,206 +11,428 @@ import {
   ArrowRight,
   Disc,
   XCircle,
-  BarChart3
+  TrendingUp,
+  Music4,
 } from "lucide-react";
-import { useLanguage } from "@/lib/LanguageContext";
-import Card from "@/components/ui/Card";
 import { motion } from "motion/react";
 
 export default function MusicTab() {
-  const { t } = useLanguage();
   const [searchQuery, setSearchQuery] = useState("");
 
   const releases = [
-    { 
-      id: '1', 
-      title: 'Midnight Echoes', 
-      type: 'Single', 
-      status: 'Live', 
-      date: 'May 12, 2026',
-      artwork: 'https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?q=80&w=200&h=200&auto=format&fit=crop',
-      stats: '1.2M streams'
+    {
+      id: "1",
+      title: "Midnight Echoes",
+      type: "Single",
+      status: "Live",
+      date: "May 12, 2026",
+      artwork:
+        "https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?q=80&w=300&auto=format&fit=crop",
+      stats: "1.2M Streams",
     },
-    { 
-      id: '2', 
-      title: 'Lost in Translation', 
-      type: 'Album', 
-      status: 'Pending', 
-      date: 'Pending',
-      artwork: 'https://images.unsplash.com/photo-1493225255756-d9584f8606e9?q=80&w=200&h=200&auto=format&fit=crop',
-      stats: '-'
+    {
+      id: "2",
+      title: "Lost in Translation",
+      type: "Album",
+      status: "Pending",
+      date: "Pending",
+      artwork:
+        "https://images.unsplash.com/photo-1493225255756-d9584f8606e9?q=80&w=300&auto=format&fit=crop",
+      stats: "Processing",
     },
-    { 
-      id: '3', 
-      title: 'Cyber City', 
-      type: 'Single', 
-      status: 'Rejected', 
-      date: 'N/A',
-      artwork: 'https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=200&h=200&auto=format&fit=crop',
-      stats: 'Copyright Issue'
-    },
-    { 
-      id: '4', 
-      title: 'Velvet Sky', 
-      type: 'EP', 
-      status: 'Live', 
-      date: 'Jan 15, 2026',
-      artwork: 'https://images.unsplash.com/photo-1459749411177-042180ce673c?q=80&w=200&h=200&auto=format&fit=crop',
-      stats: '450k streams'
+    {
+      id: "3",
+      title: "Cyber City",
+      type: "Single",
+      status: "Rejected",
+      date: "N/A",
+      artwork:
+        "https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=300&auto=format&fit=crop",
+      stats: "Copyright Issue",
     },
   ];
 
-  const filteredReleases = releases.filter(r => 
+  const filteredReleases = releases.filter((r) =>
     r.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
-    <div className="flex flex-col min-h-full px-6 lg:px-12 py-8 lg:py-12 bg-brand-black/20">
-      {/* HEADER ACTIONS */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-12">
-        <div>
-          <h1 className="text-3xl lg:text-5xl font-display font-medium text-white tracking-tight leading-none mb-4">
-            Music <span className="text-brand-primary">Catalog</span>
-          </h1>
-          <p className="text-white/30 text-[10px] lg:text-[11px] font-black uppercase tracking-[0.2em] italic">Manage and track all your global releases.</p>
-        </div>
-        
-        <div className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
-          <div className="relative group w-full sm:w-auto">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20 group-focus-within:text-brand-yellow transition-colors" />
-            <input 
-              type="text"
-              placeholder="Search catalog..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="bg-white/5 border border-white/10 rounded-[2px] pl-12 pr-6 py-4 text-[11px] font-black uppercase tracking-widest text-white focus:outline-none focus:border-brand-primary focus:bg-white/[0.08] transition-all w-full sm:w-64"
-            />
+    <div className="min-h-screen bg-[#111111] text-white overflow-x-hidden">
+
+      {/* HEADER */}
+      <div className="border-b border-white/[0.04] bg-[#181818]">
+        <div className="px-4 sm:px-6 lg:px-10 py-6 lg:py-8">
+
+          <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-6">
+
+            {/* LEFT */}
+            <div className="min-w-0">
+
+              <div className="flex items-center gap-3 mb-4">
+
+                <div className="w-10 h-10 rounded-[3px] bg-[#F5F500] flex items-center justify-center flex-shrink-0">
+                  <Music4 className="w-5 h-5 text-black" />
+                </div>
+
+                <div className="min-w-0">
+                  <p className="text-[10px] uppercase tracking-[0.25em] text-white/30">
+                    2kTunes Artist
+                  </p>
+
+                  <h1 className="text-[28px] sm:text-[34px] font-bold text-white leading-none mt-1 break-words">
+                    Music Catalog
+                  </h1>
+                </div>
+              </div>
+
+              <p className="text-white/40 max-w-xl text-sm leading-relaxed">
+                Upload, manage and track your releases across global streaming
+                platforms.
+              </p>
+            </div>
+
+            {/* RIGHT */}
+            <div className="flex flex-col sm:flex-row gap-3 w-full xl:w-auto">
+
+              {/* SEARCH */}
+              <div className="relative flex-1">
+
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
+
+                <input
+                  type="text"
+                  placeholder="Search releases..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="
+                    h-[44px]
+                    w-full
+                    sm:w-[250px]
+                    bg-[#1F1F1F]
+                    border
+                    border-white/[0.05]
+                    rounded-[3px]
+                    pl-11
+                    pr-4
+                    text-sm
+                    text-white
+                    placeholder:text-white/20
+                    focus:outline-none
+                    focus:border-[#F5F500]/20
+                    transition-all
+                  "
+                />
+              </div>
+
+              {/* BUTTON */}
+              <button
+                className="
+                  h-[44px]
+                  px-5
+                  bg-[#F5F500]
+                  hover:bg-white
+                  text-black
+                  rounded-[3px]
+                  flex
+                  items-center
+                  justify-center
+                  gap-2
+                  transition-all
+                  text-sm
+                  font-medium
+                  active:scale-[0.98]
+                  whitespace-nowrap
+                "
+              >
+                <Plus className="w-4 h-4" />
+                Release
+              </button>
+            </div>
           </div>
-          <button className="w-full sm:w-auto bg-brand-primary hover:bg-white hover:text-black text-white px-8 py-4 rounded-[2px] font-black text-[10px] uppercase tracking-[0.2em] flex items-center justify-center gap-3 transition-all shadow-xl shadow-brand-primary/10 group active:scale-95">
-            <Plus className="w-4 h-4 group-hover:rotate-90 transition-transform" />
-            New Release
+
+          {/* STATS */}
+          <div className="grid grid-cols-2 xl:grid-cols-4 gap-4 mt-8 lg:mt-10">
+
+            {[
+              {
+                label: "Releases",
+                value: "24",
+                icon: Disc,
+              },
+              {
+                label: "Streams",
+                value: "2.4M",
+                icon: TrendingUp,
+              },
+              {
+                label: "Live Stores",
+                value: "182",
+                icon: CheckCircle,
+              },
+              {
+                label: "Pending",
+                value: "3",
+                icon: Clock,
+              },
+            ].map((item, index) => (
+              <div
+                key={index}
+                className="
+                  bg-[#1A1A1A]
+                  border
+                  border-white/[0.04]
+                  rounded-[3px]
+                  p-4
+                  sm:p-5
+                  hover:border-white/[0.08]
+                  transition-all
+                  min-w-0
+                "
+              >
+                <div className="flex items-center justify-between mb-4 sm:mb-5">
+                  <item.icon className="w-5 h-5 text-[#F5F500]" />
+
+                  <ArrowRight className="w-4 h-4 text-white/10" />
+                </div>
+
+                <p className="text-[9px] sm:text-[10px] uppercase tracking-[0.18em] text-white/25 mb-2">
+                  {item.label}
+                </p>
+
+                <h3 className="text-[22px] sm:text-[30px] font-bold text-white break-words">
+                  {item.value}
+                </h3>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* RELEASES */}
+      <div className="px-4 sm:px-6 lg:px-10 py-6 lg:py-8">
+
+        {/* TOP */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+
+          <div>
+            <h2 className="text-[20px] sm:text-[22px] font-semibold">
+              Your Releases
+            </h2>
+
+            <p className="text-sm text-white/35 mt-1">
+              Manage your distributed music.
+            </p>
+          </div>
+
+          <button
+            className="
+              h-[40px]
+              px-4
+              bg-[#1A1A1A]
+              border
+              border-white/[0.05]
+              rounded-[3px]
+              text-white/60
+              hover:text-white
+              hover:border-white/[0.08]
+              transition-all
+              flex
+              items-center
+              justify-center
+              gap-2
+              text-sm
+              w-full
+              sm:w-auto
+            "
+          >
+            <Filter className="w-4 h-4" />
+            Filters
           </button>
         </div>
-      </div>
 
-      {/* QUICK STATS */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-12">
-        {[
-          { label: 'Total Releases', value: '24', icon: Disc, color: 'text-brand-primary' },
-          { label: 'Global Reaches', value: '182', icon: Globe, color: 'text-brand-yellow' },
-          { label: 'Active Streams', value: '2.4M', icon: BarChart3, color: 'text-green-400' },
-          { label: 'Royalties Ready', value: '$842', icon: Wallet, color: 'text-white' },
-        ].map((stat, i) => (
-          <div key={i} className="p-6 bg-white/[0.02] border border-white/5 rounded-[4px] group hover:bg-white/5 transition-all">
-             <div className="flex items-center justify-between mb-4">
-               <stat.icon className={`w-4 h-4 ${stat.color} opacity-40 group-hover:opacity-100 transition-opacity`} />
-               <ArrowRight className="w-3 h-3 text-white/5 group-hover:text-white/20 transition-colors" />
-             </div>
-             <p className="text-[8px] font-black uppercase tracking-[0.2em] text-white/20 mb-1">{stat.label}</p>
-             <h4 className="text-2xl font-display font-medium text-white">{stat.value}</h4>
-          </div>
-        ))}
-      </div>
+        {/* GRID */}
+        <div className="grid grid-cols-1 2xl:grid-cols-2 gap-5">
 
-      {/* CATALOG LIST */}
-      <div className="bg-[#111111]/40 border border-white/5 rounded-[4px] overflow-hidden backdrop-blur-3xl">
-        <div className="px-8 py-6 border-b border-white/5 flex items-center justify-between bg-white/[0.01]">
-          <h3 className="text-[10px] font-black uppercase tracking-[0.25em] text-white/30">Your Content</h3>
-          <div className="flex items-center gap-6">
-             <button className="flex items-center gap-2 text-[9px] font-black uppercase tracking-widest text-white/20 hover:text-white transition-colors">
-                <Filter className="w-3 h-3" />
-                Filter
-             </button>
-             <button className="text-[9px] font-black uppercase tracking-widest text-brand-primary hover:text-white transition-colors">View All</button>
-          </div>
-        </div>
+          {filteredReleases.map((release, index) => (
+            <motion.div
+              key={release.id}
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.04 }}
+              className="
+                bg-[#1A1A1A]
+                border
+                border-white/[0.04]
+                rounded-[3px]
+                overflow-hidden
+                hover:border-white/[0.08]
+                transition-all
+              "
+            >
+              <div className="p-4 sm:p-5">
 
-        <div className="overflow-x-auto">
-          <table className="w-full text-left">
-            <thead>
-              <tr className="border-b border-white/[0.03] text-white/20">
-                <th className="px-8 py-5 text-[9px] font-black uppercase tracking-widest">Release</th>
-                <th className="px-8 py-5 text-[9px] font-black uppercase tracking-widest">Type</th>
-                <th className="px-8 py-5 text-[9px] font-black uppercase tracking-widest">Status</th>
-                <th className="px-8 py-5 text-[9px] font-black uppercase tracking-widest">Released</th>
-                <th className="px-8 py-5 text-[9px] font-black uppercase tracking-widest text-right">Analytics</th>
-                <th className="px-8 py-5"></th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredReleases.map((release) => (
-                <motion.tr 
-                  key={release.id}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="border-b border-white/[0.03] hover:bg-white/[0.02] transition-colors group"
-                >
-                  <td className="px-8 py-6">
-                    <div className="flex items-center gap-4">
-                       <div className="w-12 h-12 rounded-[2px] overflow-hidden flex-shrink-0 bg-white/5 border border-white/10 group-hover:scale-105 transition-transform shadow-lg relative">
-                          <img src={release.artwork} alt={release.title} className="w-full h-full object-cover" />
-                          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                             <Play className="w-4 h-4 text-white fill-current" />
-                          </div>
-                       </div>
-                       <div>
-                         <p className="text-[11px] font-black uppercase tracking-widest text-white mb-1 group-hover:text-brand-primary transition-colors">{release.title}</p>
-                         <p className="text-[9px] font-medium text-white/20 italic">UPC: 84029302{release.id}</p>
-                       </div>
+                <div className="flex flex-col sm:flex-row gap-5">
+
+                  {/* COVER */}
+                  <div className="relative w-full sm:w-[88px] h-[220px] sm:h-[88px] rounded-[3px] overflow-hidden flex-shrink-0 bg-[#222]">
+
+                    <img
+                      src={release.artwork}
+                      alt={release.title}
+                      className="w-full h-full object-cover"
+                    />
+
+                    <div className="absolute inset-0 bg-black/40 opacity-0 hover:opacity-100 transition-all flex items-center justify-center">
+                      <Play className="w-5 h-5 text-white fill-current" />
                     </div>
-                  </td>
-                  <td className="px-8 py-6">
-                    <span className="text-[9px] font-black uppercase tracking-widest text-white/40 border border-white/5 px-2.5 py-1 rounded-[1px]">{release.type}</span>
-                  </td>
-                  <td className="px-8 py-6">
-                    {release.status === 'Live' && (
-                      <div className="flex items-center gap-2 text-green-500 bg-green-500/5 px-3 py-1.5 rounded-full w-fit border border-green-500/20">
-                        <CheckCircle className="w-3.5 h-3.5" />
-                        <span className="text-[9px] font-black uppercase tracking-widest">Live</span>
-                      </div>
-                    )}
-                    {release.status === 'Pending' && (
-                      <div className="flex items-center gap-2 text-brand-yellow bg-brand-yellow/5 px-3 py-1.5 rounded-full w-fit border border-brand-yellow/20">
-                        <Clock className="w-3.5 h-3.5" />
-                        <span className="text-[9px] font-black uppercase tracking-widest">In Review</span>
-                      </div>
-                    )}
-                    {release.status === 'Rejected' && (
-                      <div className="flex items-center gap-2 text-red-500 bg-red-500/5 px-3 py-1.5 rounded-full w-fit border border-red-500/20">
-                        <XCircle className="w-3.5 h-3.5" />
-                        <span className="text-[9px] font-black uppercase tracking-widest">Issues</span>
-                      </div>
-                    )}
-                  </td>
-                  <td className="px-8 py-6 text-[10px] font-black uppercase tracking-widest text-white/30 italic">
-                    {release.date}
-                  </td>
-                  <td className="px-8 py-6 text-right">
-                    <span className="text-[10px] font-black uppercase tracking-widest text-white">{release.stats}</span>
-                  </td>
-                  <td className="px-8 py-6 text-right">
-                    <button className="p-2 text-white/20 hover:text-white transition-colors">
-                      <MoreVertical className="w-4 h-4" />
-                    </button>
-                  </td>
-                </motion.tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
+                  </div>
 
-      <div className="mt-12 p-8 border border-white/5 border-dashed rounded-[4px] flex flex-col items-center text-center">
-         <p className="text-[10px] text-white/20 font-black uppercase tracking-[0.3em] mb-6 italic">Looking for older releases?</p>
-         <button className="text-[10px] font-black uppercase tracking-[0.2em] text-white/60 hover:text-brand-primary transition-all flex items-center gap-2 group">
+                  {/* INFO */}
+                  <div className="flex-1 min-w-0">
+
+                    {/* TOP */}
+                    <div className="flex items-start justify-between gap-4">
+
+                      <div className="min-w-0 flex-1">
+
+                        <h3 className="text-[20px] sm:text-[21px] font-bold leading-tight break-words">
+                          {release.title}
+                        </h3>
+
+                        <div className="flex items-center gap-3 mt-3 flex-wrap">
+
+                          <span className="px-3 h-[24px] flex items-center bg-white/[0.03] border border-white/[0.05] rounded-[3px] text-[10px] uppercase tracking-[0.15em] text-white/50 whitespace-nowrap">
+                            {release.type}
+                          </span>
+
+                          <span className="text-[10px] text-white/25 uppercase tracking-[0.15em] break-all">
+                            UPC: 84029302{release.id}
+                          </span>
+                        </div>
+                      </div>
+
+                      <button className="w-8 h-8 flex items-center justify-center rounded-[3px] hover:bg-white/[0.03] text-white/40 hover:text-white transition-all flex-shrink-0">
+                        <MoreVertical className="w-4 h-4" />
+                      </button>
+                    </div>
+
+                    {/* STATUS */}
+                    <div className="flex flex-wrap items-center gap-3 mt-5">
+
+                      {release.status === "Live" && (
+                        <div className="h-[28px] px-3 bg-[#F5F500]/10 border border-[#F5F500]/15 rounded-[3px] flex items-center gap-2 text-[#F5F500]">
+                          <CheckCircle className="w-3.5 h-3.5" />
+
+                          <span className="text-[10px] font-medium uppercase tracking-[0.12em]">
+                            Live
+                          </span>
+                        </div>
+                      )}
+
+                      {release.status === "Pending" && (
+                        <div className="h-[28px] px-3 bg-white/[0.03] border border-white/[0.05] rounded-[3px] flex items-center gap-2 text-white/70">
+                          <Clock className="w-3.5 h-3.5" />
+
+                          <span className="text-[10px] font-medium uppercase tracking-[0.12em]">
+                            Pending
+                          </span>
+                        </div>
+                      )}
+
+                      {release.status === "Rejected" && (
+                        <div className="h-[28px] px-3 bg-red-500/10 border border-red-500/15 rounded-[3px] flex items-center gap-2 text-red-400">
+                          <XCircle className="w-3.5 h-3.5" />
+
+                          <span className="text-[10px] font-medium uppercase tracking-[0.12em]">
+                            Rejected
+                          </span>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* FOOTER */}
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-t border-white/[0.04] mt-5 pt-4">
+
+                      <div className="min-w-0">
+                        <p className="text-[10px] uppercase tracking-[0.12em] text-white/25 mb-1">
+                          Analytics
+                        </p>
+
+                        <h4 className="text-[16px] sm:text-[17px] font-semibold text-white break-words">
+                          {release.stats}
+                        </h4>
+                      </div>
+
+                      <button
+                        className="
+                          h-[36px]
+                          px-4
+                          rounded-[3px]
+                          bg-[#F5F500]
+                          hover:bg-white
+                          text-black
+                          transition-all
+                          flex
+                          items-center
+                          justify-center
+                          gap-2
+                          text-sm
+                          font-medium
+                          active:scale-[0.98]
+                          w-full
+                          sm:w-auto
+                          whitespace-nowrap
+                        "
+                      >
+                        Open
+                        <ArrowRight className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+
+        {/* ARCHIVE */}
+        <div className="mt-8 bg-[#1A1A1A] border border-white/[0.04] rounded-[3px] p-6 sm:p-8 text-center">
+
+          <Disc className="w-9 h-9 text-[#F5F500] mx-auto mb-5" />
+
+          <h3 className="text-[24px] sm:text-[28px] font-bold mb-3 break-words">
+            Need older releases?
+          </h3>
+
+          <p className="text-white/35 max-w-xl mx-auto mb-7 text-sm leading-relaxed">
+            Access archived music, historical reports and previous royalty data.
+          </p>
+
+          <button
+            className="
+              h-[44px]
+              px-5
+              bg-[#F5F500]
+              hover:bg-white
+              text-black
+              rounded-[3px]
+              transition-all
+              inline-flex
+              items-center
+              justify-center
+              gap-3
+              text-sm
+              font-medium
+              active:scale-[0.98]
+              w-full
+              sm:w-auto
+            "
+          >
             Check Archives
-            <ExternalLink className="w-3 h-3 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
-         </button>
+            <ExternalLink className="w-4 h-4" />
+          </button>
+        </div>
       </div>
     </div>
   );
 }
-
-// Fixed missing icons in mapping
-const Globe = ({ className }: { className?: string }) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>;
-const Wallet = ({ className }: { className?: string }) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/></svg>;

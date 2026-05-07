@@ -47,7 +47,7 @@ export default function AboutSection() {
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
               transition={{ duration: 1 }}
-              className="relative aspect-square grayscale border-2 border-white/5 rounded-2xl overflow-hidden"
+              className="relative aspect-square grayscale border-2 border-white/5 rounded-[5px] overflow-hidden"
             >
               <img 
                 src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?q=80&w=2070&auto=format&fit=crop" 
@@ -107,7 +107,7 @@ export default function AboutSection() {
             initial={{ opacity: 0, x: 30 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            className="space-y-6 bg-white/5 p-8 md:p-12 border border-white/10 rounded-2xl"
+            className="space-y-6 bg-white/5 p-8 md:p-12 border border-white/10 rounded-[5px]"
             onSubmit={(e) => e.preventDefault()}
           >
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
