@@ -24,6 +24,7 @@ import MusicTab from "./MusicTab";
 import AnalyticsTab from "./AnalyticsTab";
 import RoyaltiesTab from "./RoyaltiesTab";
 import SettingsTab from "./SettingsTab";
+import UploadMusicPage from "./UploadMusicPage";
 
 type Language = "EN" | "FR" | "PT" | "ES" | "SW";
 
@@ -487,29 +488,36 @@ export default function DashboardPage() {
         {/* RELEASE BUTTON */}
         <div className="px-5 mb-8">
 
-          <button className="
-            h-[50px]
-            w-full
-            rounded-[2px]
-            bg-[#F5F500]
-            hover:bg-white
-            text-black
-            flex
-            items-center
-            justify-between
-            px-5
-            transition-all
-          ">
+        <Link to="/dashboard/upload">
+
+          <button
+            className="
+              h-[50px]
+              w-full
+              rounded-[2px]
+              bg-[#F5F500]
+              hover:bg-white
+              text-black
+              flex
+              items-center
+              justify-between
+              px-5
+              transition-all
+              active:scale-[0.98]
+            "
+          >
             <div className="flex items-center gap-3">
               <Plus className="w-4 h-4" />
 
-              <span className="text-[11px] font-semibold">
+              <span className="text-[11px] font-semibold uppercase tracking-[0.15em]">
                 New Release
               </span>
             </div>
 
             <ChevronRight className="w-4 h-4" />
           </button>
+
+        </Link>
         </div>
 
         {/* NAV */}
@@ -886,6 +894,8 @@ export default function DashboardPage() {
               <Route index element={<MusicTab />} />
 
               <Route path="music" element={<MusicTab />} />
+              
+              <Route path="upload" element={<UploadMusicPage />} />
 
               <Route
                 path="analytics"
