@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { ApiError, ApiNotConfiguredError } from "./client";
+import { useLanguage } from "@/lib/LanguageContext";
+import { errorMessageFor } from "./errors";
 
 /**
  * One fetch-on-mount hook for the dashboard's read endpoints.
@@ -24,22 +25,12 @@ export type ResourceState<T> = {
   refreshing: boolean;
   /** A message safe to show a user; never a raw server diagnostic. */
   error: string | null;
+  /** The thrown value behind `error` (e.g. to branch on `ApiError.status`). */
+  errorObj: unknown;
   reload: () => void;
+  /** Replace the data locally (after a mutation that returned the fresh row). */
+  setData: (next: T | ((prev: T | null) => T | null)) => void;
 };
-
-function messageFor(err: unknown): string {
-  if (err instanceof ApiNotConfiguredError) {
-    return "This build has no API URL configured, so live data can’t be loaded.";
-  }
-  if (err instanceof ApiError) {
-    if (err.isNetwork) return "Couldn’t reach the server. Check your connection.";
-    if (err.status >= 500) return "The server had a problem. Try again shortly.";
-    if (err.status === 403) return err.message;
-    if (err.status === 404) return "Not found.";
-    return err.message;
-  }
-  return "Something went wrong.";
-}
 
 export function useResource<T>(
   fetcher: (signal: AbortSignal) => Promise<T>,
@@ -48,8 +39,9 @@ export function useResource<T>(
   const [data, setData] = useState<T | null>(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [errorObj, setErrorObj] = useState<unknown>(null);
   const [nonce, setNonce] = useState(0);
+  const { t } = useLanguage();
   const hasData = useRef(false);
 
   // Keep the latest fetcher without making it a dependency: an inline closure
@@ -63,7 +55,7 @@ export function useResource<T>(
 
     if (hasData.current) setRefreshing(true);
     else setLoading(true);
-    setError(null);
+    setErrorObj(null);
 
     fetcherRef
       .current(controller.signal)
@@ -77,7 +69,7 @@ export function useResource<T>(
       .catch((err) => {
         if (!live || controller.signal.aborted) return;
         if (err instanceof DOMException && err.name === "AbortError") return;
-        setError(messageFor(err));
+        setErrorObj(err ?? new Error("unknown"));
         setLoading(false);
         setRefreshing(false);
       });
@@ -91,10 +83,10 @@ export function useResource<T>(
 
   const reload = useCallback(() => setNonce((n) => n + 1), []);
 
-  return { data, loading, refreshing, error, reload };
-}
+  const setDataPublic = useCallback((next: T | ((prev: T | null) => T | null)) => {
+    setData((prev) => (typeof next === "function" ? (next as (p: T | null) => T | null)(prev) : next));
+  }, []);
 
-/** Same message mapping, for one-off mutations (withdraw, create artist, …). */
-export function errorMessage(err: unknown): string {
-  return messageFor(err);
+  const error = errorObj ? errorMessageFor(errorObj, t) : null;
+  return { data, loading, refreshing, error, errorObj, reload, setData: setDataPublic };
 }

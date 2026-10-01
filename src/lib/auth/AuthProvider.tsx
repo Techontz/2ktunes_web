@@ -16,7 +16,7 @@ import {
   setUnauthenticatedHandler,
 } from "@/lib/api/client";
 import * as authApi from "@/lib/api/auth";
-import type { AuthUser } from "@/lib/api/auth";
+import type { AccountType, AuthUser } from "@/lib/api/auth";
 
 /**
  * THE SINGLE SOURCE OF TRUTH FOR AUTHENTICATION
@@ -49,7 +49,16 @@ type AuthContextValue = {
     email: string;
     password: string;
     passwordConfirmation: string;
+    accountType: AccountType;
   }) => Promise<void>;
+  /** Exchanges a Google Identity Services credential for a session. */
+  loginWithGoogle: (idToken: string) => Promise<void>;
+  /**
+   * True from a successful registration until the app navigates on. The
+   * /auth guard reads it to send new accounts to onboarding instead of the
+   * dashboard, without racing the form's own navigation.
+   */
+  justRegistered: boolean;
   logout: () => Promise<void>;
   refresh: () => Promise<void>;
 };
@@ -61,6 +70,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     apiConfigured && getToken() ? "loading" : "unauthenticated",
   );
   const [user, setUser] = useState<AuthUser | null>(null);
+  const [justRegistered, setJustRegistered] = useState(false);
   const mounted = useRef(true);
 
   useEffect(() => {
@@ -74,6 +84,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setToken(null);
     if (!mounted.current) return;
     setUser(null);
+    setJustRegistered(false);
     setStatus("unauthenticated");
   }, []);
 
@@ -147,6 +158,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       email: string;
       password: string;
       passwordConfirmation: string;
+      accountType: AccountType;
     }) => {
       // The backend returns a token straight from /register, so a successful
       // registration IS a session. We follow that rather than bouncing the user
@@ -156,7 +168,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         email: input.email,
         password: input.password,
         password_confirmation: input.passwordConfirmation,
+        account_type: input.accountType,
       });
+      setJustRegistered(true);
+      await adoptSession(res.token, res.user);
+    },
+    [adoptSession],
+  );
+
+  const loginWithGoogle = useCallback(
+    async (idToken: string) => {
+      const res = await authApi.googleLogin(idToken);
       await adoptSession(res.token, res.user);
     },
     [adoptSession],
@@ -181,10 +203,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       configured: apiConfigured,
       login,
       register,
+      loginWithGoogle,
+      justRegistered,
       logout,
       refresh,
     }),
-    [status, user, login, register, logout, refresh],
+    [status, user, login, register, loginWithGoogle, justRegistered, logout, refresh],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

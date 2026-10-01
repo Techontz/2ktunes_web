@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "./AuthProvider";
-import { DASHBOARD_HOME, safeNext } from "./routes";
+import { DASHBOARD_HOME, ONBOARDING_PATH, safeNext } from "./routes";
 
 /**
  * Route guards.
@@ -14,7 +14,7 @@ import { DASHBOARD_HOME, safeNext } from "./routes";
 function Booting() {
   return (
     <div
-      className="flex min-h-screen items-center justify-center bg-[#050505]"
+      className="flex min-h-screen items-center justify-center bg-surface"
       role="status"
       aria-label="Loading"
     >
@@ -41,11 +41,12 @@ export function RequireAuth({ children }: { children: ReactNode }) {
  * where they were originally headed.
  */
 export function RedirectIfAuthenticated({ children }: { children: ReactNode }) {
-  const { status } = useAuth();
+  const { status, justRegistered } = useAuth();
   const location = useLocation();
 
   if (status === "loading") return <Booting />;
   if (status === "authenticated") {
+    if (justRegistered) return <Navigate to={ONBOARDING_PATH} replace />;
     const next = safeNext(new URLSearchParams(location.search).get("next"));
     return <Navigate to={next ?? DASHBOARD_HOME} replace />;
   }

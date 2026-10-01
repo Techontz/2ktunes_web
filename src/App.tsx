@@ -1,114 +1,186 @@
-/**
- * @license
- * SPDX-License-Identifier: Apache-2.0
- */
-
 import { Suspense, lazy } from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Navigate, Route, Routes } from "react-router-dom";
 import ScrollToTop from "@/components/common/ScrollToTop";
+import { ToastProvider } from "@/components/ui";
 import { AuthProvider } from "@/lib/auth/AuthProvider";
 import { RedirectIfAuthenticated, RequireAuth } from "@/lib/auth/guards";
+import { DASHBOARD_HOME } from "@/lib/auth/routes";
+import { useLanguage } from "@/lib/LanguageContext";
 
-// Public — eager, because this is what a first-time visitor lands on.
-import LandingPage from "@/features/landing/LandingPage";
-import AuthPage from "@/features/auth/AuthPage";
+// Public shell + home — eager: this is what a first-time visitor lands on.
+import SiteLayout from "@/features/site/layout/SiteLayout";
+import HomePage from "@/features/site/pages/HomePage";
 
-/**
- * The dashboard is code-split. Nobody who never signs in should download nine
- * authenticated screens, and the landing page's initial bundle is the one that
- * has to stay small — it is the page being measured for load and frame rate.
- */
-const DashboardLayout = lazy(() => import("@/features/dashboard/DashboardLayout"));
-const OverviewPage = lazy(() => import("@/features/dashboard/OverviewPage"));
-const MusicPage = lazy(() => import("@/features/dashboard/MusicPage"));
-const ReleaseDetailPage = lazy(() => import("@/features/dashboard/ReleaseDetailPage"));
-const UploadPage = lazy(() => import("@/features/dashboard/UploadPage"));
-const EarningsPage = lazy(() => import("@/features/dashboard/EarningsPage"));
-const ArtistsPage = lazy(() => import("@/features/dashboard/ArtistsPage"));
-const AnalyticsPage = lazy(() => import("@/features/dashboard/AnalyticsPage"));
-const PlanPage = lazy(() => import("@/features/dashboard/PlanPage"));
-const SettingsPage = lazy(() => import("@/features/dashboard/SettingsPage"));
-const AccountPage = lazy(() => import("@/features/account/AccountPage"));
+/* Public inner pages: one chunk each, fetched on navigation. */
+const DistributionPage = lazy(() => import("@/features/site/pages/DistributionPage"));
+const PromotionPage = lazy(() => import("@/features/site/pages/PromotionPage"));
+const CreatorsPage = lazy(() => import("@/features/site/pages/CreatorsPage"));
+const RoyaltiesPage = lazy(() => import("@/features/site/pages/RoyaltiesPage"));
+const PricingPage = lazy(() => import("@/features/site/pages/PricingPage"));
+const ArtistsPage = lazy(() => import("@/features/site/pages/ArtistsPage"));
+const LabelsPage = lazy(() => import("@/features/site/pages/LabelsPage"));
+const AboutPage = lazy(() => import("@/features/site/pages/AboutPage"));
+const HelpPage = lazy(() => import("@/features/site/pages/HelpPage"));
+const ContactPage = lazy(() => import("@/features/site/pages/ContactPage"));
+const LegalPage = lazy(() => import("@/features/site/pages/LegalPage"));
+const NotFoundPage = lazy(() => import("@/features/site/pages/NotFoundPage"));
+
+/* Auth screens. */
+const AuthPage = lazy(() => import("@/features/auth/AuthPage"));
+const ForgotPasswordPage = lazy(() =>
+  import("@/features/auth/RecoveryPages").then((m) => ({ default: m.ForgotPasswordPage })),
+);
+const ResetPasswordPage = lazy(() =>
+  import("@/features/auth/RecoveryPages").then((m) => ({ default: m.ResetPasswordPage })),
+);
+const EmailVerifiedPage = lazy(() =>
+  import("@/features/auth/RecoveryPages").then((m) => ({ default: m.EmailVerifiedPage })),
+);
+
+/* Dashboard — code-split per route; nobody who never signs in downloads it. */
+const DashboardLayout = lazy(() => import("@/features/dashboard/shell/DashboardLayout"));
+const OverviewPage = lazy(() => import("@/features/dashboard/overview/OverviewPage"));
+const MusicPage = lazy(() => import("@/features/dashboard/music/MusicPage"));
+const ReleaseDetailPage = lazy(() => import("@/features/dashboard/music/ReleaseDetailPage"));
+const ReleaseWizardPage = lazy(() => import("@/features/dashboard/music/wizard/ReleaseWizardPage"));
+const DashPromotionPage = lazy(() => import("@/features/dashboard/promotion/PromotionPage"));
+const CampaignDetailPage = lazy(() => import("@/features/dashboard/promotion/CampaignDetailPage"));
+const DashCreatorsPage = lazy(() => import("@/features/dashboard/marketplace/CreatorsPage"));
+const CreatorDetailPage = lazy(() => import("@/features/dashboard/marketplace/CreatorDetailPage"));
+const OrdersPage = lazy(() => import("@/features/dashboard/marketplace/OrdersPage"));
+const OrderDetailPage = lazy(() => import("@/features/dashboard/marketplace/OrderDetailPage"));
+const CreatorWorkspacePage = lazy(() => import("@/features/dashboard/creator/CreatorWorkspacePage"));
+const AnalyticsPage = lazy(() => import("@/features/dashboard/analytics/AnalyticsPage"));
+const DashRoyaltiesPage = lazy(() => import("@/features/dashboard/royalties/RoyaltiesPage"));
+const WalletPage = lazy(() => import("@/features/dashboard/wallet/WalletPage"));
+const PlanPage = lazy(() => import("@/features/dashboard/plan/PlanPage"));
+const SplitsPage = lazy(() => import("@/features/dashboard/splits/SplitsPage"));
+const ArtistsDashboardPage = lazy(() => import("@/features/dashboard/artists/ArtistsPage"));
+const NotificationsPage = lazy(() => import("@/features/dashboard/notifications/NotificationsPage"));
+const SupportPage = lazy(() => import("@/features/dashboard/support/SupportPage"));
+const TicketDetailPage = lazy(() => import("@/features/dashboard/support/TicketDetailPage"));
+const HelpArticlesPage = lazy(() => import("@/features/dashboard/support/HelpPage"));
+const HelpArticlePage = lazy(() => import("@/features/dashboard/support/HelpArticlePage"));
+const SettingsPage = lazy(() => import("@/features/dashboard/settings/SettingsPage"));
+
+/* Signed-in, outside the dashboard shell. */
+const OnboardingPage = lazy(() => import("@/features/onboarding/OnboardingPage"));
+
+/* Public release landing page ("smart link"). */
+const SmartLinkPage = lazy(() => import("@/features/smartlink/SmartLinkPage"));
 
 /** Matches the guards' boot spinner, so a chunk fetch looks like a boot check. */
 function Loading() {
+  const { t } = useLanguage();
   return (
-    <div
-      className="flex min-h-screen items-center justify-center bg-[#050505]"
-      role="status"
-      aria-label="Loading"
-    >
+    <div className="flex min-h-svh items-center justify-center bg-surface" role="status" aria-label={t("common.loading")}>
       <span className="h-5 w-5 animate-spin rounded-full border-2 border-white/15 border-t-white/70" />
     </div>
   );
 }
 
 /**
- * Both public surfaces own their own chrome: the landing page ships SiteNav and
- * SiteFooter, and the auth page is a focused full-screen composition with its own
- * minimal header, language picker and footer. The legacy layout/Header and
- * layout/Footer components remain in the repo but are no longer mounted.
+ * Routing.
  *
- * AuthProvider wraps the router so route guards and every page read one shared
- * authentication state.
+ * Public pages share SiteLayout (nav, footer, skip link). Auth screens own a
+ * focused layout. `RequireAuth` sits on the dashboard's PARENT route, so every
+ * dashboard page is guarded by construction.
  *
- * `RequireAuth` sits on the dashboard's PARENT route, so it guards the layout
- * and every child at once — a new dashboard page cannot be added unprotected by
- * accident. Signed-out visitors are sent to `/auth?next=<the path they wanted>`;
- * signed-in visitors to /auth are sent onward to that `next`, or to the
- * dashboard.
+ * /onboarding runs once after registration (account type, first artist
+ * profile, optional creator profile) and then hands over to /dashboard.
+ * /r/:slug is the public, mobile-first smart-link page for a release.
+ * Retired paths (/account, /dashboard/upload, /dashboard/earnings) redirect to
+ * their replacements so old bookmarks and emails keep working.
  */
 export default function App() {
   return (
     <Router>
       <AuthProvider>
-        <ScrollToTop />
+        <ToastProvider>
+          <ScrollToTop />
+          <Suspense fallback={<Loading />}>
+            <Routes>
+              <Route element={<SiteLayout />}>
+                <Route path="/" element={<HomePage />} />
+                <Route path="/distribution" element={<DistributionPage />} />
+                <Route path="/promotion" element={<PromotionPage />} />
+                <Route path="/creators" element={<CreatorsPage />} />
+                <Route path="/royalties" element={<RoyaltiesPage />} />
+                <Route path="/pricing" element={<PricingPage />} />
+                <Route path="/artists" element={<ArtistsPage />} />
+                <Route path="/labels" element={<LabelsPage />} />
+                <Route path="/about" element={<AboutPage />} />
+                <Route path="/help" element={<HelpPage />} />
+                <Route path="/contact" element={<ContactPage />} />
+                <Route path="/legal/:doc" element={<LegalPage />} />
+                <Route path="*" element={<NotFoundPage />} />
+              </Route>
 
-        <Suspense fallback={<Loading />}>
-          <Routes>
-            <Route path="/" element={<LandingPage />} />
+              <Route
+                path="/auth"
+                element={
+                  <RedirectIfAuthenticated>
+                    <AuthPage />
+                  </RedirectIfAuthenticated>
+                }
+              />
+              <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+              <Route path="/reset-password" element={<ResetPasswordPage />} />
+              <Route path="/email-verified" element={<EmailVerifiedPage />} />
 
-            <Route
-              path="/auth"
-              element={
-                <RedirectIfAuthenticated>
-                  <AuthPage />
-                </RedirectIfAuthenticated>
-              }
-            />
+              <Route path="/r/:slug" element={<SmartLinkPage />} />
 
-            <Route
-              path="/dashboard"
-              element={
-                <RequireAuth>
-                  <DashboardLayout />
-                </RequireAuth>
-              }
-            >
-              <Route index element={<OverviewPage />} />
-              <Route path="music" element={<MusicPage />} />
-              <Route path="music/:id" element={<ReleaseDetailPage />} />
-              <Route path="upload" element={<UploadPage />} />
-              <Route path="earnings" element={<EarningsPage />} />
-              <Route path="artists" element={<ArtistsPage />} />
-              <Route path="analytics" element={<AnalyticsPage />} />
-              <Route path="plan" element={<PlanPage />} />
-              <Route path="settings" element={<SettingsPage />} />
-            </Route>
+              <Route
+                path="/onboarding"
+                element={
+                  <RequireAuth>
+                    <OnboardingPage />
+                  </RequireAuth>
+                }
+              />
 
-            {/* Kept as a diagnostic: a bare view of GET /api/profile, useful when
-                checking what the session actually resolves to. No longer the
-                post-authentication destination. */}
-            <Route
-              path="/account"
-              element={
-                <RequireAuth>
-                  <AccountPage />
-                </RequireAuth>
-              }
-            />
-          </Routes>
-        </Suspense>
+              <Route
+                path="/dashboard"
+                element={
+                  <RequireAuth>
+                    <DashboardLayout />
+                  </RequireAuth>
+                }
+              >
+                <Route index element={<OverviewPage />} />
+                <Route path="music" element={<MusicPage />} />
+                <Route path="music/:id" element={<ReleaseDetailPage />} />
+                <Route path="music/:id/edit" element={<ReleaseWizardPage />} />
+                <Route path="new-release" element={<ReleaseWizardPage />} />
+                <Route path="promotion" element={<DashPromotionPage />} />
+                <Route path="promotion/campaigns/:id" element={<CampaignDetailPage />} />
+                <Route path="creators" element={<DashCreatorsPage />} />
+                <Route path="creators/:slug" element={<CreatorDetailPage />} />
+                <Route path="orders" element={<OrdersPage />} />
+                <Route path="orders/:id" element={<OrderDetailPage />} />
+                <Route path="creator" element={<CreatorWorkspacePage />} />
+                <Route path="analytics" element={<AnalyticsPage />} />
+                <Route path="royalties" element={<DashRoyaltiesPage />} />
+                <Route path="wallet" element={<WalletPage />} />
+                <Route path="plan" element={<PlanPage />} />
+                <Route path="splits" element={<SplitsPage />} />
+                <Route path="artists" element={<ArtistsDashboardPage />} />
+                <Route path="notifications" element={<NotificationsPage />} />
+                <Route path="support" element={<SupportPage />} />
+                <Route path="support/:id" element={<TicketDetailPage />} />
+                <Route path="help" element={<HelpArticlesPage />} />
+                <Route path="help/:slug" element={<HelpArticlePage />} />
+                <Route path="settings" element={<SettingsPage />} />
+                {/* Retired paths from the first dashboard. */}
+                <Route path="upload" element={<Navigate to="/dashboard/new-release" replace />} />
+                <Route path="earnings" element={<Navigate to="/dashboard/wallet" replace />} />
+                <Route path="*" element={<Navigate to={DASHBOARD_HOME} replace />} />
+              </Route>
+
+              <Route path="/account" element={<Navigate to="/dashboard/settings" replace />} />
+            </Routes>
+          </Suspense>
+        </ToastProvider>
       </AuthProvider>
     </Router>
   );

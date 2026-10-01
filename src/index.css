@@ -1,80 +1,182 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Syne:wght@700;800&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800;900&display=swap');
 @import "tailwindcss";
 
+/*
+ * 2KTUNES DESIGN TOKENS
+ * =====================
+ *
+ * Three layers, in this order:
+ *
+ *   1. Palette     — raw brand colours (ink, carbon, bone, volt, lime…). These
+ *                    names predate this file and are used across the app; they
+ *                    are kept exactly so nothing downstream breaks.
+ *   2. Roles       — what a colour is FOR (surface, text-muted, accent, danger…).
+ *                    New code should reach for roles, not palette names, so a
+ *                    later re-theme is a one-file change.
+ *   3. Scale       — type, radii, shadows, motion.
+ *
+ * Contrast (measured against --color-surface #0B0B0C):
+ *   text          #F5F4F0  ≈ 18.3:1
+ *   text-muted    #B4B2AB  ≈  9.6:1
+ *   text-subtle   #8E8C86  ≈  5.9:1   ← lowest tone allowed for body copy
+ *   accent-text   #9B74FF  ≈  5.6:1
+ *   On bone (#F2F0EA): ink ≈ 18:1, ink-muted #4F4D48 ≈ 7.6:1.
+ */
+
 @theme {
-  /* ── Legacy tokens (kept intact: used by /auth) ───────────────────── */
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
-  --font-display: "Syne", sans-serif;
-  --color-brand-primary: #7C3AED;
-  --color-brand-yellow: #FFFF00;
-  --color-brand-black: #0F051D;
-  --color-brand-grey: #121217;
-
-  /* ── 2K TUNES design system ───────────────────────────────────────── */
-
-  /* One typeface, full weight range. */
+  /* ── Fonts ──────────────────────────────────────────────────────────── */
+  --font-sans: "Figtree", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-tunes: "Figtree", ui-sans-serif, system-ui, sans-serif;
+  /* Legacy alias: older screens used `font-display` (was Syne). */
+  --font-display: "Figtree", ui-sans-serif, system-ui, sans-serif;
 
-  /* Foundation: black / near-black / warm off-white */
+  /* ── 1. Palette (legacy names, kept) ───────────────────────────────── */
+  --color-brand-primary: #6d2bff;
+  --color-brand-yellow: #cbf24c;
+  --color-brand-black: #0b0b0c;
+  --color-brand-grey: #141416;
+
   --color-ink: #000000;
-  --color-carbon: #0E0E0E;
+  --color-carbon: #0e0e0e;
   --color-carbon-2: #161616;
-  --color-slab: #1D1D1D;
+  --color-slab: #1d1d1d;
   --color-slab-2: #262626;
-  --color-bone: #F2F0EA;
-  --color-bone-2: #E8E5DC;
-  --color-paper: #FFFFFF;
+  --color-bone: #f2f0ea;
+  --color-bone-2: #e8e5dc;
+  --color-paper: #ffffff;
 
-  /* Signature accent + tightly controlled support */
-  --color-volt: #6D2BFF;
-  --color-volt-lit: #8A5CFF;
-  --color-volt-deep: #4A11CC;
-  --color-lime: #CBF24C;
-  --color-amber: #FFC94A;
-  --color-clay: #E1421F;
-  --color-clay-deep: #3B1409;
+  --color-volt: #6d2bff;
+  --color-volt-lit: #8a5cff;
+  --color-volt-deep: #4a11cc;
+  --color-lime: #cbf24c;
+  --color-amber: #ffc94a;
+  --color-clay: #e1421f;
+  --color-clay-deep: #3b1409;
 
-  /* Motion */
-  --animate-drift-a: drift-a 90s linear infinite;
-  --animate-drift-b: drift-b 90s linear infinite;
+  /* ── 2. Roles ───────────────────────────────────────────────────────── */
+  --color-surface: #0b0b0c;
+  --color-surface-sunken: #060607;
+  --color-surface-raised: #141416;
+  --color-surface-overlay: #1a1a1d;
+  --color-surface-hover: #1f1f23;
+
+  --color-border: rgb(255 255 255 / 0.1);
+  --color-border-strong: rgb(255 255 255 / 0.18);
+  --color-border-subtle: rgb(255 255 255 / 0.06);
+
+  --color-text: #f5f4f0;
+  --color-text-muted: #b4b2ab;
+  --color-text-subtle: #8e8c86;
+  --color-text-inverse: #0b0b0c;
+
+  /* Light surfaces (marketing bands). */
+  --color-ink-muted: #4f4d48;
+  --color-ink-subtle: #6b6962;
+  --color-line-light: rgb(0 0 0 / 0.1);
+
+  --color-accent: #6d2bff;
+  --color-accent-hover: #7c42ff;
+  --color-accent-pressed: #5a1ee6;
+  --color-accent-text: #9b74ff;
+  --color-accent-soft: rgb(109 43 255 / 0.14);
+
+  --color-success: #cbf24c;
+  --color-success-soft: rgb(203 242 76 / 0.12);
+  --color-warning: #ffc94a;
+  --color-warning-soft: rgb(255 201 74 / 0.13);
+  --color-danger: #ff6a4d;
+  --color-danger-soft: rgb(255 106 77 / 0.12);
+  --color-info: #6cb4ff;
+  --color-info-soft: rgb(108 180 255 / 0.12);
+
+  /* ── 3a. Type scale ─────────────────────────────────────────────────
+     `text-*` sizes for product UI (dashboard/auth). Marketing display sizes
+     live in the t-hero / t-display / t-title utilities further down. */
+  --text-2xs: 0.6875rem;
+  --text-2xs--line-height: 1rem;
+  --text-caption: 0.75rem;
+  --text-caption--line-height: 1.1rem;
+  --text-body-sm: 0.875rem;
+  --text-body-sm--line-height: 1.35rem;
+  --text-body: 1rem;
+  --text-body--line-height: 1.6rem;
+  --text-lead: 1.125rem;
+  --text-lead--line-height: 1.75rem;
+  --text-h4: 1.125rem;
+  --text-h4--line-height: 1.5rem;
+  --text-h3: 1.375rem;
+  --text-h3--line-height: 1.75rem;
+  --text-h2: 1.75rem;
+  --text-h2--line-height: 2.1rem;
+  --text-h1: 2.125rem;
+  --text-h1--line-height: 2.45rem;
+
+  /* ── 3b. Radii (restrained: only badges and avatars are fully round) ─ */
+  --radius-control: 10px;
+  --radius-card: 14px;
+  --radius-panel: 20px;
+
+  /* ── 3c. Shadows ──────────────────────────────────────────────────── */
+  --shadow-raised: 0 1px 0 0 rgb(255 255 255 / 0.04) inset, 0 12px 32px -18px rgb(0 0 0 / 0.8);
+  --shadow-overlay: 0 24px 64px -20px rgb(0 0 0 / 0.85), 0 0 0 1px rgb(255 255 255 / 0.08);
+  --shadow-card-light: 0 1px 2px rgb(0 0 0 / 0.04), 0 8px 24px -12px rgb(0 0 0 / 0.12);
+
+  /* ── 3d. Motion ───────────────────────────────────────────────────── */
+  --ease-tunes: cubic-bezier(0.22, 1, 0.36, 1);
   --animate-rail: rail 60s linear infinite;
   --animate-rail-slow: rail 110s linear infinite;
-  --ease-tunes: cubic-bezier(0.22, 1, 0.36, 1);
+  --animate-fade-in: fade-in 160ms var(--ease-tunes);
+  --animate-slide-up: slide-up 220ms var(--ease-tunes);
+  --animate-slide-in-right: slide-in-right 260ms var(--ease-tunes);
+  --animate-slide-in-left: slide-in-left 260ms var(--ease-tunes);
+  --animate-shimmer: shimmer 1.6s ease-in-out infinite;
 }
 
 @layer base {
   html {
     scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
   }
   body {
-    @apply bg-ink text-white font-sans antialiased;
+    background: var(--color-surface);
+    color: var(--color-text);
+    font-family: var(--font-sans);
+    font-feature-settings: "ss02" on;
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
   }
-  /* Landing page owns its own typographic world. */
+  /* `.tunes` predates the global Figtree switch; kept so existing screens
+     keep their heading treatment. */
   .tunes {
     font-family: var(--font-tunes);
-    font-feature-settings: "ss02" on;
   }
   .tunes h1,
   .tunes h2,
   .tunes h3,
   .tunes h4 {
-    font-weight: 800;
-    letter-spacing: -0.035em;
-    line-height: 0.98;
     text-wrap: balance;
   }
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+  p {
+    text-wrap: pretty;
+  }
   ::selection {
-    background: var(--color-volt);
+    background: var(--color-accent);
     color: #fff;
   }
-  /* Visible keyboard focus everywhere on the landing page, without painting a
-     ring on mouse clicks. */
-  .tunes :is(a, button, input, textarea, select, [role="radio"]):focus-visible {
-    outline: 2px solid var(--color-volt-lit);
-    outline-offset: 3px;
-    border-radius: 4px;
+  /* One focus treatment for every interactive element, keyboard-only. */
+  :where(a, button, input, textarea, select, summary, [tabindex], [role="tab"], [role="radio"]):focus-visible {
+    outline: 2px solid var(--color-accent-text);
+    outline-offset: 2px;
+  }
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]) {
+    cursor: pointer;
   }
   @media (prefers-reduced-motion: reduce) {
     html {
@@ -90,109 +192,103 @@
   }
 }
 
-/* ── Editorial type scale ───────────────────────────────────────────── */
+/* ── Marketing type scale ──────────────────────────────────────────────
+   Deliberately smaller than before: confident, not shouting. Every size
+   clamps so a 360px phone never gets a word that cannot fit. */
 
-/* Hero — the single largest voice on the page. */
 @utility t-hero {
-  font-size: clamp(2.6rem, 8.2vw, 6.5rem);
-  line-height: 0.94;
-  letter-spacing: -0.042em;
-  font-weight: 800;
-}
-
-/* Section headline — big centred statements. */
-@utility t-display {
-  font-size: clamp(2.1rem, 5.6vw, 4.3rem);
-  line-height: 0.98;
-  letter-spacing: -0.038em;
-  font-weight: 800;
-}
-
-/* Card headline. */
-@utility t-card {
-  font-size: clamp(1.5rem, 2.6vw, 2.1rem);
+  font-size: clamp(2.25rem, 1.1rem + 3vw, 3.625rem);
   line-height: 1.04;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.035em;
   font-weight: 800;
 }
 
-/* Big numerals (earnings, stats). */
+@utility t-display {
+  font-size: clamp(1.875rem, 1.35rem + 2.3vw, 3.25rem);
+  line-height: 1.06;
+  letter-spacing: -0.032em;
+  font-weight: 800;
+}
+
+@utility t-title {
+  font-size: clamp(1.375rem, 1.15rem + 0.9vw, 1.875rem);
+  line-height: 1.15;
+  letter-spacing: -0.024em;
+  font-weight: 750;
+}
+
+@utility t-card {
+  font-size: clamp(1.125rem, 1.05rem + 0.35vw, 1.3125rem);
+  line-height: 1.25;
+  letter-spacing: -0.018em;
+  font-weight: 700;
+}
+
 @utility t-figure {
-  font-size: clamp(2.4rem, 6vw, 4.6rem);
+  font-size: clamp(2rem, 1.5rem + 2vw, 3.25rem);
   line-height: 1;
-  letter-spacing: -0.04em;
+  letter-spacing: -0.035em;
   font-weight: 800;
   font-variant-numeric: tabular-nums;
 }
 
-/* Eyebrow / label. */
 @utility t-eyebrow {
-  font-size: 0.6875rem;
+  font-size: 0.75rem;
   line-height: 1;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   font-weight: 700;
 }
 
-/* Body copy that stays readable at every breakpoint. */
-@utility t-body {
-  font-size: clamp(0.9375rem, 1.15vw, 1.0625rem);
+@utility t-lead {
+  font-size: clamp(1.0625rem, 1rem + 0.3vw, 1.25rem);
   line-height: 1.6;
-  letter-spacing: -0.005em;
-  font-weight: 500;
+  font-weight: 450;
 }
 
-/* ── Surfaces ───────────────────────────────────────────────────────── */
+@utility t-body {
+  font-size: clamp(0.9375rem, 0.92rem + 0.15vw, 1.0625rem);
+  line-height: 1.65;
+  font-weight: 450;
+}
+
+/* ── Layout ─────────────────────────────────────────────────────────── */
 
 @utility shell {
   width: 100%;
-  max-width: 78rem;
+  max-width: 76rem;
   margin-inline: auto;
-  padding-inline: 1.25rem;
-  @media (min-width: 768px) {
+  padding-inline: 1rem;
+  @media (min-width: 640px) {
+    padding-inline: 1.5rem;
+  }
+  @media (min-width: 1024px) {
     padding-inline: 2rem;
   }
+}
+
+@utility shell-narrow {
+  width: 100%;
+  max-width: 48rem;
+  margin-inline: auto;
+  padding-inline: 1rem;
+  @media (min-width: 640px) {
+    padding-inline: 1.5rem;
+  }
+}
+
+@utility section-y {
+  padding-block: 4.5rem;
+  @media (min-width: 768px) {
+    padding-block: 6rem;
+  }
   @media (min-width: 1280px) {
-    padding-inline: 2.5rem;
+    padding-block: 7.5rem;
   }
-}
-
-@utility bg-noise {
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-  background-repeat: repeat;
-  opacity: 0.05;
-}
-
-@utility grain {
-  position: relative;
-  &::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 120 120' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-    opacity: 0.16;
-    mix-blend-mode: overlay;
-  }
-}
-
-/* The curved card wall behind the hero. */
-@utility wall {
-  transform-style: preserve-3d;
 }
 
 @utility fade-x {
-  mask-image: linear-gradient(
-    to right,
-    transparent,
-    #000 8%,
-    #000 92%,
-    transparent
-  );
-}
-
-@utility fade-b {
-  mask-image: linear-gradient(to bottom, #000 55%, transparent);
+  mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
 }
 
 @utility no-scrollbar {
@@ -200,35 +296,6 @@
   scrollbar-width: none;
   &::-webkit-scrollbar {
     display: none;
-  }
-}
-
-/* Legacy utilities retained for the existing /auth surface. */
-@utility text-huge {
-  font-size: clamp(2rem, 14vw, 11rem);
-  line-height: 0.85;
-  letter-spacing: -0.06em;
-}
-
-@utility artist-mask {
-  clip-path: polygon(25% 0%, 75% 0%, 100% 30%, 100% 70%, 75% 100%, 25% 100%, 0% 70%, 0% 30%);
-}
-
-@keyframes drift-a {
-  from {
-    transform: rotateY(0deg);
-  }
-  to {
-    transform: rotateY(-360deg);
-  }
-}
-
-@keyframes drift-b {
-  from {
-    transform: rotateY(-360deg);
-  }
-  to {
-    transform: rotateY(0deg);
   }
 }
 
@@ -240,142 +307,33 @@
     transform: translate3d(-50%, 0, 0);
   }
 }
-
-/* ── Artist-system background ───────────────────────────────────────────
-   Every panel in the hero background floats on its own clock. Four
-   deliberately unrelated durations keep the ecosystem from breathing in
-   unison, which is what makes it read as organic rather than looped.
-   All of these animate transform/opacity/filter only. */
-
-@keyframes float-a {
-  0%,
-  100% {
-    transform: translate3d(0, 0, 0) rotate(0deg);
-  }
-  50% {
-    transform: translate3d(-3px, -7px, 0) rotate(-0.35deg);
+@keyframes fade-in {
+  from {
+    opacity: 0;
   }
 }
-
-@keyframes float-b {
-  0%,
-  100% {
-    transform: translate3d(0, 0, 0) rotate(0deg);
-  }
-  50% {
-    transform: translate3d(4px, 6px, 0) rotate(0.3deg);
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 8px, 0) scale(0.985);
   }
 }
-
-@keyframes float-c {
-  0%,
-  100% {
-    transform: translate3d(0, 0, 0) rotate(0deg);
-  }
-  35% {
-    transform: translate3d(5px, -4px, 0) rotate(0.25deg);
-  }
-  70% {
-    transform: translate3d(-2px, 5px, 0) rotate(-0.2deg);
+@keyframes slide-in-right {
+  from {
+    transform: translate3d(100%, 0, 0);
   }
 }
-
-@keyframes float-d {
-  0%,
-  100% {
-    transform: translate3d(0, 0, 0) scale(1);
-  }
-  50% {
-    transform: translate3d(-5px, 3px, 0) scale(1.012);
+@keyframes slide-in-left {
+  from {
+    transform: translate3d(-100%, 0, 0);
   }
 }
-
-/* Artist plates: slow cinematic breathing, never a face-warping effect. */
-@keyframes plate-breathe {
+@keyframes shimmer {
   0%,
   100% {
-    transform: scale(1) translate3d(0, 0, 0);
-    filter: brightness(0.94) saturate(1.02);
-  }
-  50% {
-    transform: scale(1.025) translate3d(-4px, -3px, 0);
-    filter: brightness(1.04) saturate(1.08);
-  }
-}
-
-/* Ambient violet blooms drifting on a 30–40s cycle: near-imperceptible. */
-/* Translate + opacity only. An earlier version also animated scale(), which
-   forced the browser to re-rasterise a very large soft-gradient texture every
-   frame and dropped the hero to ~6fps on its own. */
-@keyframes bloom-drift {
-  0%,
-  100% {
-    transform: translate3d(0, 0, 0);
     opacity: 0.55;
   }
   50% {
-    transform: translate3d(3%, -4%, 0);
-    opacity: 0.78;
-  }
-}
-
-/* A single highlight travelling across a card face. */
-@keyframes sheen {
-  0% {
-    transform: translate3d(-130%, 0, 0);
-  }
-  55%,
-  100% {
-    transform: translate3d(230%, 0, 0);
-  }
-}
-
-/* The waveform's scanning read-head. */
-@keyframes wave-scan {
-  0% {
-    transform: translate3d(-40%, 0, 0);
-  }
-  100% {
-    transform: translate3d(340%, 0, 0);
-  }
-}
-
-/* Signal trails flowing out of the globe. */
-@keyframes trail-flow {
-  to {
-    stroke-dashoffset: -340;
-  }
-}
-
-/* A stroke drawing itself once and holding. Distinct from trail-flow, which
-   loops past zero — using that here left the line permanently half-drawn. */
-@keyframes draw-line {
-  to {
-    stroke-dashoffset: 0;
-  }
-}
-
-@keyframes live-pulse {
-  0%,
-  100% {
     opacity: 1;
-    box-shadow: 0 0 0 0 rgba(203, 242, 76, 0.55);
   }
-  60% {
-    opacity: 0.65;
-    box-shadow: 0 0 0 5px rgba(203, 242, 76, 0);
-  }
-}
-
-@utility layer-float-a {
-  animation: float-a 18s ease-in-out infinite;
-}
-@utility layer-float-b {
-  animation: float-b 22s ease-in-out infinite;
-}
-@utility layer-float-c {
-  animation: float-c 26s ease-in-out infinite;
-}
-@utility layer-float-d {
-  animation: float-d 15s ease-in-out infinite;
 }
