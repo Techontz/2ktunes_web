@@ -22,7 +22,10 @@ function requireApiUrl(mode: string): Plugin {
       const env = { ...loadEnv(mode, process.cwd(), ""), ...process.env };
       const url = (env.VITE_API_URL ?? "").trim();
       if (!url) {
-        if (env.ALLOW_MISSING_API_URL === "1" || env.ALLOW_MISSING_API_URL === "true") {
+        // Vercel preview deployments may omit the API URL so the design can be reviewed;
+        // production deployments (VERCEL_ENV=production, or any non-Vercel build) still fail.
+        const isVercelPreview = env.VERCEL_ENV === "preview" || env.VERCEL_ENV === "development";
+        if (isVercelPreview || env.ALLOW_MISSING_API_URL === "1" || env.ALLOW_MISSING_API_URL === "true") {
           console.warn("\n[2ktunes] VITE_API_URL is not set: this build cannot sign in or load live data.\n");
           return;
         }
