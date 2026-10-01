@@ -23,15 +23,12 @@ export const user = {
   phone: "255754000000",
   country: "TZ",
   city: "Dar es Salaam",
-  is_admin: false,
   account_type: "artist",
   onboarding_completed_at: "2026-02-01T00:00:00Z",
   email_verified_at: "2026-02-01T00:00:00Z",
   email_verified: true,
   has_active_subscription: true,
   has_creator_profile: true,
-  subscription_plan_id: 2,
-  subscription_plan: "Artist",
   subscription_status: "active",
   subscription_expires_at: "2027-02-01T00:00:00Z",
   locale: "en",
@@ -233,7 +230,7 @@ const providers = [
 ];
 
 const methods = [
-  { id: 1, label: "My M-Pesa", account_name: "Neema Said", masked: "•••• •••• 4821", bank_name: null, is_default: true, provider: { id: 1, code: "mpesa_tz", name: "M-Pesa (Vodacom)", type: "mobile_money", currency: "TZS" }, created_at: "2026-03-01T00:00:00Z" },
+  { id: 1, provider_code: "mpesa_tz", type: "mobile_money", label: "My M-Pesa", display: "M-Pesa (Vodacom) ···· 4821", account_name: "Neema Said", bank_name: null, is_default: true, provider: { id: 1, code: "mpesa_tz", name: "M-Pesa (Vodacom)", type: "mobile_money", currency: "TZS" }, created_at: "2026-03-01T00:00:00Z" },
 ];
 
 const ledger = [
@@ -515,7 +512,7 @@ const routes = [
     })],
   ["GET", /^\/releases\/(\d+)\/splits$/, (m) => ok({ sheets: m[1] === "7" ? splits.sheets : [] })],
   ["PATCH", /^\/releases\/(\d+)$/, (m) => ok({ release: releases.find((x) => String(x.id) === m[1]) ?? releases[2] })],
-  ["GET", /^\/artists$/, () => ok({ artists, user: { id: 1, subscription_plan: "Artist", plan: plans[1] }, limit: 1 })],
+  ["GET", /^\/artists$/, () => ok({ artists, user: { id: 1, plan: plans[1] }, limit: 1 })],
   ["GET", /^\/splits$/, () => ok(splits)],
   ["GET", /^\/wallet$/, () => ok({ balances, open_withdrawals: [withdrawals[0]] })],
   ["GET", /^\/wallet\/statement$/, () => ok({ entries: ledger, meta: meta(ledger.length, 25) })],

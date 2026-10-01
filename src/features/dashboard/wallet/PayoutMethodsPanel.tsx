@@ -3,24 +3,21 @@ import { Plus, Smartphone, Trash2 } from "lucide-react";
 import { Badge, Button, Card, EmptyState, useToast } from "@/components/ui";
 import { PasswordConfirmDialog } from "@/features/dashboard/components";
 import { ApiError } from "@/lib/api/client";
-import type { PayoutMethod, PayoutProvider } from "@/lib/api/types";
+import type { PayoutMethod } from "@/lib/api/types";
 import { deletePayoutMethod, verifyPassword } from "@/lib/api/wallet";
 import { formatDate } from "@/lib/dates";
 import { useLanguage } from "@/lib/LanguageContext";
 import { useCopy } from "@/lib/useCopy";
 import { COPY } from "./copy";
-import { methodCurrency, methodDisplay, methodProviderName, methodType } from "./payoutMethods";
+import { methodCurrency, methodProviderName } from "./payoutMethods";
 import { PayoutTypeIcon } from "./PayoutTypeIcon";
 
 export function PayoutMethodsPanel({
   methods,
-  providers = [],
   onAdd,
   onChanged,
 }: {
   methods: PayoutMethod[];
-  /** Used to name/type methods when the API sends only `provider_code`. */
-  providers?: PayoutProvider[];
   onAdd: () => void;
   onChanged: () => void;
 }) {
@@ -29,7 +26,7 @@ export function PayoutMethodsPanel({
   const { toast } = useToast();
   const [removing, setRemoving] = useState<PayoutMethod | null>(null);
 
-  const nameOf = (m: PayoutMethod) => [m.label, methodDisplay(m, providers)].filter(Boolean).join(" · ");
+  const nameOf = (m: PayoutMethod) => [m.label, m.display].filter(Boolean).join(" · ");
 
   return (
     <div className="space-y-4">
@@ -62,12 +59,12 @@ export function PayoutMethodsPanel({
                 aria-hidden
                 className="flex h-10 w-10 shrink-0 items-center justify-center rounded-control bg-white/[0.06] text-text-muted"
               >
-                <PayoutTypeIcon type={methodType(m, providers)} className="h-5 w-5" />
+                <PayoutTypeIcon type={m.type} className="h-5 w-5" />
               </span>
               <div className="min-w-0 flex-1">
                 <div className="flex flex-wrap items-center gap-2">
                   <h3 className="min-w-0 break-words font-semibold text-text">
-                    {m.label || methodProviderName(m, providers) || c.types[methodType(m, providers)]}
+                    {m.label || methodProviderName(m) || c.types[m.type]}
                   </h3>
                   {m.is_default && (
                     <Badge tone="accent" size="sm">
@@ -75,9 +72,9 @@ export function PayoutMethodsPanel({
                     </Badge>
                   )}
                 </div>
-                <p className="mt-0.5 break-words font-mono text-body-sm text-text">{methodDisplay(m, providers)}</p>
+                <p className="mt-0.5 break-words font-mono text-body-sm text-text">{m.display}</p>
                 <p className="mt-0.5 break-words text-caption text-text-subtle">
-                  {[c.types[methodType(m, providers)], m.account_name, m.bank_name, methodCurrency(m, providers)]
+                  {[c.types[m.type], m.account_name, m.bank_name, methodCurrency(m)]
                     .filter(Boolean)
                     .join(" · ")}
                 </p>

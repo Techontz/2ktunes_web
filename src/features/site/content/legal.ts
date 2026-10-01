@@ -7,8 +7,8 @@ import type { Localized } from "@/lib/LanguageContext";
  */
 
 export type LegalDocId = "terms" | "privacy" | "distribution-agreement" | "acceptable-use";
-export type LegalSection = { id: string; heading: string; body: string[] };
-export type LegalDoc = { title: string; summary: string; sections: LegalSection[] };
+type LegalSection = { id: string; heading: string; body: string[] };
+type LegalDoc = { title: string; summary: string; sections: LegalSection[] };
 
 export const LEGAL_UPDATED = "2026-10-01";
 

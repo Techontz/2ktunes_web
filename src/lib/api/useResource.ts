@@ -14,7 +14,7 @@ import { errorMessageFor } from "./errors";
  * route guard redirect to /auth.
  */
 
-export type ResourceState<T> = {
+type ResourceState<T> = {
   data: T | null;
   /** True only while there is nothing to show yet. A reload keeps the old data
    *  on screen — blanking a panel back to a skeleton after every write throws

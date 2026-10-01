@@ -30,6 +30,10 @@ export function provider(over: Partial<PayoutProvider> = {}): PayoutProvider {
     fee_percent_bp: 150,
     is_sandbox: false,
     processing: "Processed automatically.",
+    fields: [
+      { key: "account_name", label: "Account holder name", type: "text", required: true, max: 120 },
+      { key: "account_number", label: "Phone number", type: "tel", required: true, max: 20 },
+    ],
     ...over,
   };
 }
@@ -37,9 +41,11 @@ export function provider(over: Partial<PayoutProvider> = {}): PayoutProvider {
 export function method(over: Partial<PayoutMethod> = {}): PayoutMethod {
   return {
     id: 3,
+    provider_code: "mpesa_tz",
+    type: "mobile_money",
     label: "Main M-Pesa",
+    display: "M-Pesa •••• 4567",
     account_name: "Neema Said",
-    masked: "•••• 4567",
     bank_name: null,
     is_default: true,
     provider: { id: 7, code: "mpesa_tz", name: "M-Pesa", type: "mobile_money", currency: "TZS" },

@@ -27,25 +27,23 @@ import { Spinner } from "./Spinner";
  *
  * Props
  *   variant   primary | secondary | outline | ghost | danger | inverse
- *             (legacy aliases: "yellow" → primary)
- *   size      sm | md | lg  (legacy "xl" → lg)
+ *   size      sm | md | lg
  *   shape     default (10px radius) | pill (marketing CTAs only)
  *   loading   boolean — shows a spinner, disables, sets aria-busy
  *   leftIcon / rightIcon  ReactNode, rendered aria-hidden
  *   fullWidth boolean
  */
 
-export type ButtonVariant =
+type ButtonVariant =
   | "primary"
   | "secondary"
   | "outline"
   | "ghost"
   | "danger"
-  | "inverse"
-  | "yellow";
-export type ButtonSize = "sm" | "md" | "lg" | "xl";
+  | "inverse";
+type ButtonSize = "sm" | "md" | "lg";
 
-const VARIANTS: Record<Exclude<ButtonVariant, "yellow">, string> = {
+const VARIANTS: Record<ButtonVariant, string> = {
   primary:
     "bg-accent text-white shadow-[0_8px_22px_-10px_rgb(132_29_198/0.7)] hover:bg-accent-hover hover:shadow-[0_12px_28px_-10px_rgb(132_29_198/0.8)] active:bg-accent-pressed disabled:bg-accent/50",
   secondary:
@@ -57,7 +55,7 @@ const VARIANTS: Record<Exclude<ButtonVariant, "yellow">, string> = {
   inverse: "bg-white text-brand-800 shadow-[0_8px_24px_-12px_rgb(26_11_46/0.5)] hover:bg-brand-50 active:bg-brand-100",
 };
 
-const SIZES: Record<Exclude<ButtonSize, "xl">, string> = {
+const SIZES: Record<ButtonSize, string> = {
   sm: "h-9 gap-1.5 px-3.5 text-[0.875rem]",
   md: "h-11 gap-2 px-5 text-[0.9375rem]",
   lg: "h-12 gap-2 px-6 text-[1rem]",
@@ -103,25 +101,23 @@ type AsChild = CommonProps & {
   href?: undefined;
 };
 
-export type ButtonProps = AsButton | AsRouterLink | AsAnchor | AsChild;
+type ButtonProps = AsButton | AsRouterLink | AsAnchor | AsChild;
 
-export function buttonClasses({
+function buttonClasses({
   variant = "primary",
   size = "md",
   shape = "default",
   fullWidth,
   className,
 }: Pick<CommonProps, "variant" | "size" | "shape" | "fullWidth" | "className">) {
-  const v = variant === "yellow" ? "primary" : variant;
-  const s = size === "xl" ? "lg" : size;
   return cn(
     "inline-flex shrink-0 select-none items-center justify-center whitespace-nowrap font-semibold tracking-[-0.01em]",
     "transition-[background-color,border-color,color,opacity,transform,box-shadow] duration-200 ease-out hover:-translate-y-px active:translate-y-0",
     "disabled:pointer-events-none disabled:opacity-55 aria-disabled:pointer-events-none aria-disabled:opacity-55",
     "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-text",
     shape === "pill" ? "rounded-full" : "rounded-control",
-    VARIANTS[v],
-    SIZES[s],
+    VARIANTS[variant],
+    SIZES[size],
     fullWidth && "w-full",
     className,
   );
@@ -216,5 +212,3 @@ export function Button(props: ButtonProps) {
     </button>
   );
 }
-
-export default Button;

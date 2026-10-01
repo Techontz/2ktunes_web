@@ -152,7 +152,7 @@ export function validateInfo(
 
 /* ── Step 2: artwork ───────────────────────────────────────────────── */
 
-export type ImageFacts = { type: string; size: number; width: number; height: number };
+type ImageFacts = { type: string; size: number; width: number; height: number };
 
 export function validateArtworkFile(img: ImageFacts, cfg: ReleaseConfig["artwork"]): Issue[] {
   const out: Issue[] = [];
@@ -171,10 +171,6 @@ export function validateArtworkFile(img: ImageFacts, cfg: ReleaseConfig["artwork
     out.push({ field: "cover_image", code: "too_big", params: { max: cfg.max_px, w: img.width, h: img.height } });
   }
   return out;
-}
-
-export function validateArtworkStep(hasCover: boolean): Issue[] {
-  return hasCover ? [] : [{ field: "cover_image", code: "required" }];
 }
 
 /* ── Step 3: tracks ────────────────────────────────────────────────── */

@@ -89,8 +89,6 @@ function Loading() {
  * /onboarding runs once after registration (account type, first artist
  * profile, optional creator profile) and then hands over to /dashboard.
  * /r/:slug is the public, mobile-first smart-link page for a release.
- * Retired paths (/account, /dashboard/upload, /dashboard/earnings) redirect to
- * their replacements so old bookmarks and emails keep working.
  */
 export default function App() {
   return (
@@ -171,13 +169,8 @@ export default function App() {
                 <Route path="help" element={<HelpArticlesPage />} />
                 <Route path="help/:slug" element={<HelpArticlePage />} />
                 <Route path="settings" element={<SettingsPage />} />
-                {/* Retired paths from the first dashboard. */}
-                <Route path="upload" element={<Navigate to="/dashboard/new-release" replace />} />
-                <Route path="earnings" element={<Navigate to="/dashboard/wallet" replace />} />
                 <Route path="*" element={<Navigate to={DASHBOARD_HOME} replace />} />
               </Route>
-
-              <Route path="/account" element={<Navigate to="/dashboard/settings" replace />} />
             </Routes>
           </Suspense>
         </ToastProvider>

@@ -70,7 +70,7 @@ export function useMuted() {
  * `.reveal` class (index.css). Reduced motion, no IntersectionObserver
  * (tests, old engines) → shown immediately.
  */
-export function useReveal<T extends Element>() {
+function useReveal<T extends Element>() {
   const ref = useRef<T>(null);
   useEffect(() => {
     const el = ref.current;
@@ -164,14 +164,14 @@ export function EqBars({ className, bars = 12 }: { className?: string; bars?: nu
 }
 
 /** Responsive artist photo (owner's lifestyle shots 1–5 in public/images/artists). */
-export const ARTIST_PHOTOS = {
+const ARTIST_PHOTOS = {
   1: { w: 736, h: 1308 },
   2: { w: 600, h: 1200 },
   3: { w: 736, h: 1313 },
   4: { w: 736, h: 1313 },
   5: { w: 564, h: 846 },
 } as const;
-export type ArtistPhotoId = keyof typeof ARTIST_PHOTOS;
+type ArtistPhotoId = keyof typeof ARTIST_PHOTOS;
 
 export function ArtistPhoto({
   id,
@@ -239,7 +239,7 @@ export function Band({
   );
 }
 
-export function Eyebrow({ children, className }: { children: ReactNode; className?: string }) {
+function Eyebrow({ children, className }: { children: ReactNode; className?: string }) {
   const { eyebrow } = useMuted();
   return (
     <p className={cn("t-eyebrow inline-flex items-center gap-2", eyebrow, className)}>
@@ -442,7 +442,7 @@ export function Checklist({ items, className }: { items: ReactNode[]; className?
   );
 }
 
-export type FaqItem = { q: string; a: ReactNode };
+type FaqItem = { q: string; a: ReactNode };
 
 /** Disclosure list: real buttons with aria-expanded/aria-controls. */
 export function Faq({ items, className }: { items: FaqItem[]; className?: string }) {

@@ -70,7 +70,7 @@ const fr: Record<MessageKey, string> = {
   "pricing.loading": "Chargement des offres…",
   "pricing.unavailable_title": "Tarifs en cours de mise à jour",
   "pricing.unavailable_body":
-    "Impossible de charger les offres pour le moment. Contactez-nous et nous vous communiquerons les tarifs du jour.",
+    "Aucune offre n'est ouverte aux inscriptions pour le moment. Contactez-nous et nous vous aiderons à démarrer.",
   "pricing.per_month": "par mois",
   "pricing.per_year": "par an",
   "pricing.per_days": "tous les {days} jours",
@@ -79,6 +79,9 @@ const fr: Record<MessageKey, string> = {
   "pricing.choose": "Choisir {plan}",
   "pricing.free": "Gratuit",
   "pricing.from_api": "Les prix affichés sont les offres actuelles de 2kTunes.",
+  "pricing.offline_note": "Impossible de joindre 2kTunes pour le moment : ces prix peuvent ne pas être à jour. Vous verrez le prix actuel avant de payer.",
+  "pricing.currency_label": "Payer en",
+  "pricing.only_in": "Payable en {currency} uniquement",
 
   /* ── Help centre ── */
   "help.search_label": "Rechercher dans l'aide",

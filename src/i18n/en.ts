@@ -74,7 +74,7 @@ const en = {
   "pricing.loading": "Loading current plans…",
   "pricing.unavailable_title": "Pricing is being updated",
   "pricing.unavailable_body":
-    "We couldn't load current plans just now. Contact us and we'll share today's pricing with you.",
+    "There are no plans open for sign-up right now. Contact us and we'll help you get started.",
   "pricing.per_month": "per month",
   "pricing.per_year": "per year",
   "pricing.per_days": "every {days} days",
@@ -83,6 +83,9 @@ const en = {
   "pricing.choose": "Start with {plan}",
   "pricing.free": "Free",
   "pricing.from_api": "Prices shown are the live plans on 2kTunes.",
+  "pricing.offline_note": "We couldn't reach 2kTunes just now, so these may not be today's prices. You'll see the current price before you pay.",
+  "pricing.currency_label": "Pay in",
+  "pricing.only_in": "Paid in {currency} only",
 
   /* ── Help centre ── */
   "help.search_label": "Search help articles",

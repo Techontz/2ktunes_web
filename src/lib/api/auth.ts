@@ -46,7 +46,6 @@ export type AuthUser = {
   address_line_1?: string | null;
   address_line_2?: string | null;
   postal_code?: string | null;
-  is_admin: boolean;
 
   /** artist | label | creator, chosen at registration. */
   account_type?: AccountType | null;
@@ -55,22 +54,8 @@ export type AuthUser = {
   /** Staff role for the admin console; null for everyone else. */
   admin_role?: string | null;
 
-  /* Subscription. Note the two separate columns: `subscription_plan` is the
-     plan NAME (a string) and is what ArtistController matches `plans.name`
-     against, while `subscription_plan_id` is the foreign key. The backend writes
-     the name on /api/subscribe and leaves the id null, so they can disagree. */
-  subscription_plan_id: number | null;
-  subscription_plan?: string | null;
+  /* Subscription state; the plan itself comes from GET /subscription. */
   subscription_status?: string | null;
-  subscription_currency?: string | null;
-  payment_method?: string | null;
-
-  /* Payout columns: returned here and by /api/royalties, but absent from
-     User::$fillable, so no endpoint in this backend can write them. */
-  payout_method?: string | null;
-  bank_name?: string | null;
-  bank_account_number?: string | null;
-  mobile_money_number?: string | null;
 
   /* Computed by UserResource on every user payload. */
   email_verified?: boolean;
@@ -91,9 +76,9 @@ export type AuthUser = {
 
 type TokenResponse = { message: string; token: string; user: AuthUser };
 
-export type LoginPayload = { email: string; password: string };
+type LoginPayload = { email: string; password: string };
 
-export type RegisterPayload = {
+type RegisterPayload = {
   name: string;
   email: string;
   password: string;
@@ -149,7 +134,7 @@ export function forgotPassword(email: string) {
   });
 }
 
-export type ResetPasswordPayload = {
+type ResetPasswordPayload = {
   token: string;
   email: string;
   password: string;

@@ -29,7 +29,7 @@ import { EMAIL_RE, authErrorKey, mapFieldErrors } from "./authErrors";
  *   /auth                         log in
  *   /auth?mode=register           create account
  *   /auth?mode=register&type=creator   … with the account type preselected
- *   /auth?next=/dashboard/upload  return there after logging in
+ *   /auth?next=/dashboard/wallet  return there after logging in
  *
  * The server is the authority on validation: its 422 `errors` are rendered
  * next to the matching fields. 401 → invalid credentials, 429 → throttled.

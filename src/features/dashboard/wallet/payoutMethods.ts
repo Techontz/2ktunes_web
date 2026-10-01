@@ -5,11 +5,11 @@ import type { WalletCopy } from "./copy";
  * Payout providers/methods helpers.
  *
  * The add-method dialog groups providers by `type`, then renders the chosen
- * provider's `fields` schema. Methods are read tolerantly: the current API
- * sends `{provider_code, type, display}`, older responses `{provider{…}, masked}`.
+ * provider's `fields` schema. Methods carry `{provider_code, type, display,
+ * provider{name, currency}}` (see DOCS/API.md).
  */
 
-export const PAYOUT_TYPES: readonly PayoutType[] = ["mobile_money", "bank", "bank_international", "wallet"];
+const PAYOUT_TYPES: readonly PayoutType[] = ["mobile_money", "bank", "bank_international", "wallet"];
 
 /** Field key that, when its select is "other", reveals `<key>_other`. */
 export const OTHER_VALUE = "other";
@@ -33,26 +33,9 @@ export function groupProviders(providers: PayoutProvider[]): ProviderGroup[] {
     .map(([type, list]) => ({ type, providers: list }));
 }
 
-/**
- * The provider's form schema. Older backends send no `fields`; fall back to
- * the inputs the previous form collected so the dialog still works.
- */
+/** The provider's form schema (always sent by GET /payout-providers). */
 export function fieldsFor(p: PayoutProvider): PayoutField[] {
-  if (p.fields && p.fields.length) return p.fields;
-  const name: PayoutField = { key: "account_name", label: "Account holder name", type: "text", required: true, max: 120 };
-  if (p.type === "mobile_money") {
-    return [name, { key: "account_number", label: "Mobile money number", type: "tel", required: true, max: 40 }];
-  }
-  if (p.type === "wallet") {
-    return [name, { key: "account_email", label: "Account email", type: "email", required: true, max: 190 }];
-  }
-  return [
-    name,
-    { key: "account_number", label: "Account number", type: "text", required: true, max: 40 },
-    { key: "bank_name", label: "Bank name", type: "text", required: false, max: 120 },
-    { key: "bank_branch", label: "Branch", type: "text", required: false, max: 120 },
-    { key: "swift_code", label: "SWIFT / BIC", type: "text", required: false, max: 11 },
-  ];
+  return p.fields;
 }
 
 /** Translated label for a field key, falling back to the API's label. */
@@ -131,26 +114,13 @@ export function fieldPayload(fields: PayoutField[], values: Record<string, strin
 /* ── Methods ─────────────────────────────────────────────────────────── */
 
 export function methodProvider(m: PayoutMethod, providers: PayoutProvider[]): PayoutProvider | null {
-  const code = m.provider_code ?? m.provider?.code ?? null;
-  return (
-    providers.find((p) => (m.provider?.id != null && p.id === m.provider.id) || (code != null && p.code === code)) ?? null
-  );
+  return providers.find((p) => p.code === m.provider_code) ?? null;
 }
 
-export function methodType(m: PayoutMethod, providers: PayoutProvider[] = []): string {
-  return m.type ?? m.provider?.type ?? methodProvider(m, providers)?.type ?? "mobile_money";
+export function methodProviderName(m: PayoutMethod): string {
+  return m.provider?.name ?? m.provider_code;
 }
 
-export function methodProviderName(m: PayoutMethod, providers: PayoutProvider[] = []): string {
-  return m.provider?.name ?? methodProvider(m, providers)?.name ?? m.provider_code ?? "";
-}
-
-/** The masked, human summary of where money goes. */
-export function methodDisplay(m: PayoutMethod, providers: PayoutProvider[] = []): string {
-  if (m.display) return m.display;
-  return [methodProviderName(m, providers), m.masked].filter(Boolean).join(" ");
-}
-
-export function methodCurrency(m: PayoutMethod, providers: PayoutProvider[] = []): string | null {
-  return m.currency ?? m.provider?.currency ?? methodProvider(m, providers)?.currency ?? null;
+export function methodCurrency(m: PayoutMethod): string | null {
+  return m.provider?.currency ?? null;
 }

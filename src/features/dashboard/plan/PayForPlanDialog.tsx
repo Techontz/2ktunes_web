@@ -12,7 +12,7 @@ import { COPY } from "./copy";
 const FORM_ID = "pay-for-plan-form";
 
 /** `details` is a PHP array: `{}` when set, but `[]` when every value is empty. */
-export function paymentDetails(info: SubscriptionInfo["payment_instructions"] | undefined): [string, string][] {
+function paymentDetails(info: SubscriptionInfo["payment_instructions"] | undefined): [string, string][] {
   const d = info?.details;
   if (!d || Array.isArray(d) || typeof d !== "object") return [];
   return Object.entries(d).filter(([, v]) => typeof v === "string" && v.trim() !== "");

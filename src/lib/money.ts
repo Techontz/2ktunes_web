@@ -2,8 +2,8 @@
  * MONEY — formatting and input parsing, never arithmetic on floats.
  *
  * The API sends money as integer minor units (`amount_minor: 2500000` +
- * `currency: "TZS"` = TZS 25,000.00) and, in a few legacy places, as decimal
- * strings ("9.99"). It accepts amounts as decimal STRINGS. So the UI only
+ * `currency: "TZS"` = TZS 25,000.00) and plan prices as decimal strings
+ * ("9.99"). It accepts amounts as decimal STRINGS. So the UI only
  * ever needs to:
  *
  *   formatMinor(2500000, "TZS", locale)   → "TZS 25,000.00"
@@ -18,7 +18,7 @@
  * Exponents mirror app/Domain/Money/Money.php on the backend.
  */
 
-export const CURRENCY_EXPONENTS: Record<string, number> = {
+const CURRENCY_EXPONENTS: Record<string, number> = {
   USD: 2,
   EUR: 2,
   GBP: 2,
@@ -35,7 +35,7 @@ export const CURRENCY_EXPONENTS: Record<string, number> = {
   MWK: 2,
 };
 
-export function currencyExponent(currency: string | null | undefined): number {
+function currencyExponent(currency: string | null | undefined): number {
   return CURRENCY_EXPONENTS[(currency ?? "").toUpperCase()] ?? 2;
 }
 
@@ -79,7 +79,7 @@ function layout(
   }
 }
 
-export type FormatMoneyOptions = {
+type FormatMoneyOptions = {
   /** "always" prefixes + on positives (ledger rows); default "auto". */
   signDisplay?: "auto" | "always";
 };
@@ -117,7 +117,7 @@ export function minorToDecimal(minor: MinorInput, currency: string | null | unde
   return negative ? `-${out}` : out;
 }
 
-export type ParsedAmount = { minor: bigint; decimal: string };
+type ParsedAmount = { minor: bigint; decimal: string };
 
 /**
  * Parses what a person typed ("25,000", "25000.5", " 1 000 ") into exact

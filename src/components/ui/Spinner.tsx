@@ -37,5 +37,3 @@ export function Spinner({
     </span>
   );
 }
-
-export default Spinner;

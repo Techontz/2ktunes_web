@@ -8,7 +8,7 @@
 export const AVATAR_TYPES = ["image/jpeg", "image/png", "image/webp"];
 export const AVATAR_ACCEPT = ".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp";
 
-export type ImageProblem = "type" | "size" | "dimensions" | "unreadable";
+type ImageProblem = "type" | "size" | "dimensions" | "unreadable";
 
 function readDimensions(file: File): Promise<{ width: number; height: number } | null> {
   return new Promise((resolve) => {

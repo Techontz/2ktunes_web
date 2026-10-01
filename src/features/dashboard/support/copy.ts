@@ -289,7 +289,7 @@ export const TICKET_CATEGORIES = [
 ] as const;
 
 export const ATTACHMENT_ACCEPT = ".jpg,.jpeg,.png,.pdf,.txt,.csv";
-export const ATTACHMENT_MAX = 10 * 1024 * 1024;
+const ATTACHMENT_MAX = 10 * 1024 * 1024;
 
 /** Returns "type" | "size" | null for a support attachment. */
 export function attachmentProblem(file: File): "type" | "size" | null {

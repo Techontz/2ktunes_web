@@ -61,7 +61,7 @@ export function resetCatalogCaches() {
 
 /* ── Releases ──────────────────────────────────────────────────────── */
 
-export type ReleaseListParams = {
+type ReleaseListParams = {
   status?: string;
   type?: string;
   q?: string;

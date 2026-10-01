@@ -70,7 +70,7 @@ const sw: Record<MessageKey, string> = {
   "pricing.loading": "Inapakia vifurushi vya sasa…",
   "pricing.unavailable_title": "Bei zinasasishwa",
   "pricing.unavailable_body":
-    "Hatukuweza kupakia vifurushi kwa sasa. Wasiliana nasi na tutakutumia bei za leo.",
+    "Hakuna vifurushi vilivyo wazi kwa usajili sasa hivi. Wasiliana nasi na tutakusaidia kuanza.",
   "pricing.per_month": "kwa mwezi",
   "pricing.per_year": "kwa mwaka",
   "pricing.per_days": "kila siku {days}",
@@ -79,6 +79,9 @@ const sw: Record<MessageKey, string> = {
   "pricing.choose": "Anza na {plan}",
   "pricing.free": "Bure",
   "pricing.from_api": "Bei zinazoonyeshwa ni vifurushi vilivyo hai kwenye 2kTunes.",
+  "pricing.offline_note": "Hatukuweza kufikia 2kTunes sasa hivi, kwa hiyo huenda hizi si bei za leo. Utaona bei ya sasa kabla ya kulipa.",
+  "pricing.currency_label": "Lipa kwa",
+  "pricing.only_in": "Inalipwa kwa {currency} tu",
 
   /* ── Help centre ── */
   "help.search_label": "Tafuta makala za msaada",

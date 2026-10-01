@@ -30,7 +30,7 @@ npm run dev                  # http://localhost:3000
 - The backend's `FRONTEND_URL` must be this site's origin: it builds `smart_link_url` (`{FRONTEND_URL}/r/{slug}`), the email-verification redirect and password-reset links. The dashboard falls back to `window.location.origin` only when the API sends no `smart_link_url`.
 - CORS on the API must allow this site's origin (bearer tokens; no cookies or credentials).
 - No source maps are emitted (`build.sourcemap: false`).
-- `public/robots.txt` and `public/sitemap.xml` assume the production domain **https://2ktunes.com**. Update both if the site lives elsewhere. Smart links (`/r/…`) stay crawlable on purpose (public release pages; unknown slugs are `noindex`); the dashboard, onboarding, account and auth/reset paths are disallowed.
+- `public/robots.txt` and `public/sitemap.xml` assume the production domain **https://2ktunes.com**. Update both if the site lives elsewhere. Smart links (`/r/…`) stay crawlable on purpose (public release pages; unknown slugs are `noindex`); the dashboard, onboarding and auth/reset paths are disallowed.
 - SEO caveat: this is a client-rendered SPA. Titles and descriptions are set per page at runtime (Google renders JS), but link-preview bots (WhatsApp, X, Facebook) read only the static `index.html` tags, so every shared link, including smart links, previews with the site-wide title and description. Per-release previews need server-side rendering or an edge function. There is no `og:image` yet.
 - No analytics, trackers or cookies are loaded. The only third-party requests are Google Fonts (stylesheet and font files) and, when `VITE_GOOGLE_CLIENT_ID` is set, the Google Identity script on the sign-in page (Google may set its own cookies there, so mention it in the privacy policy before enabling it). `localStorage` holds the session token, the language choice and resumable-upload ids (cleared on sign-out). A cookie banner is not needed for this build.
 
@@ -52,10 +52,12 @@ src/
   index.css               design tokens (@theme) + marketing type utilities
   components/ui/          design-system primitives — import from "@/components/ui"
   components/brand/       Wordmark
-  i18n/                   en.ts (source of truth), sw.ts (typed against en)
-  lib/LanguageContext.tsx t() for UI strings, pick({EN,SW}) for long-form copy
-  lib/api/                HTTP client, auth + plans endpoints
+  i18n/                   en.ts (source of truth), sw.ts and fr.ts (typed against en)
+  lib/LanguageContext.tsx t() for UI strings, pick({EN,SW,FR}) for long-form copy
+  lib/api/                HTTP client and typed V2 endpoints (see ../DOCS/API.md)
   lib/auth/               AuthProvider, route guards, safeNext
+  lib/upload/             resumable chunked uploads (POST /uploads sessions)
+  test/                   test-only harness (mock fetch, render helpers); never imported by app code
   features/site/          public site: layout, kit (sections), content/, pages/
   features/auth/          /auth, /forgot-password, /reset-password, /email-verified
   features/dashboard/     authenticated app
@@ -63,9 +65,9 @@ src/
 
 ## Design system
 
-Tokens live in `src/index.css`: palette (`ink`, `carbon`, `bone`, `volt`, `lime`… kept for existing screens) plus **roles** new code should use — `surface`, `surface-raised`, `border`, `text`, `text-muted`, `text-subtle`, `accent`, `success`, `warning`, `danger`, `info` — radii (`rounded-control` 10px, `rounded-card` 14px, `rounded-panel` 20px), shadows, and two type scales: product (`text-caption`, `text-body-sm`, `text-body`, `text-h1…h4`) and marketing (`t-hero`, `t-display`, `t-title`, `t-lead`, `t-body`).
+Tokens live in `src/index.css`: palette (brand scale plus a few named tints: `ink`, `bone`, `lime`) plus **roles** new code should use — `surface`, `surface-raised`, `border`, `text`, `text-muted`, `text-subtle`, `accent`, `success`, `warning`, `danger`, `info` — radii (`rounded-control` 10px, `rounded-card` 14px, `rounded-panel` 20px), shadows, and two type scales: product (`text-caption`, `text-body-sm`, `text-body`, `text-h1…h4`) and marketing (`t-hero`, `t-display`, `t-title`, `t-lead`, `t-body`).
 
-Primitives (each documents its props in a header comment): Button, Card, Field/Input/PasswordInput/Textarea/Select/Checkbox/RadioCardGroup, Badge/StatusBadge, Tabs, Dialog, Sheet, Skeleton/EmptyState/ErrorState, Spinner, Toast, DataTable, Stat, Avatar, ProgressBar, Stepper.
+Primitives (each documents its props in a header comment): Button, Card, Field/Input/PasswordInput/Textarea/Select/Checkbox/RadioCardGroup, Badge, Tabs, Dialog, Sheet, Skeleton/EmptyState/ErrorState, Spinner, Toast, DataTable, Stat, Avatar, ProgressBar, Stepper.
 
 ## Content rules
 

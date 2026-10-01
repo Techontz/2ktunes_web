@@ -55,7 +55,7 @@ const nul = (s: string) => (s.trim() === "" ? null : s.trim());
  * while still being typed (a 2-digit year, a half date) are left out rather
  * than failing the whole save; the step's own validation reports them.
  */
-export function infoPatch(f: Form): ReleasePatch {
+function infoPatch(f: Form): ReleasePatch {
   const patch: ReleasePatch = {
     release_title: f.release_title.trim(),
     version: nul(f.version),

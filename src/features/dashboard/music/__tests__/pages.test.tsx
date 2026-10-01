@@ -116,7 +116,7 @@ describe("ReleaseWizardPage", () => {
   const refs = {
     "GET /release-config": { config: releaseConfig },
     "GET /stores": { stores },
-    "GET /artists": { artists: [{ id: 3, name: "Neema", avatar_url: null }], user: { id: 1, subscription_plan: null, plan: null }, limit: 1 },
+    "GET /artists": { artists: [{ id: 3, name: "Neema", avatar_url: null }], user: { id: 1, plan: null }, limit: 1 },
   };
 
   it("new release: step 1 blocks on missing fields, then creates the draft", async () => {

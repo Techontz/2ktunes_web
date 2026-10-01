@@ -66,7 +66,7 @@ export type ResumeStore = {
   remove(key: string): void;
 };
 
-export const browserResumeStore: ResumeStore = {
+const browserResumeStore: ResumeStore = {
   get: (k) => {
     try {
       return localStorage.getItem(k);
@@ -91,10 +91,10 @@ export const browserResumeStore: ResumeStore = {
 };
 
 /** Preferred chunk size: small enough for flaky mobile links, ≥ the 256 KB server minimum. */
-export const DEFAULT_CHUNK_SIZE = 4 * 1024 * 1024;
+const DEFAULT_CHUNK_SIZE = 4 * 1024 * 1024;
 export const MIN_CHUNK_SIZE = 256 * 1024;
 
-export type ChunkRange = { index: number; start: number; end: number };
+type ChunkRange = { index: number; start: number; end: number };
 
 /**
  * The byte ranges for a file of `size` split into `chunkSize` pieces — the
@@ -175,7 +175,7 @@ export function isRetryable(err: unknown): boolean {
   return true;
 }
 
-export type UploadOptions = {
+type UploadOptions = {
   file: Blob & { name?: string; type?: string };
   kind: UploadKind;
   filename?: string;

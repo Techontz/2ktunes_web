@@ -1175,4 +1175,3 @@ const FR: typeof EN = {
 };
 
 export const COPY = { EN, SW, FR };
-export type MusicCopy = typeof EN;

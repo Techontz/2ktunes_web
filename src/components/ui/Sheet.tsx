@@ -97,5 +97,3 @@ export function Sheet({
     </Portal>
   );
 }
-
-export default Sheet;

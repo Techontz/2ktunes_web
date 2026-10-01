@@ -34,7 +34,7 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 }
 
-export function CrashPage() {
+function CrashPage() {
   const { t } = useLanguage();
   return (
     <main

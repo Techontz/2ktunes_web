@@ -31,7 +31,7 @@ export type ActionItem = {
   path: string;
 };
 
-export type RevenueRow = { currency: string; revenue_minor: number };
+type RevenueRow = { currency: string; revenue_minor: number };
 export type LabelledRevenue = {
   id?: number;
   label: string | null;
@@ -62,7 +62,7 @@ export type DashboardOverview = {
 
 export type CountRow = { label: string | null; n: number };
 
-export type SmartLinkStats = {
+type SmartLinkStats = {
   views: number;
   unique_visitors: number;
   clicks: number;
@@ -102,7 +102,7 @@ export type AppNotification = {
   created_at: string;
 };
 
-export type NotificationChannel = { database: boolean; mail: boolean };
+type NotificationChannel = { database: boolean; mail: boolean };
 export type NotificationPreferences = Record<string, NotificationChannel>;
 
 export type Plan = {
@@ -241,7 +241,7 @@ export type Track = {
   credits?: Credit[];
 };
 
-export type ReleaseIssue = {
+type ReleaseIssue = {
   id: number;
   field: string | null;
   track_id: number | null;
@@ -260,7 +260,7 @@ export type Delivery = {
   live_at: string | null;
 };
 
-export type TimelineEvent = {
+type TimelineEvent = {
   event: string;
   from: string | null;
   to: string | null;
@@ -402,7 +402,7 @@ export type Artist = {
 
 export type ArtistsResponse = {
   artists: Artist[];
-  user: { id: number; subscription_plan: string | null; plan: Plan | null };
+  user: { id: number; plan: Plan | null };
   limit: number | null;
 };
 
@@ -472,7 +472,7 @@ export type SplitInvitation = {
 
 /* ───────────────────────────── Money ───────────────────────────── */
 
-export type WithdrawalStatus =
+type WithdrawalStatus =
   | "requested"
   | "approved"
   | "processing"
@@ -517,7 +517,7 @@ export type LedgerEntry = {
 /** Payout method families (GET /payout-providers → `type`). No card payouts. */
 export type PayoutType = "mobile_money" | "bank" | "bank_international" | "wallet";
 
-export type PayoutFieldType = "text" | "email" | "tel" | "select" | "country";
+type PayoutFieldType = "text" | "email" | "tel" | "select" | "country";
 
 /** One input the provider needs; POST /payout-methods takes `{[key]: value}`. */
 export type PayoutField = {
@@ -547,30 +547,23 @@ export type PayoutProvider = {
   is_sandbox: boolean;
   /** English processing note from the API, e.g. "Processed manually…". */
   processing?: string | null;
-  /** Form schema. Older backends omit it; the UI then uses a default set. */
-  fields?: PayoutField[];
+  /** Ordered form schema for POST /payout-methods. */
+  fields: PayoutField[];
 };
 
-/**
- * GET /payout-methods item. The current contract is
- * `{ id, provider_code, type, label, display, is_default, … }`; older
- * responses carried `provider{…}` + `masked` instead, so both are optional
- * and read through the helpers in features/dashboard/wallet/payoutMethods.ts.
- */
+/** GET /payout-methods item. Numbers and emails are never returned in full. */
 export type PayoutMethod = {
   id: number;
+  provider_code: string;
+  type: PayoutType | (string & {});
   label: string | null;
+  /** Masked, human summary, e.g. "CRDB Bank ···· 4821" or "PayPal j***@gmail.com". */
+  display: string;
   is_default: boolean;
-  provider_code?: string | null;
-  type?: PayoutType | (string & {}) | null;
-  /** Masked, human summary, e.g. "M-Pesa •••• 4567" or "PayPal · n•••@mail.com". */
-  display?: string | null;
-  currency?: string | null;
-  account_name?: string | null;
-  masked?: string | null;
-  bank_name?: string | null;
-  provider?: { id: number; code: string; name: string; type: string; currency: string } | null;
-  created_at?: string | null;
+  account_name: string | null;
+  bank_name: string | null;
+  provider: { id: number; code: string; name: string; type: string; currency: string } | null;
+  created_at: string | null;
 };
 
 export type WithdrawalQuote = {
@@ -649,7 +642,7 @@ export type PortfolioItem = {
   views: number | null;
 };
 
-export type CreatorProfileStatus = "draft" | "pending_review" | "approved" | "rejected" | "suspended";
+type CreatorProfileStatus = "draft" | "pending_review" | "approved" | "rejected" | "suspended";
 
 export type CreatorSummary = {
   id: number;

@@ -25,7 +25,7 @@ const artist = {
 describe("ArtistsPage", () => {
   it("lists artists with the plan limit and explains a 403 artist_limit", async () => {
     const api = mockApi({
-      "GET /artists": { artists: [artist], user: { id: 1, subscription_plan: "Pro", plan }, limit: 1 },
+      "GET /artists": { artists: [artist], user: { id: 1, plan }, limit: 1 },
       "GET /release-config": { config: { genres: ["Bongo Flava"] } },
       "POST /artists": { status: 403, body: { status: false, code: "artist_limit", message: "Artist limit reached." } },
     });

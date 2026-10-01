@@ -11,13 +11,13 @@ import { newIdempotencyKey } from "@/lib/api/wallet";
  * amount (i.e. a new quote) — or after success / closing the flow (`reset`).
  */
 
-export type AttemptState = {
+type AttemptState = {
   /** `currency|methodId|amount` the current key belongs to. */
   signature: string | null;
   key: string | null;
 };
 
-export type AttemptAction =
+type AttemptAction =
   | { type: "enter_confirm"; signature: string; mint: () => string }
   | { type: "reset" };
 

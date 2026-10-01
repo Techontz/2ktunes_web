@@ -139,7 +139,7 @@ function useControlProps(
 
 /* ── Input ─────────────────────────────────────────────────────────── */
 
-export type InputProps = InputHTMLAttributes<HTMLInputElement> & {
+type InputProps = InputHTMLAttributes<HTMLInputElement> & {
   ref?: Ref<HTMLInputElement>;
   /** Decorative element inside the left edge (e.g. a search icon). */
   leading?: ReactNode;
@@ -311,7 +311,7 @@ export function Checkbox({
 
 /* ── RadioCardGroup ────────────────────────────────────────────────── */
 
-export type RadioCardOption<V extends string> = {
+type RadioCardOption<V extends string> = {
   value: V;
   label: ReactNode;
   description?: ReactNode;

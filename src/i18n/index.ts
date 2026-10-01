@@ -12,8 +12,6 @@ import fr from "./fr";
  */
 export type Language = "EN" | "SW" | "FR";
 
-export const LANGUAGES: readonly Language[] = ["EN", "SW", "FR"];
-
 export const SUPPORTED_LANGUAGES: { code: Language; name: string; short: string }[] = [
   { code: "EN", name: "English", short: "EN" },
   { code: "SW", name: "Kiswahili", short: "SW" },
@@ -39,14 +37,6 @@ export const API_LOCALE: Record<Language, "en" | "sw" | "fr"> = {
   SW: "sw",
   FR: "fr",
 };
-
-/** API locale ("fr", "sw-TZ", null) → Language, defaulting to English. */
-export function languageFromApi(locale: string | null | undefined): Language {
-  const l = (locale ?? "").toLowerCase();
-  if (l.startsWith("sw")) return "SW";
-  if (l.startsWith("fr")) return "FR";
-  return "EN";
-}
 
 export function interpolate(
   template: string,

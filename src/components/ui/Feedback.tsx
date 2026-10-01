@@ -7,11 +7,10 @@ import { Button } from "./Button";
  * Loading, empty and error states — every data view needs all three.
  *
  *   <Skeleton className="h-5 w-40" />            one bar
- *   <SkeletonText lines={3} />                   a paragraph placeholder
  *
  *   <EmptyState icon={<Disc3 />} title="No releases yet"
  *     description="Your first release will appear here."
- *     action={<Button to="/dashboard/upload">Upload</Button>} />
+ *     action={<Button to="/dashboard/new-release">New release</Button>} />
  *
  *   <ErrorState title="Couldn't load earnings" description={error}
  *     onRetry={reload} retryLabel="Try again" />
@@ -42,16 +41,6 @@ export function Skeleton({
         className,
       )}
     />
-  );
-}
-
-export function SkeletonText({ lines = 3, className }: { lines?: number; className?: string }) {
-  return (
-    <span aria-hidden className={cn("block space-y-2.5", className)}>
-      {Array.from({ length: lines }, (_, i) => (
-        <Skeleton key={i} className={cn("h-3.5", i === lines - 1 ? "w-3/5" : "w-full")} />
-      ))}
-    </span>
   );
 }
 

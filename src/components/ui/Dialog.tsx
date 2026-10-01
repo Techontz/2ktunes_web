@@ -119,5 +119,3 @@ export function Dialog({
     </Portal>
   );
 }
-
-export default Dialog;

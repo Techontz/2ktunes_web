@@ -17,7 +17,7 @@ export function normalise(s: string): string {
     .replace(/[^a-z0-9\s]/g, "");
 }
 
-export function searchArticles(articles: HelpArticle[], categories: Record<HelpCategory, string>, query: string) {
+function searchArticles(articles: HelpArticle[], categories: Record<HelpCategory, string>, query: string) {
   const terms = normalise(query).split(/\s+/).filter(Boolean);
   if (!terms.length) return articles;
   return articles

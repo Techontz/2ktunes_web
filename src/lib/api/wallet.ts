@@ -45,7 +45,7 @@ export async function fetchPayoutMethods({ signal }: S = {}): Promise<PayoutMeth
  * entry per provider `fields[].key` (account_name, account_number,
  * bank_name, bank_country, swift_code, account_email …).
  */
-export type PayoutMethodInput = {
+type PayoutMethodInput = {
   payout_provider_id: number;
   label?: string | null;
   is_default?: boolean;

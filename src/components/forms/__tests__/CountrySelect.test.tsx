@@ -4,7 +4,7 @@ import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { Field } from "@/components/ui";
 import { LanguageProvider, type Language } from "@/lib/LanguageContext";
-import { filterCountries, countryOptions, ISO_COUNTRIES, parseCountryCodes } from "@/lib/countries";
+import { filterCountries, countryOptions, ISO_COUNTRIES } from "@/lib/countries";
 import { CountrySelect } from "../CountrySelect";
 
 function Single({ onChange, language = "EN" }: { onChange?: (v: string) => void; language?: Language }) {
@@ -50,10 +50,6 @@ describe("countries lib", () => {
     expect(filterCountries(fr, "Germany", "fr-FR").map((o) => o.code)).toEqual(["DE"]);
     expect(filterCountries(fr, "tz", "fr-FR")[0].code).toBe("TZ");
     expect(filterCountries(countryOptions("en-TZ"), "zzzz", "en-TZ")).toEqual([]);
-  });
-
-  it("parses legacy comma lists into valid codes only", () => {
-    expect(parseCountryCodes("tz, KE ,ug tz XX")).toEqual(["TZ", "KE", "UG"]);
   });
 });
 

@@ -23,7 +23,7 @@ import {
 } from "../kit";
 import { PlanCards } from "../PlanCards";
 import { StoreMarquee, StoreWall } from "../StoreWall";
-import { AnalyticsMock, CampaignMock, ReleaseMock, SplitsMock, WalletMock } from "../visuals";
+import { AnalyticsMock, CampaignMock, SplitsMock, WalletMock } from "../visuals";
 import { usePageMeta } from "../usePageMeta";
 
 const PROMISE_ICONS = [<Globe2 key="g" />, <Megaphone key="m" />, <Wallet key="w" />];
@@ -73,10 +73,10 @@ function Hero() {
         {/* Artist collage — the owner's own photography; decorative. */}
         <div aria-hidden className="relative mx-auto h-[23rem] w-full max-w-[34rem] sm:h-[30rem] lg:h-[34rem] lg:max-w-none">
           <div className="absolute left-0 top-[12%] h-[62%] w-[36%] rotate-[-7deg] overflow-hidden rounded-[22px] border border-white/15 shadow-overlay animate-float-slow">
-            <ArtistPhoto id={3} eager sizes="(min-width: 1024px) 14rem, 36vw" position="50% 22%" />
+            <ArtistPhoto id={2} eager sizes="(min-width: 1024px) 14rem, 36vw" position="50% 20%" />
           </div>
           <div className="absolute right-0 top-[6%] h-[60%] w-[36%] rotate-[6deg] overflow-hidden rounded-[22px] border border-white/15 shadow-overlay animate-float-slow [animation-delay:-5s]">
-            <ArtistPhoto id={4} eager sizes="(min-width: 1024px) 14rem, 36vw" position="50% 22%" />
+            <ArtistPhoto id={5} eager sizes="(min-width: 1024px) 14rem, 36vw" position="50% 30%" />
           </div>
           <div className="absolute left-1/2 top-0 h-[86%] w-[50%] -translate-x-1/2 overflow-hidden rounded-[28px] border-2 border-white/25 shadow-[0_40px_80px_-30px_rgb(8_2_16/0.9)]">
             <div className="h-full w-full animate-float [animation-duration:11s]">
@@ -307,7 +307,7 @@ export default function HomePage() {
             </TextLink>
           </div>
           <div className="mt-12">
-            <PlanCards compact />
+            <PlanCards />
           </div>
         </div>
       </Band>

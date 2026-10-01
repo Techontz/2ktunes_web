@@ -28,7 +28,7 @@
  *     5xx  never surfaced to the user verbatim
  */
 
-export const API_BASE = (
+const API_BASE = (
   (import.meta.env.VITE_API_URL as string | undefined) ?? ""
 ).replace(/\/+$/, "");
 
@@ -117,7 +117,7 @@ export function setUnauthenticatedHandler(fn: (() => void) | null): void {
 type Query = Record<string, string | number | boolean | null | undefined>;
 
 /** `?a=1&b=x` from an object; empty/null/undefined values are dropped. */
-export function toQuery(query?: Query): string {
+function toQuery(query?: Query): string {
   if (!query) return "";
   const params = new URLSearchParams();
   for (const [k, v] of Object.entries(query)) {

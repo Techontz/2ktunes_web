@@ -30,7 +30,7 @@ import { cn } from "@/lib/utils";
  */
 
 type Tone = "neutral" | "success" | "danger" | "info";
-export type ToastOptions = {
+type ToastOptions = {
   title: ReactNode;
   description?: ReactNode;
   tone?: Tone;

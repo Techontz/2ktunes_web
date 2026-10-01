@@ -78,5 +78,8 @@ export default defineConfig(({ mode }) => ({
     env: { VITE_API_URL: "http://api.test" },
     // userEvent-driven page tests can exceed the 5s default on a loaded CI machine.
     testTimeout: 15000,
+    // Half the cores: jsdom page tests are heavy, and saturating every core
+    // (the default) makes timings flaky on busy dev machines and CI runners.
+    maxWorkers: "50%",
   },
 }));

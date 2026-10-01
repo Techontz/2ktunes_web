@@ -8,7 +8,7 @@ import { useLanguage } from "@/lib/LanguageContext";
 import { cn } from "@/lib/utils";
 import { LanguageSwitch } from "./LanguageSwitch";
 
-export const PRIMARY_NAV = [
+const PRIMARY_NAV = [
   { to: "/distribution", key: "nav.distribution" },
   { to: "/promotion", key: "nav.promotion" },
   { to: "/creators", key: "nav.creators" },

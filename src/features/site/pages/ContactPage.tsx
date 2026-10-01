@@ -13,7 +13,7 @@ import { usePageMeta } from "../usePageMeta";
  * the subject and body filled in, addressed to CONTACT_EMAIL. The message can
  * also be copied, for people without a configured mail app.
  */
-export const CONTACT_EMAIL =
+const CONTACT_EMAIL =
   ((import.meta.env.VITE_CONTACT_EMAIL as string | undefined) ?? "").trim() || "support@2ktunes.com";
 
 const TOPICS = [
@@ -78,7 +78,7 @@ const COPY: Localized<{
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-export function buildMailto(to: string, subject: string, body: string): string {
+function buildMailto(to: string, subject: string, body: string): string {
   return `mailto:${to}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 }
 

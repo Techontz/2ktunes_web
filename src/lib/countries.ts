@@ -26,16 +26,8 @@ export const ISO_COUNTRIES = [
   "VN", "VU", "WF", "WS", "YE", "YT", "ZA", "ZM", "ZW",
 ] as const;
 
-export type CountryCode = (typeof ISO_COUNTRIES)[number];
-
-const ISO_SET: ReadonlySet<string> = new Set(ISO_COUNTRIES);
-
 /** Markets 2kTunes serves most; shown first when the list is unfiltered. */
 export const PRIORITY_COUNTRIES = ["TZ", "KE", "UG", "RW", "BI", "CD", "NG", "GH", "CI", "SN", "CM", "ZA"] as const;
-
-export function isCountryCode(code: string | null | undefined): code is CountryCode {
-  return !!code && ISO_SET.has(code.toUpperCase());
-}
 
 /** "TZ" → 🇹🇿 (regional indicator symbols). */
 export function flagEmoji(code: string | null | undefined): string {
@@ -91,7 +83,7 @@ export function countryOptions(locale: string): CountryOption[] {
 }
 
 /** Case- and accent-insensitive comparison key ("Côte d’Ivoire" → "cote d'ivoire"). */
-export function searchKey(s: string): string {
+function searchKey(s: string): string {
   return s
     .normalize("NFD")
     .replace(/[̀-ͯ]/g, "")
@@ -118,14 +110,4 @@ export function filterCountries(options: CountryOption[], query: string, locale:
     else if (name.includes(q) || english.includes(q)) contains.push(o);
   }
   return [...starts, ...contains];
-}
-
-/** Parses "TZ, KE ug" into upper-case ISO codes (deduplicated, valid only). */
-export function parseCountryCodes(text: string): string[] {
-  const out: string[] = [];
-  for (const raw of text.split(/[\s,;]+/)) {
-    const c = raw.trim().toUpperCase();
-    if (isCountryCode(c) && !out.includes(c)) out.push(c);
-  }
-  return out;
 }

@@ -20,9 +20,7 @@ export function StoresStep() {
   const available = useMemo(() => stores.filter((s) => s.status === "available").map((s) => s.slug), [stores]);
   const [platforms, setPlatforms] = useState<string[]>(() => release?.platforms ?? []);
   const [mode, setMode] = useState<Territories["mode"]>(() => release?.territories?.mode ?? "worldwide");
-  const [countries, setCountries] = useState<string[]>(() =>
-    (release?.territories?.countries ?? []).map((x) => x.toUpperCase()),
-  );
+  const [countries, setCountries] = useState<string[]>(() => release?.territories?.countries ?? []);
   const [showErrors, setShowErrors] = useState(false);
   const [serverErrors, setServerErrors] = useState<Record<string, string>>({});
 
@@ -30,10 +28,10 @@ export function StoresStep() {
   const issues = validateStores({ platforms, territories }, available);
   const by = firstByField(issues);
 
-  // The picker only yields ISO-2 codes; the filter guards legacy saved values.
+  // A store can be switched off after it was picked; never resend it.
   const payload = {
     platforms: platforms.filter((p) => available.includes(p)),
-    territories: { mode, countries: territories.countries.filter((x) => /^[A-Z]{2}$/.test(x)) },
+    territories,
   };
   const auto = useAutosave(
     payload,

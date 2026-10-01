@@ -18,7 +18,7 @@ const FOCUSABLE = [
   "[contenteditable='true']",
 ].join(",");
 
-export function getFocusable(root: HTMLElement): HTMLElement[] {
+function getFocusable(root: HTMLElement): HTMLElement[] {
   return Array.from(root.querySelectorAll<HTMLElement>(FOCUSABLE)).filter(
     (el) => !el.hasAttribute("inert") && el.getAttribute("aria-hidden") !== "true",
   );

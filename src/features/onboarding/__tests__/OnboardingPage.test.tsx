@@ -80,7 +80,7 @@ describe("OnboardingPage", () => {
   it("asks for the country before continuing", async () => {
     mockApi({
       "GET /profile": { user: { ...defaultUser, onboarding_completed_at: null, country: null } },
-      "GET /artists": { artists: [], user: { id: 1, subscription_plan: null, plan: null }, limit: null },
+      "GET /artists": { artists: [], user: { id: 1, plan: null }, limit: null },
       "GET /release-config": { config },
     });
     const user = userEvent.setup();

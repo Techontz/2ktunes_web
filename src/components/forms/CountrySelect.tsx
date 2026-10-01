@@ -41,7 +41,7 @@ type CommonProps = {
   exclude?: readonly string[];
 };
 
-export type SingleCountrySelectProps = CommonProps & {
+type SingleCountrySelectProps = CommonProps & {
   multiple?: false;
   value: string | null | undefined;
   onChange: (code: string) => void;
@@ -49,13 +49,13 @@ export type SingleCountrySelectProps = CommonProps & {
   allowEmpty?: boolean;
 };
 
-export type MultiCountrySelectProps = CommonProps & {
+type MultiCountrySelectProps = CommonProps & {
   multiple: true;
   value: readonly string[];
   onChange: (codes: string[]) => void;
 };
 
-export type CountrySelectProps = SingleCountrySelectProps | MultiCountrySelectProps;
+type CountrySelectProps = SingleCountrySelectProps | MultiCountrySelectProps;
 
 const PRIORITY: ReadonlySet<string> = new Set(PRIORITY_COUNTRIES);
 

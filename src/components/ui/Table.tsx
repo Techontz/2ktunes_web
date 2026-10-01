@@ -13,7 +13,7 @@ import { Skeleton } from "./Feedback";
  *     columns={[
  *       { key: "date", header: "Date", cell: (w) => fmtDate(w.created_at) },
  *       { key: "amount", header: "Amount", align: "right", cell: (w) => fmt(w.amount), primary: true },
- *       { key: "status", header: "Status", cell: (w) => <StatusBadge status={w.status} /> },
+ *       { key: "status", header: "Status", cell: (w) => <Badge>{w.status}</Badge> },
  *     ]}
  *     loading={loading}
  *     empty={<EmptyState title="No withdrawals yet" compact />}
@@ -179,5 +179,3 @@ export function DataTable<T>({
     </div>
   );
 }
-
-export default DataTable;

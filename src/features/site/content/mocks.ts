@@ -1,7 +1,7 @@
 import type { Localized } from "@/lib/LanguageContext";
 
 /** Labels inside the product illustrations. Figures are sample data. */
-export type MockCopy = {
+type MockCopy = {
   sample: string;
   release: {
     kind: string;

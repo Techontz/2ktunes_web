@@ -2,7 +2,7 @@ import type { Localized } from "@/lib/LanguageContext";
 
 export type HelpCategory = "start" | "releases" | "stores" | "promotion" | "royalties" | "account";
 export type HelpArticle = { id: string; category: HelpCategory; q: string; a: string[]; keywords?: string };
-export type HelpCopy = {
+type HelpCopy = {
   meta: { title: string; description: string };
   hero: { eyebrow: string; title: string; lede: string };
   categories: Record<HelpCategory, string>;

@@ -13,7 +13,7 @@ import { StepFooter } from "./StepFooter";
 import { validateArtworkFile, type Issue } from "./validation";
 
 /** Reads pixel dimensions without uploading anything. */
-export function readImageSize(file: File): Promise<{ width: number; height: number }> {
+function readImageSize(file: File): Promise<{ width: number; height: number }> {
   return new Promise((resolve, reject) => {
     const url = URL.createObjectURL(file);
     const img = new Image();

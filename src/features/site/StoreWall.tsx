@@ -8,7 +8,7 @@ import { isDarkTone, Reveal, useMuted, useTone } from "./kit";
  * them through distribution partners and claims no partnership or
  * endorsement. Keep the disclaimer next to any rendering of this list.
  */
-export const STORES: { name: string; kind: "stream" | "social" | "africa" }[] = [
+const STORES: { name: string; kind: "stream" | "social" | "africa" }[] = [
   { name: "Spotify", kind: "stream" },
   { name: "Apple Music", kind: "stream" },
   { name: "YouTube Music", kind: "stream" },

@@ -102,7 +102,7 @@ const AVATAR = {
   lg: "h-14 w-14 text-[1rem]",
 };
 
-export function initials(name: string): string {
+function initials(name: string): string {
   const parts = name.trim().split(/\s+/).filter(Boolean);
   if (parts.length === 0) return "?";
   const first = parts[0][0] ?? "";

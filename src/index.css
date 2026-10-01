@@ -9,9 +9,8 @@
  *
  * Three layers, in this order:
  *
- *   1. Palette     — the brand scale (brand-50…950), night purples, and the
- *                    legacy names (ink, carbon, bone, volt, lime…) re-pointed
- *                    at the purple palette so older screens follow the brand.
+ *   1. Palette     — the brand scale (brand-50…950), night purples and a few
+ *                    named tints (ink, bone, lime).
  *   2. Roles       — what a colour is FOR (surface, text-muted, accent, danger…).
  *                    Components use roles, never raw palette names.
  *   3. Scale       — type, radii, shadows, motion.
@@ -36,8 +35,6 @@
   /* ── Fonts ──────────────────────────────────────────────────────────── */
   --font-sans: "Figtree", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-tunes: "Figtree", ui-sans-serif, system-ui, sans-serif;
-  /* Legacy alias: older screens used `font-display` (was Syne). */
-  --font-display: "Figtree", ui-sans-serif, system-ui, sans-serif;
 
   /* ── 1a. Brand scale ───────────────────────────────────────────────── */
   --color-brand-50: #faf6fe;
@@ -57,28 +54,10 @@
   --color-orange: #f7931e;
   --color-lavender: #faf7fe;
 
-  /* ── 1b. Legacy names (kept; re-pointed at the brand) ───────────────── */
-  --color-brand-primary: #841dc6;
-  --color-brand-yellow: #f7931e;
-  --color-brand-black: #1a0b2e;
-  --color-brand-grey: #2a0f4a;
-
+  /* ── 1b. Named tints used by a few marketing/brand surfaces ───────── */
   --color-ink: #1a0b2e;
-  --color-carbon: #1a0b2e;
-  --color-carbon-2: #221038;
-  --color-slab: #2a0f4a;
-  --color-slab-2: #351659;
   --color-bone: #f6f0fd;
-  --color-bone-2: #ece2fa;
-  --color-paper: #ffffff;
-
-  --color-volt: #841dc6;
-  --color-volt-lit: #b983ee;
-  --color-volt-deep: #5a1389;
   --color-lime: #b6f36a;
-  --color-amber: #ffc94a;
-  --color-clay: #e1421f;
-  --color-clay-deep: #3b1409;
 
   /* ── 2. Roles (light — the default) ─────────────────────────────────── */
   --color-surface: #faf7fe;
@@ -100,9 +79,7 @@
   --color-text-subtle: #625573;
   --color-text-inverse: #ffffff;
 
-  /* Kept for older light-band code. */
-  --color-ink-muted: #4a3d5c;
-  --color-ink-subtle: #625573;
+  /* Hairline on always-white cards (Card variant="light"). */
   --color-line-light: rgb(42 8 70 / 0.1);
 
   --color-accent: #841dc6;

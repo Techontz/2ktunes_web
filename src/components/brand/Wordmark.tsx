@@ -9,7 +9,6 @@ import { cn } from "@/lib/utils";
  *   <Wordmark tone="dark" />           for deep-purple surfaces (white mark)
  *   <Wordmark tone="light" />          for white / lavender surfaces (purple mark)
  *   <Wordmark variant="mark" />        the "2K" mark alone
- *   <Wordmark invert />                legacy alias of tone="light"
  *
  * Exposed to assistive tech once, as role="img" named "2kTunes" (the
  * <img> parts are alt="").
@@ -60,21 +59,18 @@ function Lockup({
 
 export function Wordmark({
   className,
-  invert = false,
-  tone,
+  tone = "auto",
   variant = "full",
 }: {
   className?: string;
-  invert?: boolean;
   tone?: Tone;
   variant?: "full" | "mark" | "wordmark";
 }) {
-  const resolved: Tone = tone ?? (invert ? "light" : "auto");
   // One accessible name for the whole logo; the images themselves are alt="".
-  if (resolved !== "auto")
+  if (tone !== "auto")
     return (
       <span role="img" aria-label="2kTunes" className={cn("inline-flex leading-none", className)}>
-        <Lockup tone={resolved} variant={variant} />
+        <Lockup tone={tone} variant={variant} />
       </span>
     );
   // Auto: both lockups are rendered; CSS shows the one that suits the

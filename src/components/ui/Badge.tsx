@@ -2,17 +2,14 @@ import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
 /**
- * Badge / StatusBadge.
+ * Badge.
  *
  *   <Badge tone="accent">New</Badge>
- *   <StatusBadge status="pending" />             // "Pending review", amber, with dot
- *   <StatusBadge status="distributed" label="Live" />
+ *   <Badge tone="success" dot>Live</Badge>
  *
- * Badge props: tone neutral | accent | success | warning | danger | info,
+ * Props: tone neutral | accent | success | warning | danger | info,
  *   dot?: boolean, size sm | md, className.
- * StatusBadge props: status (release / payout / campaign states, unknown
- *   values render neutral with the raw text), label? overrides the text.
- *   Colour is never the only signal — the text always states the status.
+ * Colour is never the only signal — the text always states the status.
  */
 
 export type BadgeTone = "neutral" | "accent" | "success" | "warning" | "danger" | "info";
@@ -53,47 +50,3 @@ export function Badge({
     </span>
   );
 }
-
-const STATUS: Record<string, { tone: BadgeTone; label: string }> = {
-  draft: { tone: "neutral", label: "Draft" },
-  pending: { tone: "warning", label: "Pending review" },
-  submitted: { tone: "warning", label: "Submitted" },
-  reviewing: { tone: "info", label: "In review" },
-  in_review: { tone: "info", label: "In review" },
-  changes_requested: { tone: "warning", label: "Changes requested" },
-  approved: { tone: "accent", label: "Approved" },
-  processing: { tone: "info", label: "Processing" },
-  delivering: { tone: "info", label: "Delivering" },
-  distributed: { tone: "success", label: "Live" },
-  live: { tone: "success", label: "Live" },
-  active: { tone: "success", label: "Active" },
-  completed: { tone: "success", label: "Completed" },
-  paid: { tone: "success", label: "Paid" },
-  rejected: { tone: "danger", label: "Rejected" },
-  failed: { tone: "danger", label: "Failed" },
-  cancelled: { tone: "neutral", label: "Cancelled" },
-  taken_down: { tone: "neutral", label: "Taken down" },
-  expired: { tone: "neutral", label: "Expired" },
-};
-
-export function StatusBadge({
-  status,
-  label,
-  size,
-  className,
-}: {
-  status: string;
-  label?: ReactNode;
-  size?: "sm" | "md";
-  className?: string;
-}) {
-  const key = status.toLowerCase().replace(/[\s-]+/g, "_");
-  const meta = STATUS[key] ?? { tone: "neutral" as const, label: status.replace(/_/g, " ") };
-  return (
-    <Badge tone={meta.tone} dot size={size} className={className}>
-      {label ?? meta.label}
-    </Badge>
-  );
-}
-
-export default Badge;

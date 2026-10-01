@@ -7,7 +7,6 @@
 User-agent: *
 Disallow: /dashboard
 Disallow: /onboarding
-Disallow: /account
 Disallow: /auth
 Disallow: /forgot-password
 Disallow: /reset-password

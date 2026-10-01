@@ -5,7 +5,7 @@
  */
 
 /** Languages 2kTunes creators most often work in, African languages first. */
-export const COMMON_LANGUAGES = [
+const COMMON_LANGUAGES = [
   "sw", "en", "fr", "pt", "ar", "am", "ha", "yo", "ig", "zu", "xh", "rw", "rn", "lg", "so", "om",
   "ln", "wo", "tw", "es", "de", "it", "zh", "hi",
 ] as const;

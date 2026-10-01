@@ -2,7 +2,7 @@ import type { Localized } from "@/lib/LanguageContext";
 
 type Item = { title: string; body: string };
 
-export type HomeCopy = {
+type HomeCopy = {
   hero: { eyebrow: string; lines: [string, string, string]; lede: string; secondary: string; trust: string[] };
   promises: [Item, Item, Item];
   stores: { eyebrow: string; title: string; lede: string };
@@ -125,7 +125,7 @@ export const HOME: Localized<HomeCopy> = {
     },
     africa: {
       eyebrow: "Africa first",
-      title: "Built here, for artists here — heard everywhere.",
+      title: "Built here, for artists here, heard everywhere.",
       lede: "Most distributors were built for other markets and bolted Africa on later. 2kTunes starts from how East African artists release, promote and get paid.",
       points: [
         { title: "African platforms included", body: "Boomplay and Audiomack sit alongside global stores, not as an afterthought." },
@@ -269,7 +269,7 @@ export const HOME: Localized<HomeCopy> = {
     },
     africa: {
       eyebrow: "Afrika kwanza",
-      title: "Imejengwa hapa, kwa wasanii wa hapa — inasikika kila mahali.",
+      title: "Imejengwa hapa, kwa wasanii wa hapa, inasikika kila mahali.",
       lede: "Wasambazaji wengi walijengwa kwa masoko mengine na Afrika ikaongezwa baadaye. 2kTunes inaanzia jinsi wasanii wa Afrika Mashariki wanavyotoa muziki, kujitangaza na kulipwa.",
       points: [
         { title: "Majukwaa ya Afrika yamo", body: "Boomplay na Audiomack yako sambamba na maduka ya kimataifa, si nyongeza ya baadaye." },

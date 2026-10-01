@@ -44,7 +44,7 @@ const MAX_REVISIONS = 2;
 type Dlg = "pay" | "cancel" | "complete" | "revision" | "dispute" | "accept" | "decline" | "submit" | null;
 
 /** Which actions the API allows for this viewer (see OrderService + OrderStatus). */
-export function orderActions(o: Pick<Order, "status" | "role" | "creator" | "revision_count">) {
+function orderActions(o: Pick<Order, "status" | "role" | "creator" | "revision_count">) {
   const s = o.status;
   const isService = !o.creator;
   if (o.role === "buyer") {

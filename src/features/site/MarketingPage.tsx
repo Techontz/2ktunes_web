@@ -54,7 +54,7 @@ import { usePageMeta } from "./usePageMeta";
  * the same grid, type scale and band rhythm.
  */
 
-export const ICONS = {
+const ICONS = {
   globe: Globe2,
   disc: Disc3,
   file: FileCheck2,
@@ -78,7 +78,7 @@ export const ICONS = {
   dollar: CircleDollarSign,
   badge: BadgeCheck,
 } satisfies Record<string, LucideIcon>;
-export type IconName = keyof typeof ICONS;
+type IconName = keyof typeof ICONS;
 
 type Item = { icon?: IconName; title: string; body: string; tag?: string };
 type Visual = "release" | "wallet" | "splits" | "campaign" | "analytics";

@@ -27,7 +27,7 @@ import type { AuthUser } from "@/lib/api/auth";
  * shown only to accounts that are creators or already have a creator profile.
  */
 
-export type NavItem = {
+type NavItem = {
   to: string;
   label: MessageKey;
   icon: LucideIcon;
@@ -36,7 +36,7 @@ export type NavItem = {
   visible?: (user: AuthUser | null) => boolean;
 };
 
-export type NavGroup = { label: MessageKey; items: NavItem[] };
+type NavGroup = { label: MessageKey; items: NavItem[] };
 
 const isCreator = (u: AuthUser | null) => !!u && (u.account_type === "creator" || u.has_creator_profile === true);
 

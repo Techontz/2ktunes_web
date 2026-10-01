@@ -19,7 +19,7 @@ import { cn } from "@/lib/utils";
 import { COPY } from "./copy";
 import { failureOf, providerFee, providerLimits, providerProcessing, withdrawalErrorMessage } from "./helpers";
 import { attemptSignature, useWithdrawAttempt } from "./useWithdrawAttempt";
-import { methodDisplay, methodProvider } from "./payoutMethods";
+import { methodProvider } from "./payoutMethods";
 
 type Step = "form" | "review" | "confirm" | "done";
 
@@ -98,7 +98,7 @@ export function WithdrawDialog({
   const provider = method ? methodProvider(method, providers) : null;
   const quotedMethod = quoted ? (methods.find((m) => m.id === quoted.methodId) ?? null) : null;
   const quotedProvider = quotedMethod ? methodProvider(quotedMethod, providers) : null;
-  const quotedDest = quotedMethod ? methodDisplay(quotedMethod, providers) : "—";
+  const quotedDest = quotedMethod ? quotedMethod.display : "—";
 
   const close = () => {
     resetAttempt();
@@ -309,7 +309,7 @@ export function WithdrawDialog({
               <Select value={methodId} onChange={(e) => setMethodId(e.target.value)} placeholder={c.wdMethodPlaceholder}>
                 {methods.map((m) => (
                   <option key={m.id} value={m.id}>
-                    {[m.label, methodDisplay(m, providers)].filter(Boolean).join(" · ")}
+                    {[m.label, m.display].filter(Boolean).join(" · ")}
                   </option>
                 ))}
               </Select>

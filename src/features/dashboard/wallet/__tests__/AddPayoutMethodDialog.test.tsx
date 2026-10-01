@@ -280,8 +280,14 @@ describe("Add payout method", () => {
     setup({
       "GET /payout-methods": {
         methods: [
-          { id: 1, provider_code: "bank_usd", type: "bank_international", label: null, display: "Barclays •••• 5555", is_default: true },
-          { id: 2, provider_code: "paypal", type: "wallet", label: "Main PayPal", display: "PayPal · n•••@example.com", is_default: false },
+          {
+            id: 1, provider_code: "bank_usd", type: "bank_international", label: null, display: "Barclays •••• 5555", is_default: true,
+            provider: { id: 4, code: "bank_usd", name: "International bank transfer (SWIFT)", type: "bank_international", currency: "USD" },
+          },
+          {
+            id: 2, provider_code: "paypal", type: "wallet", label: "Main PayPal", display: "PayPal · n•••@example.com", is_default: false,
+            provider: { id: 5, code: "paypal", name: "PayPal", type: "wallet", currency: "USD" },
+          },
         ],
       },
     });

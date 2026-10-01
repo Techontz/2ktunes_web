@@ -33,10 +33,9 @@ export const TRANSLATED_ERROR_CODES = [
   "accept_window_expired",
 ] as const;
 
-export type TranslatedErrorCode = (typeof TRANSLATED_ERROR_CODES)[number];
 
 /** Translated text for a known API error code, or null. */
-export function translatedCodeMessage(
+function translatedCodeMessage(
   code: string | null | undefined,
   t: (k: string) => string,
 ): string | null {

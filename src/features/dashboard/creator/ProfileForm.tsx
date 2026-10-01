@@ -7,7 +7,7 @@ import { FormAlert, useAction } from "@/features/dashboard/components";
 import { languageOptions } from "@/lib/languages";
 import { useLabels } from "@/features/dashboard/marketplace/labels";
 import { saveMyCreatorProfile, uploadCreatorAvatar, type CreatorProfileInput } from "@/lib/api/marketplace";
-import type { CreatorProfile, SocialAccount } from "@/lib/api/types";
+import type { CreatorProfile } from "@/lib/api/types";
 import { useLanguage } from "@/lib/LanguageContext";
 import { useCopy } from "@/lib/useCopy";
 import { COPY } from "./copy";
@@ -28,19 +28,6 @@ export function profileFields(p: CreatorProfile): CreatorProfileInput {
     categories: p.categories ?? [],
     turnaround_days: p.turnaround_days,
     is_available: p.is_available,
-  };
-}
-
-/** A saved social account in the PUT body shape (unchanged numbers keep their verification). */
-export function socialFields(a: SocialAccount): NonNullable<CreatorProfileInput["social_accounts"]>[number] {
-  return {
-    platform: a.platform,
-    handle: a.handle,
-    url: a.url,
-    followers: a.followers,
-    avg_views: a.avg_views,
-    engagement_rate_bp: a.engagement_rate_bp,
-    audience_countries: a.audience_countries ?? [],
   };
 }
 
