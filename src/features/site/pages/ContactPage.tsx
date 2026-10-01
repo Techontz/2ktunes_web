@@ -2,7 +2,7 @@ import { useState, type FormEvent } from "react";
 import { CheckCircle2, Copy, LifeBuoy, Mail, MapPin } from "lucide-react";
 import { Button, Field, Input, Select, Textarea } from "@/components/ui";
 import { useLanguage, type Localized } from "@/lib/LanguageContext";
-import { TextLink } from "../kit";
+import { Orbs, TextLink } from "../kit";
 import { usePageMeta } from "../usePageMeta";
 
 /**
@@ -62,6 +62,18 @@ const COPY: Localized<{
     helpLink: "Tafuta kwenye Kituo cha Msaada",
     subject: "Swali kwa 2kTunes",
   },
+  FR: {
+    eyebrow: "Contact",
+    title: "Parlez à une vraie personne.",
+    lede: "Une question sur une sortie, vos royalties ou une collaboration ? Écrivez à notre équipe en anglais ou en kiswahili. Nous répondons généralement sous un jour ouvré.",
+    emailLabel: "E-mail",
+    officeLabel: "Bureau",
+    office: "Dar es Salaam, Tanzanie",
+    helpLabel: "Réponses rapides",
+    helpBody: "Beaucoup de questions ont déjà leur réponse dans le Centre d’aide.",
+    helpLink: "Rechercher dans le Centre d’aide",
+    subject: "Demande 2kTunes",
+  },
 };
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -116,8 +128,9 @@ export default function ContactPage() {
   };
 
   return (
-    <section className="bg-surface pb-20 pt-28 md:pb-28 md:pt-36">
-      <div className="shell grid gap-14 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:gap-20">
+    <section className="theme-dark bg-hero relative overflow-hidden pb-20 pt-28 text-text md:pb-28 md:pt-36">
+      <Orbs />
+      <div className="shell relative grid gap-14 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:gap-20">
         <div>
           <p className="t-eyebrow mb-4 text-accent-text">{c.eyebrow}</p>
           <h1 className="t-display">{c.title}</h1>
@@ -157,7 +170,7 @@ export default function ContactPage() {
           </dl>
         </div>
 
-        <div className="rounded-panel border border-border-subtle bg-surface-raised p-5 sm:p-8">
+        <div className="rounded-panel border border-white/12 bg-surface-raised/80 p-5 shadow-overlay backdrop-blur-md sm:p-8">
           <form noValidate onSubmit={onSubmit} className="space-y-5">
             <div className="grid gap-5 sm:grid-cols-2">
               <Field label={t("contact.name")} error={errors.name} id="contact-name" required>

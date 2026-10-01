@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState, type FormEvent, type ReactNode } from "react";
 import { Link, Navigate, useNavigate } from "react-router-dom";
-import { Building2, Check, Clapperboard, Mic2 } from "lucide-react";
+import { Building2, Clapperboard, Mic2 } from "lucide-react";
 import { Wordmark } from "@/components/brand/Wordmark";
 import {
   Avatar,
@@ -25,9 +25,10 @@ import { useAuth } from "@/lib/auth/AuthProvider";
 import { DASHBOARD_HOME } from "@/lib/auth/routes";
 import { useLanguage } from "@/lib/LanguageContext";
 import { useCopy } from "@/lib/useCopy";
-import { cn } from "@/lib/utils";
-import { CountrySelect } from "./CountrySelect";
-import { CURRENCIES, currencyForCountry, type Currency } from "./countries";
+import { CountrySelect } from "@/components/forms/CountrySelect";
+import { ToggleChips } from "@/components/forms/ToggleChips";
+import { API_LOCALE, SUPPORTED_LANGUAGES, type Language } from "@/i18n";
+import { CURRENCIES, currencyForCountry, currencyLabel, type Currency } from "./countries";
 import { CATEGORY_COPY, COPY } from "./copy";
 
 /**
@@ -126,7 +127,7 @@ export default function OnboardingPage() {
       country: account.country || null,
       phone: account.phone.trim() || null,
       preferred_currency: account.preferred_currency,
-      locale: language === "SW" ? "sw" : "en",
+      locale: API_LOCALE[language],
     };
     await completeOnboarding(payload);
     await refresh();
@@ -285,61 +286,6 @@ function StepHeading({
 }
 
 /** Multi-select as toggle chips (aria-pressed), capped at `max`. */
-function ToggleChips({
-  legend,
-  hint,
-  options,
-  value,
-  onChange,
-  max,
-  error,
-}: {
-  legend: string;
-  hint?: string;
-  options: { value: string; label: string }[];
-  value: string[];
-  onChange: (next: string[]) => void;
-  max: number;
-  error?: string | null;
-}) {
-  return (
-    <fieldset className="min-w-0">
-      <legend className="mb-1 text-[0.875rem] font-semibold text-text-muted">{legend}</legend>
-      {hint && <p className="mb-2 text-[0.8125rem] text-text-subtle">{hint}</p>}
-      <div className="flex flex-wrap gap-2">
-        {options.map((o) => {
-          const on = value.includes(o.value);
-          const disabled = !on && value.length >= max;
-          return (
-            <button
-              key={o.value}
-              type="button"
-              aria-pressed={on}
-              disabled={disabled}
-              onClick={() => onChange(on ? value.filter((v) => v !== o.value) : [...value, o.value])}
-              className={cn(
-                "inline-flex min-h-9 items-center gap-1.5 rounded-full border px-3.5 text-body-sm font-semibold transition-colors",
-                "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-text disabled:opacity-45",
-                on
-                  ? "border-accent-text bg-accent-soft text-text"
-                  : "border-border bg-white/[0.03] text-text-muted hover:border-border-strong hover:text-text",
-              )}
-            >
-              {on && <Check className="h-3.5 w-3.5" aria-hidden />}
-              {o.label}
-            </button>
-          );
-        })}
-      </div>
-      {error && (
-        <p role="alert" className="mt-2 text-[0.8125rem] font-medium text-danger">
-          {error}
-        </p>
-      )}
-    </fieldset>
-  );
-}
-
 /* ── Step 1: account ─────────────────────────────────────────────────── */
 
 function AccountStep({
@@ -358,11 +304,11 @@ function AccountStep({
   errors: Record<string, string>;
   formError: string | null;
   language: string;
-  onLanguage: (lang: "EN" | "SW") => void;
+  onLanguage: (lang: Language) => void;
   onNext: () => void;
 }) {
   const c = useCopy(COPY);
-  const { t } = useLanguage();
+  const { t, locale } = useLanguage();
   const [local, setLocal] = useState<Record<string, string>>({});
   const isLabel = value.account_type === "label";
 
@@ -475,19 +421,18 @@ function AccountStep({
           >
             {CURRENCIES.map((cur) => (
               <option key={cur} value={cur}>
-                {cur}
+                {currencyLabel(cur, locale)}
               </option>
             ))}
           </Select>
         </Field>
         <Field label={c.language} error={err("locale")}>
-          <Select value={language} onChange={(e) => onLanguage(e.target.value as "EN" | "SW")}>
-            <option value="EN" lang="en">
-              {c.langEn}
-            </option>
-            <option value="SW" lang="sw">
-              {c.langSw}
-            </option>
+          <Select value={language} onChange={(e) => onLanguage(e.target.value as Language)}>
+            {SUPPORTED_LANGUAGES.map((l) => (
+              <option key={l.code} value={l.code} lang={l.code.toLowerCase()}>
+                {l.name}
+              </option>
+            ))}
           </Select>
         </Field>
       </div>

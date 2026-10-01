@@ -1,7 +1,8 @@
 import { useState, type FormEvent } from "react";
 import { Button, Dialog, Field, Input, Select, Textarea, useToast } from "@/components/ui";
 import { FormAlert, InlineLoading, LoadError, useAction } from "@/features/dashboard/components";
-import { useLabels, CAMPAIGN_OBJECTIVES, parseCountryList } from "@/features/dashboard/marketplace/labels";
+import { useLabels, CAMPAIGN_OBJECTIVES } from "@/features/dashboard/marketplace/labels";
+import { CountrySelect } from "@/components/forms/CountrySelect";
 import { useAuth } from "@/lib/auth/AuthProvider";
 import { fetchRelease, fetchReleaseConfig, fetchReleases } from "@/lib/api/catalog";
 import { createCampaign, updateCampaign, type CampaignInput } from "@/lib/api/marketplace";
@@ -59,7 +60,7 @@ function CampaignForm({
 
   const ref = useResource(async (signal) => {
     const [config, releases] = await Promise.all([fetchReleaseConfig(), fetchReleases({ per_page: 100 }, { signal })]);
-    return { market: config.marketplace, releases: releases.releases };
+    return { market: config.marketplace, genres: config.genres ?? [], releases: releases.releases };
   }, []);
 
   const [f, setF] = useState(() => ({
@@ -70,7 +71,7 @@ function CampaignForm({
     track_id: campaign?.track_id ? String(campaign.track_id) : "",
     budget: campaign?.budget_minor != null ? minorToDecimal(campaign.budget_minor, campaign.currency) : "",
     currency: campaign?.currency ?? "",
-    countries: (campaign?.target_countries ?? []).join(", "),
+    countries: (campaign?.target_countries ?? []).map((x) => x.toUpperCase()),
     audience: campaign?.target_audience ?? "",
     brief: campaign?.brief ?? "",
     starts_on: campaign?.starts_on ?? "",
@@ -94,7 +95,8 @@ function CampaignForm({
 
   if (ref.loading) return <InlineLoading />;
   if (ref.error || !ref.data) return <LoadError error={ref.error} onRetry={ref.reload} compact />;
-  const { market, releases } = ref.data;
+  const { market, genres, releases } = ref.data;
+  const genreOptions = f.pitch.genre && !genres.includes(f.pitch.genre) ? [f.pitch.genre, ...genres] : genres;
   const currencies = market.currencies;
   const currency =
     f.currency ||
@@ -110,8 +112,7 @@ function CampaignForm({
       if (!parsed) errs.budget = c.fBudgetInvalid;
       else budget = parsed.decimal;
     }
-    const countries = f.countries.trim() ? parseCountryList(f.countries) : [];
-    if (countries === null) errs.target_countries = c.fCountriesInvalid;
+    const countries = f.countries;
     if (f.starts_on && f.ends_on && f.ends_on < f.starts_on) errs.ends_on = c.fEndsInvalid;
     setErrors(errs);
     if (Object.keys(errs).length) return;
@@ -123,7 +124,7 @@ function CampaignForm({
       objective: (f.objective || null) as CampaignObjective | null,
       release_id: f.release_id ? Number(f.release_id) : null,
       track_id: f.release_id && f.track_id ? Number(f.track_id) : null,
-      target_countries: countries && countries.length ? countries : null,
+      target_countries: countries.length ? countries : null,
       target_audience: f.audience.trim() || null,
       brief: f.brief.trim() || null,
       starts_on: f.starts_on || null,
@@ -211,8 +212,8 @@ function CampaignForm({
             ))}
           </Select>
         </Field>
-        <Field label={c.fCountries} hint={c.fCountriesHint} error={err("target_countries")} {...opt}>
-          <Input value={f.countries} onChange={(e) => set({ countries: e.target.value })} autoCapitalize="characters" />
+        <Field label={c.fCountries} hint={c.fCountriesHint} error={err("target_countries")} className="sm:col-span-2" {...opt}>
+          <CountrySelect multiple value={f.countries} onChange={(next) => set({ countries: next })} />
         </Field>
         <Field label={c.fAudience} hint={c.fAudienceHint} error={err("target_audience")} {...opt}>
           <Input value={f.audience} onChange={(e) => set({ audience: e.target.value })} maxLength={1000} />
@@ -241,7 +242,14 @@ function CampaignForm({
               />
             </Field>
             <Field label={c.fPitchGenre} error={err("pitch.genre")} {...opt}>
-              <Input value={f.pitch.genre} onChange={(e) => set({ pitch: { ...f.pitch, genre: e.target.value } })} maxLength={64} />
+              <Select value={f.pitch.genre} onChange={(e) => set({ pitch: { ...f.pitch, genre: e.target.value } })}>
+                <option value="">—</option>
+                {genreOptions.map((g) => (
+                  <option key={g} value={g}>
+                    {g}
+                  </option>
+                ))}
+              </Select>
             </Field>
             <Field label={c.fPitchMood} error={err("pitch.mood")} {...opt}>
               <Input value={f.pitch.mood} onChange={(e) => set({ pitch: { ...f.pitch, mood: e.target.value } })} maxLength={120} />

@@ -1,4 +1,4 @@
-import { useLanguage } from "./LanguageContext";
+import { useLanguage, type Language } from "./LanguageContext";
 
 /**
  * Feature-local copy.
@@ -9,16 +9,18 @@ import { useLanguage } from "./LanguageContext";
  *
  *   const EN = { title: "Wallet", fee: (x: string) => `Fee ${x}` };
  *   const SW: typeof EN = { title: "Pochi", fee: (x) => `Ada ${x}` };
- *   export const COPY = { EN, SW };
+ *   const FR: typeof EN = { title: "Portefeuille", fee: (x) => `Frais ${x}` };
+ *   export const COPY = { EN, SW, FR };
  *
- *   const c = useCopy(COPY);   // → EN or SW for the current language
+ *   const c = useCopy(COPY);   // → EN, SW or FR for the current language
  *
- * `SW: typeof EN` makes a missing or misshaped Swahili string a type error,
- * the same guarantee src/i18n/sw.ts gives the shared keys.
+ * `SW: typeof EN` / `FR: typeof EN` make a missing or misshaped translation a
+ * type error, the same guarantee src/i18n/{sw,fr}.ts give the shared keys,
+ * and `Copy<T>` requires every language.
  */
-export type Copy<T> = { EN: T; SW: T };
+export type Copy<T> = Record<Language, T>;
 
 export function useCopy<T>(copy: Copy<T>): T {
   const { language } = useLanguage();
-  return language === "SW" ? copy.SW : copy.EN;
+  return copy[language] ?? copy.EN;
 }

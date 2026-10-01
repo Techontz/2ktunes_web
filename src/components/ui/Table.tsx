@@ -86,13 +86,13 @@ export function DataTable<T>({
   return (
     <div className={cn("min-w-0", className)} aria-busy={loading || undefined}>
       {/* Desktop */}
-      <div className="hidden overflow-hidden rounded-card border border-border-subtle md:block">
+      <div className="relative hidden overflow-x-auto rounded-card border border-border-subtle bg-surface-raised shadow-raised md:block">
         <table className="w-full border-collapse text-body-sm">
           <caption className={showCaption ? "px-5 py-3 text-left font-semibold" : "sr-only"}>
             {caption}
           </caption>
           <thead>
-            <tr className="border-b border-border-subtle bg-white/[0.025]">
+            <tr className="border-b border-border-subtle bg-surface-sunken/70">
               {columns.map((c) => (
                 <th
                   key={c.key}
@@ -125,7 +125,7 @@ export function DataTable<T>({
                     {...rowInteraction(row)}
                     className={cn(
                       "border-b border-border-subtle last:border-0",
-                      onRowClick && "cursor-pointer transition-colors hover:bg-white/[0.03]",
+                      onRowClick && "cursor-pointer transition-colors hover:bg-accent-soft/40",
                     )}
                   >
                     {columns.map((c) => (
@@ -146,7 +146,7 @@ export function DataTable<T>({
       <ul className="space-y-2 md:hidden" aria-label={caption}>
         {loading
           ? Array.from({ length: loadingRows }, (_, i) => (
-              <li key={i} className="rounded-card border border-border-subtle bg-surface-raised p-4">
+              <li key={i} className="rounded-card border border-border-subtle bg-surface-raised p-4 shadow-raised">
                 <Skeleton className="h-4 w-1/2" />
                 <Skeleton className="mt-3 h-3 w-4/5" />
               </li>
@@ -156,7 +156,7 @@ export function DataTable<T>({
                 key={getRowKey(row)}
                 {...rowInteraction(row)}
                 className={cn(
-                  "rounded-card border border-border-subtle bg-surface-raised p-4",
+                  "rounded-card border border-border-subtle bg-surface-raised p-4 shadow-raised",
                   onRowClick && "cursor-pointer active:bg-surface-hover",
                 )}
               >

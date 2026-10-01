@@ -4,7 +4,7 @@ import { request } from "./client";
  * The authentication endpoints.
  *
  *   POST /api/register         201 { message, token, user }
- *                                  body { name, email, password, password_confirmation, account_type }
+ *                                  body { name, email, password, password_confirmation, account_type, locale? }
  *   POST /api/login            200 { message, token, user }
  *                              401 { message: "Invalid credentials" }
  *                              429 { message }                         (throttled)
@@ -100,6 +100,8 @@ export type RegisterPayload = {
   /** Laravel's `confirmed` rule on `password` reads exactly this field name. */
   password_confirmation: string;
   account_type: AccountType;
+  /** UI language at sign-up ("en" | "sw" | "fr"). */
+  locale?: "en" | "sw" | "fr";
 };
 
 export function login(payload: LoginPayload) {

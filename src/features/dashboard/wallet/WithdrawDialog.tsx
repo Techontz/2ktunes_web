@@ -19,6 +19,7 @@ import { cn } from "@/lib/utils";
 import { COPY } from "./copy";
 import { failureOf, providerFee, providerLimits, providerProcessing, withdrawalErrorMessage } from "./helpers";
 import { attemptSignature, useWithdrawAttempt } from "./useWithdrawAttempt";
+import { methodDisplay, methodProvider } from "./payoutMethods";
 
 type Step = "form" | "review" | "confirm" | "done";
 
@@ -94,9 +95,10 @@ export function WithdrawDialog({
 
   const balance = withdrawable.find((b) => b.currency === currency) ?? null;
   const method = methods.find((m) => String(m.id) === methodId) ?? null;
-  const provider = method ? (providers.find((p) => p.id === method.provider.id) ?? null) : null;
+  const provider = method ? methodProvider(method, providers) : null;
   const quotedMethod = quoted ? (methods.find((m) => m.id === quoted.methodId) ?? null) : null;
-  const quotedProvider = quotedMethod ? (providers.find((p) => p.id === quotedMethod.provider.id) ?? null) : null;
+  const quotedProvider = quotedMethod ? methodProvider(quotedMethod, providers) : null;
+  const quotedDest = quotedMethod ? methodDisplay(quotedMethod, providers) : "—";
 
   const close = () => {
     resetAttempt();
@@ -307,7 +309,7 @@ export function WithdrawDialog({
               <Select value={methodId} onChange={(e) => setMethodId(e.target.value)} placeholder={c.wdMethodPlaceholder}>
                 {methods.map((m) => (
                   <option key={m.id} value={m.id}>
-                    {[m.label, m.provider.name, m.masked].filter(Boolean).join(" · ")}
+                    {[m.label, methodDisplay(m, providers)].filter(Boolean).join(" · ")}
                   </option>
                 ))}
               </Select>
@@ -326,6 +328,9 @@ export function WithdrawDialog({
                     { label: c.processingTitle, value: providerProcessing(provider, c, language) },
                   ]}
                 />
+                {(provider.type === "bank_international" || provider.type === "wallet") && (
+                  <p className="mt-3 text-caption text-text-muted">{c.intlUsdNote}</p>
+                )}
                 {provider.is_sandbox && <p className="mt-3 text-caption text-warning">{c.wdSandbox}</p>}
               </div>
             )}
@@ -380,7 +385,7 @@ export function WithdrawDialog({
                 value: q.fx_rate ? c.wdFxValue(q.currency, q.fx_rate, q.payout_currency) : null,
                 hidden: !q.fx_rate,
               },
-              { label: c.wdMethod, value: quotedMethod ? `${quotedMethod.provider.name} ${quotedMethod.masked}` : "—" },
+              { label: c.wdMethod, value: quotedDest },
               { label: c.wdMin, value: <Money minor={q.limits.min_minor} currency={limitCur} /> },
               {
                 label: c.wdMax,
@@ -420,7 +425,7 @@ export function WithdrawDialog({
             <p className="break-words">
               {c.wdConfirmLead(
                 formatMinor(q.gross_minor, q.currency, locale),
-                quotedMethod ? `${quotedMethod.provider.name} ${quotedMethod.masked}` : "—",
+                quotedDest,
               )}
             </p>
             <p className="mt-1 text-text-muted">

@@ -42,13 +42,17 @@ export default function SiteNav() {
   // Close the menu on navigation.
   useEffect(() => setOpen(false), [location.pathname]);
 
+  // Every public page opens on a deep-purple hero except the legal documents,
+  // so the bar is transparent at the top there and solid everywhere else.
+  const solid = scrolled || location.pathname.startsWith("/legal");
+
   return (
     <header
       className={cn(
-        "fixed inset-x-0 top-0 z-50 border-b transition-colors duration-200",
-        scrolled
-          ? "border-border-subtle bg-surface/90 backdrop-blur-md"
-          : "border-transparent bg-surface/0",
+        "theme-dark fixed inset-x-0 top-0 z-50 border-b transition-[background-color,border-color,box-shadow] duration-300",
+        solid
+          ? "border-white/10 bg-night/88 shadow-[0_10px_30px_-18px_rgb(8_2_16/0.8)] backdrop-blur-xl"
+          : "border-transparent bg-transparent",
       )}
     >
       <div className="shell flex h-16 items-center justify-between gap-4">
@@ -56,9 +60,9 @@ export default function SiteNav() {
           <Link
             to="/"
             aria-label={t("nav.home")}
-            className="inline-flex h-11 items-center rounded-sm text-[1.375rem] leading-none"
+            className="inline-flex h-11 items-center rounded-sm text-[1.3rem] leading-none transition-opacity hover:opacity-90"
           >
-            <Wordmark />
+            <Wordmark tone="dark" />
           </Link>
           <nav aria-label={t("nav.main")} className="hidden lg:block">
             <ul className="flex items-center gap-1">
@@ -68,8 +72,10 @@ export default function SiteNav() {
                     to={item.to}
                     className={({ isActive }) =>
                       cn(
-                        "inline-flex h-9 items-center rounded-[8px] px-3 text-[0.9375rem] font-medium transition-colors",
-                        isActive ? "text-text" : "text-text-muted hover:text-text",
+                        "relative inline-flex h-9 items-center rounded-full px-3.5 text-[0.9375rem] font-semibold transition-colors",
+                        isActive
+                          ? "bg-tint/[0.1] text-white"
+                          : "text-text-muted hover:bg-tint/[0.06] hover:text-white",
                       )
                     }
                   >
@@ -84,18 +90,18 @@ export default function SiteNav() {
         <div className="flex shrink-0 items-center gap-2 sm:gap-3">
           <LanguageSwitch className="hidden sm:inline-flex" />
           {signedIn ? (
-            <Button to="/dashboard" size="sm" className="hidden sm:inline-flex">
+            <Button to="/dashboard" size="sm" shape="pill" className="hidden sm:inline-flex">
               {t("cta.dashboard")}
             </Button>
           ) : (
             <>
               <Link
                 to="/auth"
-                className="hidden h-9 items-center rounded-[8px] px-3 text-[0.9375rem] font-medium text-text-muted transition-colors hover:text-text sm:inline-flex"
+                className="hidden h-9 items-center rounded-full px-3.5 text-[0.9375rem] font-semibold text-text-muted transition-colors hover:bg-tint/[0.06] hover:text-white sm:inline-flex"
               >
                 {t("cta.login")}
               </Link>
-              <Button to="/auth?mode=register" size="sm" className="hidden sm:inline-flex">
+              <Button to="/auth?mode=register" size="sm" shape="pill" className="hidden sm:inline-flex">
                 {t("cta.release")}
               </Button>
             </>
@@ -106,7 +112,7 @@ export default function SiteNav() {
             aria-label={t("common.menu_open")}
             aria-expanded={open}
             aria-haspopup="dialog"
-            className="-mr-2 flex h-11 w-11 items-center justify-center rounded-control text-text transition-colors hover:bg-white/[0.06] lg:hidden"
+            className="-mr-2 flex h-11 w-11 items-center justify-center rounded-control text-text transition-colors hover:bg-tint/[0.06] lg:hidden"
           >
             <Menu className="h-5 w-5" aria-hidden />
           </button>
@@ -149,7 +155,7 @@ export default function SiteNav() {
                   className={({ isActive }) =>
                     cn(
                       "flex h-12 items-center rounded-control px-3 text-[1.125rem] font-semibold",
-                      isActive ? "bg-white/[0.06] text-text" : "text-text hover:bg-white/[0.04]",
+                      isActive ? "bg-tint/[0.06] text-text" : "text-text hover:bg-tint/[0.04]",
                     )
                   }
                 >
@@ -163,7 +169,7 @@ export default function SiteNav() {
               <li key={item.to}>
                 <NavLink
                   to={item.to}
-                  className="flex h-11 items-center rounded-control px-3 text-[1rem] font-medium text-text-muted hover:bg-white/[0.04] hover:text-text"
+                  className="flex h-11 items-center rounded-control px-3 text-[1rem] font-medium text-text-muted hover:bg-tint/[0.04] hover:text-text"
                 >
                   {t(item.key)}
                 </NavLink>

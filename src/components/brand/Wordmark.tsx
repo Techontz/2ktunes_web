@@ -1,25 +1,88 @@
 import { cn } from "@/lib/utils";
 
 /**
- * The 2kTunes wordmark, set in type (no image request, crisp at any size).
- * The full stop is the mark's single point of colour.
+ * The official 2kTunes logo (mark + wordmark), from the brand files in
+ * public/brand. Sizes in `em`, so the existing `text-[…]` size classes on
+ * callers keep working: the mark is 1.3em tall, the wordmark 0.82em.
  *
- * Props: invert (dark ink for light surfaces), className (size via text-*).
+ *   <Wordmark />                       auto: follows the surface (.theme-dark → light logo)
+ *   <Wordmark tone="dark" />           for deep-purple surfaces (white mark)
+ *   <Wordmark tone="light" />          for white / lavender surfaces (purple mark)
+ *   <Wordmark variant="mark" />        the "2K" mark alone
+ *   <Wordmark invert />                legacy alias of tone="light"
+ *
+ * Exposed to assistive tech once, as role="img" named "2kTunes" (the
+ * <img> parts are alt="").
  */
-export function Wordmark({ className, invert = false }: { className?: string; invert?: boolean }) {
+
+type Tone = "auto" | "light" | "dark";
+
+const SRC = {
+  light: { mark: "/brand/mark-purple.webp", word: "/brand/wordmark-on-light.webp" },
+  dark: { mark: "/brand/mark-white.webp", word: "/brand/wordmark-on-dark.webp" },
+} as const;
+
+function Lockup({
+  tone,
+  variant,
+  className,
+}: {
+  tone: "light" | "dark";
+  variant: "full" | "mark" | "wordmark";
+  className?: string;
+}) {
+  const s = SRC[tone];
   return (
-    <span
-      className={cn(
-        "inline-flex select-none items-baseline font-extrabold tracking-[-0.045em]",
-        invert ? "text-ink" : "text-white",
-        className,
+    <span className={cn("inline-flex shrink-0 select-none items-center gap-[0.42em] leading-none", className)}>
+      {variant !== "wordmark" && (
+        <img
+          src={s.mark}
+          alt=""
+          width={384}
+          height={285}
+          draggable={false}
+          className="block h-[1.3em] w-auto"
+        />
       )}
-    >
-      <span className="font-black">2k</span>
-      <span>Tunes</span>
-      <span aria-hidden className={invert ? "text-volt" : "text-volt-lit"}>
-        .
+      {variant !== "mark" && (
+        <img
+          src={s.word}
+          alt=""
+          width={560}
+          height={90}
+          draggable={false}
+          className="block h-[0.82em] w-auto"
+        />
+      )}
+    </span>
+  );
+}
+
+export function Wordmark({
+  className,
+  invert = false,
+  tone,
+  variant = "full",
+}: {
+  className?: string;
+  invert?: boolean;
+  tone?: Tone;
+  variant?: "full" | "mark" | "wordmark";
+}) {
+  const resolved: Tone = tone ?? (invert ? "light" : "auto");
+  // One accessible name for the whole logo; the images themselves are alt="".
+  if (resolved !== "auto")
+    return (
+      <span role="img" aria-label="2kTunes" className={cn("inline-flex leading-none", className)}>
+        <Lockup tone={resolved} variant={variant} />
       </span>
+    );
+  // Auto: both lockups are rendered; CSS shows the one that suits the
+  // surrounding surface (.theme-dark → white mark).
+  return (
+    <span role="img" aria-label="2kTunes" className={cn("inline-flex leading-none", className)}>
+      <Lockup tone="light" variant={variant} className="[.theme-dark_&]:hidden" />
+      <Lockup tone="dark" variant={variant} className="hidden [.theme-dark_&]:inline-flex" />
     </span>
   );
 }

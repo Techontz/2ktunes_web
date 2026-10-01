@@ -5,11 +5,45 @@ import { ApiError, ApiNotConfiguredError } from "./client";
 /**
  * Turns any thrown value into a message that is safe to show a user.
  *
- * Business-rule and validation errors (4xx) carry a human message written by
- * the API (`insufficient_funds`, `release_locked` …) and are shown as-is.
+ * Business-rule and validation errors (4xx) carry an English message written
+ * by the API. Known machine `code`s (`insufficient_funds`, `daily_limit` …)
+ * map to translated copy; unknown codes fall back to the API's message.
  * Transport and server failures map to translated copy; a 5xx body is never
  * shown.
  */
+
+/** API error codes that have translated copy under `err.code.<code>`. */
+export const TRANSLATED_ERROR_CODES = [
+  "password_incorrect",
+  "insufficient_funds",
+  "below_minimum",
+  "above_maximum",
+  "daily_limit",
+  "monthly_limit",
+  "fx_unavailable",
+  "provider_unavailable",
+  "validation_failed",
+  "release_incomplete",
+  "subscription_required",
+  "email_unverified",
+  "too_many_uploads",
+  "upc_taken",
+  "amount_invalid",
+  "idempotency_conflict",
+  "accept_window_expired",
+] as const;
+
+export type TranslatedErrorCode = (typeof TRANSLATED_ERROR_CODES)[number];
+
+/** Translated text for a known API error code, or null. */
+export function translatedCodeMessage(
+  code: string | null | undefined,
+  t: (k: string) => string,
+): string | null {
+  if (!code || !(TRANSLATED_ERROR_CODES as readonly string[]).includes(code)) return null;
+  return t(`err.code.${code}`);
+}
+
 export function errorMessageFor(err: unknown, t: (k: string) => string): string {
   if (err instanceof ApiNotConfiguredError) return t("err.unconfigured");
   if (err instanceof ApiError) {
@@ -18,7 +52,9 @@ export function errorMessageFor(err: unknown, t: (k: string) => string): string 
     if (err.status === 429) return t("err.rate_limited");
     if (err.status === 404) return t("err.not_found");
     if (err.status === 403 && err.code === "forbidden") return t("err.forbidden");
-    return err.message || t("err.generic");
+    // A 422 whose only content is field errors keeps the API summary so the
+    // form can highlight fields; a known code wins over the English message.
+    return translatedCodeMessage(err.code, t) ?? (err.message || t("err.generic"));
   }
   return t("err.generic");
 }

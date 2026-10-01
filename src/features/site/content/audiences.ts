@@ -94,6 +94,52 @@ export const ARTISTS: Localized<PageCopy> = {
     ],
     cta: { title: "Muziki wako. Haki zako. Pesa yako.", lede: "Fungua akaunti ya msanii kwa dakika moja." },
   },
+  FR: {
+    meta: { title: "Pour les artistes", description: "Sortez votre musique, faites-vous connaître et soyez payé en tant qu’artiste indépendant — avec une équipe qui comprend la musique africaine." },
+    hero: {
+      eyebrow: "Pour les artistes indépendants",
+      title: "Gérez votre carrière en vrai professionnel.",
+      lede: "Sortez votre musique à votre rythme, gardez vos droits, voyez ce qui fonctionne et soyez payé chez vous. 2kTunes est l’équipe derrière votre sortie, sans prendre vos masters.",
+      secondary: { label: "Voir les tarifs", to: "/pricing" },
+      visual: "release",
+    },
+    sections: [
+      {
+        type: "features",
+        tone: "raised",
+        eyebrow: "Pensé pour les artistes",
+        title: "Ce que vous obtenez dès le premier jour.",
+        items: [
+          { icon: "globe", title: "Plateformes mondiales et africaines", body: "Votre musique sur les plateformes que vos fans utilisent, de Spotify à Boomplay." },
+          { icon: "shield", title: "Vos droits, toujours", body: "Aucune exclusivité, aucune clause de propriété cachée. Partez quand vous voulez." },
+          { icon: "megaphone", title: "Une promotion honnête", body: "Pitch éditorial et campagnes de créateurs de contenu dès aujourd’hui ; curateurs et publicités pas encore disponibles — le tout clairement expliqué." },
+          { icon: "wallet", title: "Retirez localement", body: "Retirez vers M-Pesa, Airtel Money, Mixx by Yas ou votre banque, converti en TZS à un taux affiché avant votre confirmation." },
+          { icon: "pie", title: "Partagez avec votre équipe", body: "Producteurs et auteurs reçoivent automatiquement leur part." },
+          { icon: "chart", title: "Connaissez votre public", body: "Voyez quels titres, pays et plateformes décollent." },
+        ],
+      },
+      {
+        type: "split",
+        tone: "light",
+        eyebrow: "Votre première sortie",
+        title: "Aucun jargon du métier requis.",
+        lede: "Le parcours de mise en ligne explique chaque champ en termes simples, et notre vérification repère ce que les plateformes rejetteraient avant que cela ne vous fasse perdre du temps.",
+        points: ["Enregistrez un brouillon et finissez plus tard", "Des explications claires si quelque chose doit être corrigé", "Le statut de chaque plateforme après la livraison"],
+        visual: "release",
+      },
+      {
+        type: "split",
+        tone: "dark",
+        eyebrow: "Être payé",
+        title: "Des streams à votre téléphone.",
+        lede: "Les royalties de toutes les plateformes arrivent dans un seul portefeuille, dans la devise versée par chaque plateforme. Retirez vers le mobile money ou votre banque dès que vous dépassez le minimum — converti en shillings au taux affiché avant votre confirmation.",
+        visual: "wallet",
+        reverse: true,
+        link: { label: "Comment fonctionnent les royalties", to: "/royalties" },
+      },
+    ],
+    cta: { title: "Votre musique. Vos droits. Votre argent.", lede: "Créez votre compte artiste en une minute." },
+  },
 };
 
 export const LABELS: Localized<PageCopy> = {
@@ -181,6 +227,48 @@ export const LABELS: Localized<PageCopy> = {
     ],
     cta: { title: "Leta wasanii wako 2kTunes.", lede: "Fungua akaunti ya Lebo / Timu, au zungumza nasi kuhusu kazi nyingi zaidi.", secondary: { label: "Wasiliana nasi", to: "/contact" } },
   },
+  FR: {
+    meta: { title: "Pour les labels", description: "Gérez vos artistes, votre catalogue et les partages de royalties — avec des paiements locaux pour chacun." },
+    hero: {
+      eyebrow: "Pour les labels et équipes",
+      title: "Un seul tableau de bord pour tous vos artistes.",
+      lede: "Gérez artistes, sorties, partages de revenus et paiements au même endroit. Donnez de la visibilité à chaque artiste, gardez votre catalogue organisé et payez tout le monde localement.",
+      secondary: { label: "Nous contacter", to: "/contact" },
+      visual: "analytics",
+    },
+    sections: [
+      {
+        type: "features",
+        tone: "raised",
+        eyebrow: "Outils de gestion",
+        title: "Pensé pour les managers, labels et collectifs.",
+        items: [
+          { icon: "users", title: "Plusieurs profils d’artiste", body: "Sortez de la musique sous autant de noms d’artiste que votre offre le permet, depuis un seul compte." },
+          { icon: "layers", title: "Tout le catalogue en un coup d’œil", body: "Chaque sortie, son statut et sa livraison, pour tous vos artistes." },
+          { icon: "pie", title: "Partages pour tous vos artistes", body: "Définissez les parts du label, de l’artiste et du producteur pour chaque sortie." },
+          { icon: "dollar", title: "Rapports consolidés", body: "Revenus par artiste, sortie, plateforme et territoire." },
+          { icon: "megaphone", title: "Campagnes par artiste", body: "Planifiez pitchs et campagnes de créateurs de contenu sortie par sortie." },
+          { icon: "handshake", title: "Un vrai interlocuteur", body: "Les comptes label peuvent demander un contact dédié dans notre équipe." },
+        ],
+      },
+      {
+        type: "split",
+        tone: "light",
+        eyebrow: "Des paiements fluides",
+        title: "Payez vos artistes sans paperasse.",
+        lede: "Les partages de revenus versent la part de chaque artiste dans son propre portefeuille, et chacun retire vers le mobile money ou sa banque. Votre équipe n’a plus à calculer les paiements à la main.",
+        points: ["Partages automatiques par sortie", "Chaque artiste voit ses propres relevés", "Retraits locaux pour tout le monde"],
+        visual: "splits",
+      },
+      {
+        type: "notice",
+        tone: "dark",
+        title: "Vous transférez un catalogue existant ?",
+        body: "Nous pouvons vous aider à migrer vos sorties depuis un autre distributeur en conservant vos ISRC et vos dates de sortie d’origine, afin de garder vos compteurs d’écoutes et votre historique. Contactez-nous avant de commencer pour planifier la transition sans interruption.",
+      },
+    ],
+    cta: { title: "Amenez vos artistes sur 2kTunes.", lede: "Créez un compte Label / Équipe, ou parlez-nous d’un catalogue plus important.", secondary: { label: "Nous contacter", to: "/contact" } },
+  },
 };
 
 export const ABOUT: Localized<PageCopy> = {
@@ -261,5 +349,44 @@ export const ABOUT: Localized<PageCopy> = {
       },
     ],
     cta: { title: "Njoo tujenge pamoja.", lede: "Toa muziki wako, au wasiliana nasi kuhusu ushirikiano.", secondary: { label: "Wasiliana nasi", to: "/contact" } },
+  },
+  FR: {
+    meta: { title: "À propos", description: "2kTunes est une société de distribution musicale qui place l’Afrique au premier plan, créée en Tanzanie." },
+    hero: {
+      eyebrow: "À propos de 2kTunes",
+      title: "Né en Tanzanie, pour les artistes qui visent le monde.",
+      lede: "Nous avons créé 2kTunes parce que les artistes africains méritent la même portée mondiale que n’importe qui — sans perdre leurs droits ni attendre des mois un argent difficile à retirer.",
+      secondary: { label: "Nous contacter", to: "/contact" },
+    },
+    sections: [
+      {
+        type: "prose",
+        tone: "raised",
+        eyebrow: "Pourquoi nous existons",
+        title: "La distribution mondiale n’a jamais été pensée pour nous.",
+        paragraphs: [
+          "Pendant des années, les artistes d’ici n’avaient que deux options : céder leurs droits à quelqu’un qui avait les bons accès, ou passer par un distributeur conçu pour un autre marché — tableaux de bord uniquement en anglais, paiements uniquement par virement bancaire et support dans un autre fuseau horaire.",
+          "2kTunes est la troisième voie. Nous livrons sur les mêmes plateformes mondiales, ajoutons les plateformes africaines que vos fans utilisent vraiment, et payons via le mobile money et les comptes bancaires que vous avez déjà, convertis dans votre devise au moment du retrait.",
+          "Nous sommes aussi honnêtes sur la partie difficile. Personne ne peut garantir des streams ou des places en playlist, et ceux qui le promettent vendent quelque chose de risqué. Ce que nous pouvons faire, c’est vous offrir une livraison propre, des revenus transparents et de vraies voies vers un public.",
+        ],
+        aside: [
+          { label: "Siège", value: "Dar es Salaam, Tanzanie" },
+          { label: "Langues", value: "Anglais · Kiswahili · Français" },
+          { label: "Devise locale", value: "Shilling tanzanien (TZS)" },
+        ],
+      },
+      {
+        type: "features",
+        tone: "light",
+        eyebrow: "Nos convictions",
+        title: "Les principes qui nous guident.",
+        items: [
+          { icon: "shield", title: "Les artistes possèdent leur œuvre", body: "Nous sommes un service que vous choisissez, pas un label auquel vous vous liez." },
+          { icon: "dollar", title: "Un argent lisible", body: "Chaque montant est relié à sa source ; chaque frais est affiché avant que vous payiez." },
+          { icon: "badge", title: "Pas de fausses promesses", body: "Nous ne vendons jamais de streams, de placements ou de mises en avant garantis." },
+        ],
+      },
+    ],
+    cta: { title: "Construisons ensemble.", lede: "Sortez votre musique, ou contactez-nous pour un partenariat.", secondary: { label: "Nous contacter", to: "/contact" } },
   },
 };

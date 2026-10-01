@@ -51,14 +51,17 @@ export function Stat({
   return (
     <div
       className={cn(
-        "min-w-0 rounded-card border border-border-subtle bg-surface-raised p-5",
+        "min-w-0 rounded-card border border-border-subtle bg-surface-raised p-5 shadow-raised",
         className,
       )}
     >
       <div className="flex items-center justify-between gap-3">
         <p className="truncate text-body-sm font-medium text-text-subtle">{label}</p>
         {icon && (
-          <span aria-hidden className="text-text-subtle [&>svg]:h-4 [&>svg]:w-4">
+          <span
+            aria-hidden
+            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[9px] bg-accent-soft text-accent-text [&>svg]:h-4 [&>svg]:w-4"
+          >
             {icon}
           </span>
         )}
@@ -194,7 +197,7 @@ export function ProgressBar({
         aria-valuenow={clamped}
         aria-valuetext={`${pct}%`}
         className={cn(
-          "w-full overflow-hidden rounded-full bg-white/[0.08]",
+          "w-full overflow-hidden rounded-full bg-tint/[0.08]",
           size === "sm" ? "h-1.5" : "h-2",
         )}
       >
@@ -251,7 +254,7 @@ export function Stepper({
                 className={cn(
                   "flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[0.75rem] font-bold",
                   done && "bg-accent text-white",
-                  active && "bg-white text-ink",
+                  active && "bg-accent-soft text-accent-text ring-2 ring-inset ring-accent",
                   !done && !active && "border border-border-strong text-text-subtle",
                 )}
               >

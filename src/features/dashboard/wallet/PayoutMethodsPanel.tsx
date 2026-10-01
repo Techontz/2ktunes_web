@@ -1,21 +1,26 @@
 import { useState } from "react";
-import { Landmark, Plus, Smartphone, Trash2 } from "lucide-react";
+import { Plus, Smartphone, Trash2 } from "lucide-react";
 import { Badge, Button, Card, EmptyState, useToast } from "@/components/ui";
 import { PasswordConfirmDialog } from "@/features/dashboard/components";
 import { ApiError } from "@/lib/api/client";
-import type { PayoutMethod } from "@/lib/api/types";
+import type { PayoutMethod, PayoutProvider } from "@/lib/api/types";
 import { deletePayoutMethod, verifyPassword } from "@/lib/api/wallet";
 import { formatDate } from "@/lib/dates";
 import { useLanguage } from "@/lib/LanguageContext";
 import { useCopy } from "@/lib/useCopy";
 import { COPY } from "./copy";
+import { methodCurrency, methodDisplay, methodProviderName, methodType } from "./payoutMethods";
+import { PayoutTypeIcon } from "./PayoutTypeIcon";
 
 export function PayoutMethodsPanel({
   methods,
+  providers = [],
   onAdd,
   onChanged,
 }: {
   methods: PayoutMethod[];
+  /** Used to name/type methods when the API sends only `provider_code`. */
+  providers?: PayoutProvider[];
   onAdd: () => void;
   onChanged: () => void;
 }) {
@@ -24,12 +29,12 @@ export function PayoutMethodsPanel({
   const { toast } = useToast();
   const [removing, setRemoving] = useState<PayoutMethod | null>(null);
 
-  const nameOf = (m: PayoutMethod) => [m.label, `${m.provider.name} ${m.masked}`].filter(Boolean).join(" · ");
+  const nameOf = (m: PayoutMethod) => [m.label, methodDisplay(m, providers)].filter(Boolean).join(" · ");
 
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <p className="min-w-0 flex-1 text-body-sm text-text-subtle">{c.methodsDesc}</p>
+        <p className="min-w-0 flex-1 basis-64 text-body-sm text-text-subtle">{c.methodsDesc}</p>
         {methods.length > 0 && (
           <Button size="sm" leftIcon={<Plus />} onClick={onAdd}>
             {c.addMethod}
@@ -57,24 +62,28 @@ export function PayoutMethodsPanel({
                 aria-hidden
                 className="flex h-10 w-10 shrink-0 items-center justify-center rounded-control bg-white/[0.06] text-text-muted"
               >
-                {m.provider.type === "bank" ? <Landmark className="h-5 w-5" /> : <Smartphone className="h-5 w-5" />}
+                <PayoutTypeIcon type={methodType(m, providers)} className="h-5 w-5" />
               </span>
               <div className="min-w-0 flex-1">
                 <div className="flex flex-wrap items-center gap-2">
-                  <h3 className="min-w-0 break-words font-semibold text-text">{m.label || m.provider.name}</h3>
+                  <h3 className="min-w-0 break-words font-semibold text-text">
+                    {m.label || methodProviderName(m, providers) || c.types[methodType(m, providers)]}
+                  </h3>
                   {m.is_default && (
                     <Badge tone="accent" size="sm">
                       {c.defaultBadge}
                     </Badge>
                   )}
                 </div>
-                <p className="mt-0.5 break-words font-mono text-body-sm text-text">{m.masked}</p>
+                <p className="mt-0.5 break-words font-mono text-body-sm text-text">{methodDisplay(m, providers)}</p>
                 <p className="mt-0.5 break-words text-caption text-text-subtle">
-                  {[m.label ? m.provider.name : null, m.account_name, m.bank_name, m.provider.currency]
+                  {[c.types[methodType(m, providers)], m.account_name, m.bank_name, methodCurrency(m, providers)]
                     .filter(Boolean)
                     .join(" · ")}
                 </p>
-                <p className="mt-0.5 text-caption text-text-subtle">{c.addedAt(formatDate(m.created_at, locale))}</p>
+                {m.created_at && (
+                  <p className="mt-0.5 text-caption text-text-subtle">{c.addedAt(formatDate(m.created_at, locale))}</p>
+                )}
               </div>
               <Button
                 variant="ghost"

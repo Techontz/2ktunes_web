@@ -51,7 +51,7 @@ export function Sheet({
   return (
     <Portal>
       <div className="fixed inset-0 z-[70]">
-        <div aria-hidden className="absolute inset-0 animate-fade-in bg-black/65" onClick={onClose} />
+        <div aria-hidden className="absolute inset-0 animate-fade-in bg-night/55 backdrop-blur-[2px]" onClick={onClose} />
         <div
           ref={panelRef}
           role="dialog"
@@ -84,7 +84,7 @@ export function Sheet({
                 type="button"
                 onClick={onClose}
                 aria-label={closeLabel}
-                className="-mr-2 ml-auto flex h-11 w-11 items-center justify-center rounded-control text-text-muted transition-colors hover:bg-white/[0.06] hover:text-text"
+                className="-mr-2 ml-auto flex h-11 w-11 items-center justify-center rounded-control text-text-muted transition-colors hover:bg-tint/[0.06] hover:text-text"
               >
                 <X className="h-5 w-5" aria-hidden />
               </button>

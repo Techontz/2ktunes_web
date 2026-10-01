@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
-import { Badge, Button, Card, Checkbox, Field, Input, RadioCardGroup } from "@/components/ui";
+import { Badge, Button, Card, Checkbox, Field, RadioCardGroup } from "@/components/ui";
+import { CountrySelect } from "@/components/forms/CountrySelect";
 import { updateRelease } from "@/lib/api/catalog";
 import { fieldErrorsOf } from "@/lib/api/errors";
 import type { Territories } from "@/lib/api/types";
@@ -10,7 +11,7 @@ import { useIssueText } from "../shared";
 import { useReportSaver, useWizard } from "./context";
 import { StepFooter } from "./StepFooter";
 import { useAutosave } from "./useAutosave";
-import { firstByField, parseCountryList, validateStores } from "./validation";
+import { firstByField, validateStores } from "./validation";
 
 export function StoresStep() {
   const c = useCopy(COPY);
@@ -19,16 +20,17 @@ export function StoresStep() {
   const available = useMemo(() => stores.filter((s) => s.status === "available").map((s) => s.slug), [stores]);
   const [platforms, setPlatforms] = useState<string[]>(() => release?.platforms ?? []);
   const [mode, setMode] = useState<Territories["mode"]>(() => release?.territories?.mode ?? "worldwide");
-  const [countriesText, setCountriesText] = useState(() => (release?.territories?.countries ?? []).join(", "));
+  const [countries, setCountries] = useState<string[]>(() =>
+    (release?.territories?.countries ?? []).map((x) => x.toUpperCase()),
+  );
   const [showErrors, setShowErrors] = useState(false);
   const [serverErrors, setServerErrors] = useState<Record<string, string>>({});
 
-  const countries = parseCountryList(countriesText);
   const territories: Territories = { mode, countries: mode === "worldwide" ? [] : countries };
   const issues = validateStores({ platforms, territories }, available);
   const by = firstByField(issues);
 
-  // Only well-formed country codes are sent while typing.
+  // The picker only yields ISO-2 codes; the filter guards legacy saved values.
   const payload = {
     platforms: platforms.filter((p) => available.includes(p)),
     territories: { mode, countries: territories.countries.filter((x) => /^[A-Z]{2}$/.test(x)) },
@@ -124,10 +126,10 @@ export function StoresStep() {
             <Field
               label={c.countries}
               hint={c.countriesHint}
-              className="mt-4 sm:max-w-md"
+              className="mt-4 sm:max-w-lg"
               error={serverErrors["territories.countries"] ?? (showErrors ? issueText(by.territories) : undefined)}
             >
-              <Input value={countriesText} onChange={(e) => setCountriesText(e.target.value)} autoCapitalize="characters" />
+              <CountrySelect multiple value={countries} onChange={setCountries} />
             </Field>
           )}
         </Section>

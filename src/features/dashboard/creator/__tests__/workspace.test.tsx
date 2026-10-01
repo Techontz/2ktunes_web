@@ -52,7 +52,9 @@ describe("CreatorWorkspacePage", () => {
 
     expect(await screen.findByRole("heading", { name: "Start your creator profile" })).toBeInTheDocument();
     await user.type(screen.getByLabelText(/Display name/), "Zuri");
-    await user.type(screen.getByLabelText(/^Country/), "tz");
+    await user.type(screen.getByRole("combobox", { name: /^Country/ }), "tanz");
+    await user.keyboard("{Enter}");
+    await user.click(screen.getByRole("button", { name: "Swahili" }));
     await user.click(screen.getByRole("checkbox", { name: "Dance" }));
     await user.click(screen.getByRole("button", { name: "Create profile" }));
 
@@ -60,6 +62,7 @@ describe("CreatorWorkspacePage", () => {
     expect(api.calls("PUT /creator/profile")[0].body).toMatchObject({
       display_name: "Zuri",
       country: "TZ",
+      languages: ["sw"],
       categories: ["dance"],
       is_available: true,
     });

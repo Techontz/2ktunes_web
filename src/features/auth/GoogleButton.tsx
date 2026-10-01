@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { GOOGLE_CLIENT_ID, googleLoginAvailable } from "@/lib/api/auth";
 import { useLanguage } from "@/lib/LanguageContext";
+import { API_LOCALE } from "@/i18n";
 
 /**
  * "Continue with Google" via Google Identity Services.
@@ -92,7 +93,7 @@ export default function GoogleButton({
           text: "continue_with",
           logo_alignment: "center",
           width: Math.min(ref.current.offsetWidth || 400, 400),
-          locale: language === "SW" ? "sw" : "en",
+          locale: API_LOCALE[language],
         });
       })
       .catch(() => !cancelled && setFailed(true));

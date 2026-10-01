@@ -13,7 +13,7 @@ export function LanguageSwitch({ className }: { className?: string }) {
       role="radiogroup"
       aria-label={t("common.language")}
       className={cn(
-        "inline-flex h-9 items-center rounded-control border border-border-subtle bg-white/[0.03] p-0.5",
+        "inline-flex h-9 items-center rounded-control border border-border-subtle bg-tint/[0.03] p-0.5",
         className,
       )}
     >
@@ -30,7 +30,7 @@ export function LanguageSwitch({ className }: { className?: string }) {
             onClick={() => setLanguage(l.code)}
             className={cn(
               "h-full min-w-9 rounded-[8px] px-2 text-[0.75rem] font-bold tracking-[0.04em] transition-colors",
-              active ? "bg-white/[0.12] text-text" : "text-text-subtle hover:text-text",
+              active ? "bg-accent text-white shadow-[0_4px_12px_-6px_rgb(132_29_198/0.8)]" : "text-text-subtle hover:text-text",
             )}
           >
             {l.short}

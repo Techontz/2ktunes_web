@@ -92,4 +92,49 @@ export const PRICING: Localized<PageCopy> = {
     ],
     cta: { title: "Chagua kifurushi ukiwa tayari.", lede: "Kufungua akaunti ni bure. Unachagua kifurushi kabla toleo lako la kwanza halijatoka.", secondary: { label: "Wasiliana nasi", to: "/contact" } },
   },
+  FR: {
+    meta: { title: "Tarifs", description: "Offres de distribution 2kTunes actuelles, tarifées selon le nombre de profils d’artistes que vous gérez." },
+    hero: {
+      eyebrow: "Tarifs",
+      title: "Des offres claires. Vos droits, toujours.",
+      lede: "Le prix des offres dépend du nombre de profils d’artistes que vous gérez. Les prix ci-dessous sont chargés en direct depuis nos offres : ce que vous voyez est ce que vous paierez.",
+      secondary: { label: "Parlez-nous", to: "/contact" },
+    },
+    sections: [
+      {
+        type: "plans",
+        tone: "light",
+        eyebrow: "Offres",
+        title: "Choisissez l’offre adaptée à votre catalogue.",
+        lede: "Passez à l’offre supérieure à mesure que votre catalogue d’artistes grandit. Les services de promotion et les campagnes de créateurs sont facturés séparément et toujours affichés avant paiement.",
+      },
+      {
+        type: "features",
+        tone: "dark",
+        eyebrow: "Dans chaque offre",
+        title: "L’essentiel n’est jamais en option.",
+        items: [
+          { icon: "shield", title: "100 % de vos droits", body: "Vos masters et vos compositions vous appartiennent. Retirez une sortie quand vous le souhaitez." },
+          { icon: "globe", title: "Plateformes mondiales et africaines", body: "Distribuez sur les services mondiaux et les plateformes africaines à partir du même envoi." },
+          { icon: "wallet", title: "Portefeuille de royalties", body: "Les royalties restent dans la devise versée par les plateformes ; retirez vers mobile money ou banque, avec conversion en TZS à un taux affiché avant confirmation." },
+          { icon: "pie", title: "Partages de revenus", body: "Versez automatiquement leur part à vos collaborateurs." },
+          { icon: "chart", title: "Statistiques", body: "Écoutes, territoires et revenus par sortie, au fil des rapports des plateformes." },
+          { icon: "languages", title: "Assistance bilingue", body: "Aide en anglais et en kiswahili par une équipe basée en Tanzanie." },
+        ],
+      },
+      {
+        type: "faq",
+        tone: "raised",
+        eyebrow: "FAQ tarifs",
+        title: "Questions de facturation",
+        items: [
+          { q: "Que se passe-t-il si j’arrête de payer ?", a: "Votre compte reste le vôtre. Vos sorties peuvent être retirées des plateformes à la fin de votre offre, et les royalties acquises restent dans votre portefeuille, prêtes à être retirées." },
+          { q: "Puis-je payer en shillings ?", a: "Chaque offre est affichée dans la devise qui lui est attribuée. Si une offre est tarifée dans une autre devise, votre tableau de bord indique le montant en TZS avant paiement." },
+          { q: "Les labels ont-ils une offre spécifique ?", a: "Les catalogues plus importants peuvent choisir une offre avec davantage de profils d’artistes, ou nous contacter pour un accord label." },
+        ],
+        link: { label: "Pour les labels", to: "/labels" },
+      },
+    ],
+    cta: { title: "Choisissez une offre quand vous êtes prêt.", lede: "La création de compte est gratuite. Vous choisissez une offre avant la mise en ligne de votre première sortie.", secondary: { label: "Nous contacter", to: "/contact" } },
+  },
 };

@@ -53,6 +53,7 @@ type AuthContextValue = {
     password: string;
     passwordConfirmation: string;
     accountType: AccountType;
+    locale?: "en" | "sw" | "fr";
   }) => Promise<void>;
   /** Exchanges a Google Identity Services credential for a session. */
   loginWithGoogle: (idToken: string) => Promise<void>;
@@ -162,6 +163,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       password: string;
       passwordConfirmation: string;
       accountType: AccountType;
+      locale?: "en" | "sw" | "fr";
     }) => {
       // The backend returns a token straight from /register, so a successful
       // registration IS a session. We follow that rather than bouncing the user
@@ -172,6 +174,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         password: input.password,
         password_confirmation: input.passwordConfirmation,
         account_type: input.accountType,
+        ...(input.locale ? { locale: input.locale } : {}),
       });
       setJustRegistered(true);
       await adoptSession(res.token, res.user);

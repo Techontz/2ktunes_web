@@ -171,4 +171,31 @@ describe("ReleaseWizardPage", () => {
     expect(await screen.findByText("Track 1: upload the audio.")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Upload audio" })).toBeInTheDocument();
   });
+
+  it("stores step: territories use a country multi-select and PATCH ISO codes", async () => {
+    const api = mockApi({
+      ...refs,
+      "GET /releases/:id": { release: makeRelease({ platforms: ["spotify"] }) },
+      "GET /releases/:id/validation": { validation: { ready: false, errors: [], warnings: [], steps: {}, tracks: {} } },
+      "PATCH /releases/:id": ({ body }) => ({ release: makeRelease({ platforms: ["spotify"], ...(body as object) }) }),
+    });
+    const user = userEvent.setup();
+    renderPage(<ReleaseWizardPage />, { route: "/dashboard/music/7/edit?step=stores", path: "/dashboard/music/:id/edit" });
+
+    await user.click(await screen.findByRole("radio", { name: /Only selected countries/ }));
+    // No free-text code box any more.
+    expect(screen.queryByRole("textbox", { name: /Countries/ })).not.toBeInTheDocument();
+    const picker = screen.getByRole("combobox", { name: /Countries/ });
+    await user.type(picker, "Kenya");
+    await user.keyboard("{Enter}");
+    await user.type(picker, "Tanz");
+    await user.keyboard("{Enter}");
+    expect(screen.getByRole("button", { name: "Remove Kenya" })).toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "Next" }));
+    await waitFor(() => {
+      const patches = api.calls("PATCH /releases/:id").map((c) => c.body as { territories?: unknown });
+      expect(patches.some((b) => JSON.stringify(b.territories) === JSON.stringify({ mode: "include", countries: ["KE", "TZ"] }))).toBe(true);
+    });
+  });
 });

@@ -128,7 +128,61 @@ const SW: typeof EN = {
   unknown: "Haijulikani",
 };
 
-export const LABELS = { EN, SW };
+const FR: typeof EN = {
+  categories: {
+    dance: "Danse",
+    comedy: "Humour",
+    lifestyle: "Lifestyle",
+    fashion: "Mode",
+    beauty: "Beauté",
+    music: "Musique",
+    lip_sync: "Lip sync",
+    storytelling: "Storytelling",
+    fitness: "Fitness",
+    food: "Cuisine",
+    travel: "Voyage",
+    tech: "Tech",
+    education: "Éducation",
+    sports: "Sport",
+    gaming: "Jeux vidéo",
+    family: "Famille",
+    faith: "Foi",
+  },
+  campaignTypes: {
+    creator_campaign: "Campagne créateurs",
+    tiktok_challenge: "Challenge TikTok",
+    playlist_pitching: "Pitch playlists",
+    presave_campaign: "Campagne de pré-sauvegarde",
+    social_promotion: "Promotion sur les réseaux",
+    influencer_marketing: "Marketing d'influence",
+    advertising: "Publicité",
+    marketing_package: "Offre marketing",
+  },
+  objectives: {
+    awareness: "Notoriété",
+    streams: "Streams",
+    ugc: "Contenu de fans (UGC)",
+    presaves: "Pré-sauvegardes",
+    followers: "Abonnés",
+    playlist_consideration: "Entrée en playlist",
+  },
+  disputeReasons: {
+    not_delivered: "Non livré",
+    not_as_described: "Non conforme",
+    late: "Livraison en retard",
+    quality: "Problème de qualité",
+    payment: "Problème de paiement",
+    other: "Autre",
+  },
+  devices: {
+    mobile: "Téléphone",
+    tablet: "Tablette",
+    desktop: "Ordinateur",
+  },
+  unknown: "Inconnu",
+};
+
+export const LABELS = { EN, SW, FR };
 
 export function humanize(value: string | null | undefined): string {
   const s = (value ?? "").replace(/_/g, " ").trim();

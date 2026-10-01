@@ -21,11 +21,11 @@ export function providerLimits(p: PayoutProvider, c: WalletCopy, locale: string)
 }
 
 /**
- * The API describes processing in English. Swahili readers get the matching
- * translated sentence (the backend only emits the manual/automatic pair).
+ * The API describes processing in English. Swahili and French readers get the
+ * matching translated sentence (the backend only emits the manual/automatic pair).
  */
 export function providerProcessing(p: PayoutProvider, c: WalletCopy, language: string): string {
-  if (language !== "SW" && p.processing) return p.processing;
+  if (language === "EN" && p.processing) return p.processing;
   return /automatic/i.test(p.processing ?? "") ? c.processingAuto : c.processingManual;
 }
 

@@ -319,4 +319,148 @@ export const HOME: Localized<HomeCopy> = {
       lede: "Fungua akaunti kwa dakika moja. Pakia ukiwa tayari.",
     },
   },
+  FR: {
+    hero: {
+      eyebrow: "Distribution musicale · Conçu en Tanzanie",
+      lines: ["Diffusez partout.", "Élargissez votre public.", "Soyez payé chez vous."],
+      lede:
+        "2kTunes distribue votre musique sur les plateformes où le public écoute, vous aide à toucher de nouveaux fans grâce aux créateurs et aux campagnes, et vous verse vos royalties sur mobile money ou sur votre compte bancaire — converties en shillings au moment du retrait.",
+      secondary: "Comment ça marche",
+      trust: ["Vous conservez 100 % de vos droits", "Retraits vers M-Pesa, Airtel Money, Mixx et banques", "Assistance en anglais et en kiswahili"],
+    },
+    promises: [
+      {
+        title: "Distribution mondiale",
+        body: "Un seul envoi suffit pour atteindre les services de streaming mondiaux, les applis de vidéo courte et les plateformes africaines que votre public utilise vraiment.",
+      },
+      {
+        title: "Marketing avec des créateurs africains",
+        body: "Faites découvrir votre titre grâce aux campagnes de créateurs, aux propositions éditoriales et à une planification de sortie pensée pour ce marché.",
+      },
+      {
+        title: "Royalties versées localement",
+        body: "Vos revenus arrivent dans un seul portefeuille, dans la devise versée par les plateformes, et se retirent vers M-Pesa, Airtel Money, Mixx by Yas ou un compte bancaire.",
+      },
+    ],
+    stores: {
+      eyebrow: "Où va votre musique",
+      title: "Les plateformes que votre public utilise déjà.",
+      lede: "Choisissez vos destinations pour chaque sortie. Nous gérons les formats de livraison, les métadonnées et les exigences des plateformes à votre place.",
+    },
+    workflow: {
+      eyebrow: "Comment ça marche",
+      title: "De l’envoi au retrait, en cinq étapes claires.",
+      lede: "Chaque sortie suit le même parcours visible, et vous savez à tout moment où en est la vôtre.",
+      steps: [
+        { title: "Envoi", body: "Ajoutez votre audio, votre pochette, les crédits et la date de sortie grâce à un parcours guidé." },
+        { title: "Vérification", body: "Notre équipe contrôle l’audio, la pochette et les métadonnées selon les règles des plateformes avant tout envoi." },
+        { title: "En ligne", body: "Votre sortie est livrée aux plateformes choisies et devient disponible à la date prévue." },
+        { title: "Revenus", body: "Les rapports des plateformes arrivent sous forme de royalties dans votre portefeuille, détaillées par plateforme, pays et période." },
+        { title: "Retrait", body: "Retirez vers mobile money ou votre banque dès que vous atteignez le solde minimum." },
+      ],
+    },
+    promotion: {
+      eyebrow: "Promotion",
+      title: "La distribution vous rend visible. La promotion vous fait entendre.",
+      lede: "Quatre façons différentes de toucher de nouveaux auditeurs — et nous sommes clairs sur chacune : ce qui est disponible aujourd’hui, ce que cela coûte, ce que cela peut et ne peut pas faire.",
+      kinds: [
+        {
+          tag: "Inclus avec votre sortie",
+          title: "Proposition éditoriale",
+          body: "Soumettez un titre inédit à l’attention des éditeurs des plateformes. Les éditeurs décident en toute indépendance ; une proposition est une demande, pas un placement.",
+        },
+        {
+          tag: "Pas encore disponible",
+          title: "Services de curateurs",
+          body: "Proposez votre titre à des curateurs de playlists et à des blogs indépendants qui choisissent de le mettre en avant ou non. Vous payez l’écoute, jamais un ajout garanti.",
+        },
+        {
+          tag: "Campagne payante",
+          title: "Campagnes de créateurs",
+          body: "Parcourez des créateurs TikTok, Instagram et YouTube et commandez une offre pour mettre votre titre en avant. Les créateurs sont payés une fois la publication approuvée par vous, et chaque publication est signalée comme promotion.",
+        },
+        {
+          tag: "Pas encore disponible",
+          title: "Publicité",
+          body: "Lancez des publicités qui dirigent les auditeurs vers votre sortie sur les plateformes de votre choix, avec le budget et l’audience que vous définissez.",
+        },
+      ],
+      note: "Personne ne peut honnêtement garantir des écoutes, des placements en playlist ou une mise en avant éditoriale — et nous ne le ferons jamais.",
+      link: "Découvrir la promotion",
+    },
+    royalties: {
+      eyebrow: "Royalties et paiements locaux",
+      title: "Gagné partout. Payé chez vous.",
+      lede: "Les plateformes paient dans de nombreuses devises, selon leur propre calendrier. 2kTunes regroupe tout dans un seul portefeuille, dans la devise versée par chaque plateforme, et convertit en shillings lorsque vous retirez, par le moyen de paiement que vous utilisez déjà.",
+      points: [
+        { title: "Un portefeuille, toutes les plateformes", body: "Chaque ligne renvoie à une plateforme, un territoire et une période de rapport." },
+        { title: "Converti au moment du retrait", body: "Les soldes restent dans la devise versée par les plateformes. Pour un retrait en TZS, vous voyez le taux de change et les frais avant de confirmer." },
+        { title: "Mobile money ou banque", body: "Retirez vers M-Pesa, Airtel Money, Mixx by Yas ou un compte bancaire local. Notre équipe financière traite chaque demande, et votre tableau de bord affiche chaque étape." },
+      ],
+      link: "Comment fonctionnent les royalties",
+    },
+    splits: {
+      eyebrow: "Partages de revenus",
+      title: "Payez tous ceux qui ont fait le titre.",
+      lede: "Définissez une fois les pourcentages des producteurs, auteurs-compositeurs et artistes invités. Chaque collaborateur reçoit sa part dans son propre portefeuille.",
+      points: ["Invitez vos collaborateurs par e-mail", "Les partages s’appliquent à tous les relevés à venir", "Tout le monde voit les mêmes chiffres"],
+    },
+    analytics: {
+      eyebrow: "Statistiques",
+      title: "Voyez où votre musique progresse.",
+      lede: "Sachez quels titres décollent, quels pays écoutent et quelles plateformes les diffusent — pour que votre prochaine sortie soit une décision, pas un pari.",
+      points: ["Écoutes et revenus par sortie", "Principaux territoires et plateformes", "Tendances au fil des rapports des plateformes"],
+    },
+    africa: {
+      eyebrow: "L’Afrique d’abord",
+      title: "Conçu ici, pour les artistes d’ici — entendu partout.",
+      lede: "La plupart des distributeurs ont été pensés pour d’autres marchés, l’Afrique ajoutée après coup. 2kTunes part de la façon dont les artistes d’Afrique de l’Est sortent leur musique, se font connaître et sont payés.",
+      points: [
+        { title: "Plateformes africaines incluses", body: "Boomplay et Audiomack figurent aux côtés des plateformes mondiales, pas en option de dernière minute." },
+        { title: "Argent local, langue locale", body: "Retraits en shillings vers mobile money ou banque, et un tableau de bord en anglais et en kiswahili." },
+        { title: "Une équipe qui connaît la scène", body: "Assistance et planification de campagnes par une équipe qui travaille chaque jour avec des artistes d’Afrique de l’Est." },
+      ],
+    },
+    pricing: {
+      eyebrow: "Tarifs",
+      title: "Des offres simples, au juste prix.",
+      lede: "Les offres dépendent du nombre de profils d’artistes que vous gérez. Vous conservez vos droits avec chaque offre.",
+      link: "Comparer les offres",
+    },
+    faq: {
+      eyebrow: "FAQ",
+      title: "Les premières questions des artistes.",
+      items: [
+        {
+          q: "Combien de temps avant que ma musique soit en ligne ?",
+          a: "Notre vérification prend généralement quelques jours ouvrés, puis chaque plateforme publie selon son propre calendrier. Soumettez votre sortie au moins deux à trois semaines avant la date prévue — quatre ou plus si vous souhaitez une proposition éditoriale.",
+        },
+        {
+          q: "Est-ce que je conserve les droits sur ma musique ?",
+          a: "Oui. Vous conservez 100 % de la propriété de vos masters et de vos compositions. Vous accordez à 2kTunes une licence pour distribuer en votre nom, et vous pouvez retirer une sortie à tout moment.",
+        },
+        {
+          q: "Comment suis-je payé ?",
+          a: "Les royalties issues des rapports des plateformes sont ajoutées à votre portefeuille 2kTunes dans la devise versée par la plateforme, souvent en dollars américains. Une fois le montant minimum de retrait indiqué dans votre tableau de bord atteint, vous pouvez retirer vers mobile money ou un compte bancaire. Pour un paiement en TZS, le taux de change et les frais sont affichés avant confirmation, et notre équipe financière traite le retrait.",
+        },
+        {
+          q: "Pouvez-vous garantir des écoutes ou des placements en playlist ?",
+          a: "Non, et méfiez-vous de quiconque le promet. Les équipes éditoriales et les curateurs indépendants font leurs propres choix. Nous vous aidons à bien présenter votre titre, à toucher des créateurs et à planifier votre sortie — les résultats dépendent de la musique et du public.",
+        },
+        {
+          q: "Puis-je partager les royalties avec mes collaborateurs ?",
+          a: "Oui. Ajoutez des producteurs, auteurs-compositeurs ou artistes invités à une sortie avec leur pourcentage, et la part de chacun est versée dans son propre portefeuille.",
+        },
+        {
+          q: "Sur quelles plateformes distribuez-vous ?",
+          a: "Les services mondiaux comme Spotify, Apple Music, YouTube Music, Amazon Music et Deezer, les réseaux sociaux comme TikTok et Instagram, et des plateformes africaines dont Boomplay et Audiomack. La disponibilité peut varier selon le territoire et la sortie.",
+        },
+      ],
+      link: "Consulter le centre d’aide",
+    },
+    final: {
+      title: "Votre prochaine sortie commence ici.",
+      lede: "Créez votre compte en une minute. Envoyez votre musique quand vous êtes prêt.",
+    },
+  },
 };

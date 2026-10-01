@@ -6,6 +6,7 @@ import { LanguageSwitch } from "@/features/site/layout/LanguageSwitch";
 import ReleaseCover from "@/features/site/art/ReleaseCover";
 import { FEATURED_RELEASE } from "@/features/site/art/release";
 import { useLanguage } from "@/lib/LanguageContext";
+import { ArtistPhoto, EqBars } from "@/features/site/kit";
 import { MOCKS } from "@/features/site/content/mocks";
 
 /**
@@ -17,18 +18,19 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
   const { t, pick } = useLanguage();
   return (
     <div className="flex min-h-svh bg-surface text-text">
-      <aside className="relative hidden w-[44%] max-w-[40rem] flex-col justify-between overflow-hidden border-r border-border-subtle bg-surface-sunken p-12 lg:flex xl:p-14">
-        <div
-          aria-hidden
-          className="pointer-events-none absolute -left-32 top-1/3 h-[32rem] w-[32rem] rounded-full"
-          style={{ background: "radial-gradient(circle, rgba(109,43,255,0.14), transparent 65%)" }}
-        />
+      <aside className="theme-dark relative hidden w-[44%] max-w-[40rem] flex-col justify-between overflow-hidden bg-night p-12 text-text lg:flex xl:p-14">
+        <div aria-hidden className="absolute inset-0">
+          <ArtistPhoto id={2} eager sizes="44vw" position="50% 20%" className="opacity-90" />
+          <span className="absolute inset-0 bg-[linear-gradient(180deg,rgb(26_11_46/0.55)_0%,rgb(42_15_74/0.35)_35%,rgb(26_11_46/0.92)_72%,#1a0b2e_100%)]" />
+          <span className="absolute inset-0 bg-[radial-gradient(70%_50%_at_0%_100%,rgb(132_29_198/0.55),transparent_70%)]" />
+        </div>
         <Link to="/" aria-label={t("nav.home")} className="relative w-fit rounded-sm text-[1.5rem]">
-          <Wordmark />
+          <Wordmark tone="dark" />
         </Link>
 
         <div className="relative">
-          <p className="max-w-[18ch] text-[2.25rem] font-extrabold leading-[1.08] tracking-[-0.035em] xl:text-[2.5rem]">
+          <EqBars className="mb-6 h-7 text-brand-300" />
+          <p className="max-w-[18ch] text-[2.25rem] font-extrabold leading-[1.08] tracking-[-0.035em] text-white xl:text-[2.625rem]">
             {t("auth.brand_title")}
           </p>
           <ul className="mt-8 space-y-3.5">
@@ -36,7 +38,7 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
               <li key={k} className="flex items-start gap-3 text-body text-text-muted">
                 <span
                   aria-hidden
-                  className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-accent-soft text-accent-text"
+                  className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-accent text-white"
                 >
                   <Check className="h-3 w-3" strokeWidth={3} />
                 </span>
@@ -44,35 +46,41 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
               </li>
             ))}
           </ul>
-        </div>
-
-        <div
-          aria-hidden
-          className="relative flex max-w-[22rem] items-center gap-3 rounded-card border border-border-subtle bg-surface-raised p-3"
-        >
-          <span className="h-12 w-12 shrink-0 overflow-hidden rounded-[8px]">
-            <ReleaseCover size="thumb" alt="" />
-          </span>
-          <span className="min-w-0 flex-1">
-            <span className="block truncate text-body-sm font-bold">{FEATURED_RELEASE.title}</span>
-            <span className="block truncate text-caption text-text-subtle">{FEATURED_RELEASE.artist}</span>
-          </span>
-          <span className="rounded-full bg-success-soft px-2 py-0.5 text-[0.6875rem] font-semibold text-success">
-            {pick(MOCKS).release.statusLive}
-          </span>
+          <div
+            aria-hidden
+            className="mt-10 flex max-w-[22rem] animate-float-slow items-center gap-3 rounded-card border border-white/15 bg-[#2a1248]/80 p-3 shadow-overlay backdrop-blur-md"
+          >
+            <span className="h-12 w-12 shrink-0 overflow-hidden rounded-[8px]">
+              <ReleaseCover size="thumb" alt="" />
+            </span>
+            <span className="min-w-0 flex-1">
+              <span className="block truncate text-body-sm font-bold text-white">{FEATURED_RELEASE.title}</span>
+              <span className="block truncate text-caption text-text-subtle">{FEATURED_RELEASE.artist}</span>
+            </span>
+            <span className="rounded-full bg-success-soft px-2 py-0.5 text-[0.6875rem] font-semibold text-success">
+              {pick(MOCKS).release.statusLive}
+            </span>
+          </div>
         </div>
       </aside>
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="flex h-16 items-center justify-between gap-4 px-4 sm:px-8">
-          <Link to="/" aria-label={t("nav.home")} className="rounded-sm text-[1.375rem] lg:invisible">
-            <Wordmark />
+        {/* Phones/tablets: a slim brand bar with an artist photo. */}
+        <header className="theme-dark relative flex h-16 items-center justify-between gap-4 overflow-hidden bg-hero px-4 sm:px-8 lg:hidden">
+          <div aria-hidden className="absolute inset-y-0 right-0 w-1/2 opacity-40 [mask-image:linear-gradient(90deg,transparent,#000)]">
+            <ArtistPhoto id={2} sizes="50vw" position="50% 30%" />
+          </div>
+          <Link to="/" aria-label={t("nav.home")} className="relative rounded-sm text-[1.3rem]">
+            <Wordmark tone="dark" />
           </Link>
+          <LanguageSwitch className="relative" />
+        </header>
+        <header className="hidden h-16 items-center justify-end gap-4 px-8 lg:flex">
           <LanguageSwitch />
         </header>
 
         <main id="main" className="flex flex-1 items-start justify-center px-4 py-8 sm:items-center sm:px-8 sm:py-12">
-          <div className="w-full max-w-[26rem]">{children}</div>
+          <div className="w-full max-w-[28rem] animate-slide-up sm:rounded-panel sm:border sm:border-border-subtle sm:bg-white sm:p-8 sm:shadow-card-light">{children}</div>
         </main>
 
         <footer className="flex flex-col gap-3 px-4 pb-6 text-[0.8125rem] text-text-subtle sm:flex-row sm:items-center sm:justify-between sm:px-8">
@@ -98,7 +106,7 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
 export function AuthHeading({ title, sub }: { title: ReactNode; sub?: ReactNode }) {
   return (
     <div className="mb-8">
-      <h1 className="text-[1.875rem] font-extrabold leading-tight tracking-[-0.03em] sm:text-[2.125rem]">
+      <h1 className="text-[1.875rem] font-extrabold leading-tight tracking-[-0.03em] text-text sm:text-[2.125rem]">
         {title}
       </h1>
       {sub && <p className="mt-2.5 text-body text-text-muted">{sub}</p>}

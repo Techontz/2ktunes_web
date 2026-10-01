@@ -30,6 +30,7 @@ import type { Release, ReleaseValidation, ValidationItem } from "@/lib/api/types
 import { useResource } from "@/lib/api/useResource";
 import { formatDate, formatDateTime } from "@/lib/dates";
 import { useLanguage } from "@/lib/LanguageContext";
+import { countryName } from "@/lib/countries";
 import { formatBp } from "@/lib/money";
 import { useCopy } from "@/lib/useCopy";
 import {
@@ -316,9 +317,9 @@ function OverviewTab({ r, languages }: { r: Release; languages: Record<string, s
   const { locale } = useLanguage();
   const territories =
     r.territories?.mode === "include"
-      ? c.onlyIn(r.territories.countries.join(", "))
+      ? c.onlyIn(r.territories.countries.map((cc) => countryName(cc, locale)).join(", "))
       : r.territories?.mode === "exclude"
-        ? c.exceptIn(r.territories.countries.join(", "))
+        ? c.exceptIn(r.territories.countries.map((cc) => countryName(cc, locale)).join(", "))
         : c.worldwide;
   return (
     <Card>

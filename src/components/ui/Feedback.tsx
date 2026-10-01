@@ -35,7 +35,7 @@ export function Skeleton({
     <span
       aria-hidden
       className={cn(
-        "block animate-shimmer bg-white/[0.07]",
+        "block animate-shimmer bg-tint/[0.07]",
         rounded === "sm" && "rounded-[4px]",
         rounded === "md" && "rounded-[8px]",
         rounded === "full" && "rounded-full",
@@ -73,14 +73,14 @@ export function EmptyState({
   return (
     <div
       className={cn(
-        "flex flex-col items-center rounded-card border border-dashed border-border text-center",
+        "flex flex-col items-center rounded-card border border-dashed border-border-strong/70 bg-surface-raised/60 text-center",
         compact ? "px-5 py-8" : "px-6 py-14",
         className,
       )}
     >
       <span
         aria-hidden
-        className="flex h-11 w-11 items-center justify-center rounded-control bg-white/[0.06] text-text-muted [&>svg]:h-5 [&>svg]:w-5"
+        className="flex h-11 w-11 items-center justify-center rounded-control bg-accent-soft text-accent-text [&>svg]:h-5 [&>svg]:w-5"
       >
         {icon ?? <Inbox />}
       </span>

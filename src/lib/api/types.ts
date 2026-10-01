@@ -514,32 +514,63 @@ export type LedgerEntry = {
   created_at: string;
 };
 
+/** Payout method families (GET /payout-providers → `type`). No card payouts. */
+export type PayoutType = "mobile_money" | "bank" | "bank_international" | "wallet";
+
+export type PayoutFieldType = "text" | "email" | "tel" | "select" | "country";
+
+/** One input the provider needs; POST /payout-methods takes `{[key]: value}`. */
+export type PayoutField = {
+  key: string;
+  label: string;
+  type: PayoutFieldType | (string & {});
+  required: boolean;
+  options?: { value: string; label: string }[] | null;
+  hint?: string | null;
+  max?: number | null;
+};
+
 export type PayoutProvider = {
   id: number;
   code: string;
   name: string;
-  type: "mobile_money" | "bank" | string;
+  type: PayoutType | (string & {});
+  /** ISO-2, or null for international/wallet providers. */
   country: string | null;
   currency: string;
   min_minor: number;
   max_minor: number | null;
-  daily_limit_minor: number | null;
-  monthly_limit_minor: number | null;
+  daily_limit_minor?: number | null;
+  monthly_limit_minor?: number | null;
   fee_fixed_minor: number;
   fee_percent_bp: number;
   is_sandbox: boolean;
-  processing: string;
+  /** English processing note from the API, e.g. "Processed manually…". */
+  processing?: string | null;
+  /** Form schema. Older backends omit it; the UI then uses a default set. */
+  fields?: PayoutField[];
 };
 
+/**
+ * GET /payout-methods item. The current contract is
+ * `{ id, provider_code, type, label, display, is_default, … }`; older
+ * responses carried `provider{…}` + `masked` instead, so both are optional
+ * and read through the helpers in features/dashboard/wallet/payoutMethods.ts.
+ */
 export type PayoutMethod = {
   id: number;
   label: string | null;
-  account_name: string;
-  masked: string;
-  bank_name: string | null;
   is_default: boolean;
-  provider: { id: number; code: string; name: string; type: string; currency: string };
-  created_at: string;
+  provider_code?: string | null;
+  type?: PayoutType | (string & {}) | null;
+  /** Masked, human summary, e.g. "M-Pesa •••• 4567" or "PayPal · n•••@mail.com". */
+  display?: string | null;
+  currency?: string | null;
+  account_name?: string | null;
+  masked?: string | null;
+  bank_name?: string | null;
+  provider?: { id: number; code: string; name: string; type: string; currency: string } | null;
+  created_at?: string | null;
 };
 
 export type WithdrawalQuote = {

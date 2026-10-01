@@ -114,4 +114,41 @@ export const MOCKS: Localized<MockCopy> = {
       territories: "Nchi zinazoongoza",
     },
   },
+  FR: {
+    sample: "Illustration · données fictives",
+    release: {
+      kind: "Single · BLESSINGS EP",
+      steps: ["Importé", "Vérifié", "Livré", "En ligne"],
+      statusLive: "En ligne",
+      destinations: "Livré sur",
+      more: "autres",
+    },
+    wallet: {
+      title: "Portefeuille royalties",
+      available: "Disponible au retrait",
+      lines: ["Streaming", "Vidéo courte", "Téléchargements"],
+      withdrawTo: "Retirer vers",
+      methods: ["M-Pesa", "Airtel Money", "Mixx by Yas", "Virement"],
+      methodNote: ["•••• 4821", "Mobile money", "Mobile money", "CRDB · NMB · autres"],
+      action: "Retirer",
+    },
+    splits: {
+      title: "Partage · meant2 be",
+      roles: ["Artiste principal", "Producteur", "Auteur"],
+      note: "Chaque collaborateur reçoit sa part automatiquement.",
+    },
+    campaign: {
+      title: "Campagne créateurs",
+      status: "Active",
+      creators: "Créateurs",
+      videos: "Vidéos",
+      budget: "Budget utilisé",
+      brief: "Défi danse · Tanzanie et Kenya",
+    },
+    analytics: {
+      title: "Streams",
+      period: "12 dernières semaines",
+      territories: "Top territoires",
+    },
+  },
 };

@@ -142,5 +142,76 @@ const SW: typeof EN = {
   submitted: "Malipo yametumwa — tutawasha kifurushi chako yakishathibitishwa",
 };
 
-export const COPY = { EN, SW };
+const FR: typeof EN = {
+  title: "Abonnement",
+  intro: "Votre abonnement 2kTunes détermine le nombre d'artistes que vous pouvez gérer et vous permet d'envoyer vos sorties vers les plateformes.",
+  currentTitle: "Votre abonnement",
+  planLabel: "Formule",
+  noPlan: "Aucune formule",
+  statusLabel: "Statut",
+  expiresLabel: "Actif jusqu'au",
+  expiredLabel: "Expiré le",
+  inactiveBody: "Choisissez une formule ci-dessous pour commencer à distribuer votre musique.",
+  expiredBody: "Votre formule a expiré. Renouvelez-la ou choisissez-en une autre pour continuer à distribuer.",
+  pendingTitle: "Paiement en attente de confirmation",
+  pendingBody: "L'équipe financière de 2kTunes vérifie votre référence de paiement et active votre formule, généralement sous un jour ouvré.",
+  pendingPlan: "Formule",
+  pendingMethod: "Payé via",
+  pendingReference: "Référence de paiement",
+  pendingAmount: "Montant",
+  pendingSubmitted: "Envoyé",
+
+  plansTitle: "Formules",
+  plansDesc: "Les prix sont fixés par 2kTunes et facturés par période.",
+  plansEmptyTitle: "Aucune formule disponible pour le moment",
+  plansEmptyBody: "Les formules sont en cours de mise à jour. Revenez bientôt ou contactez le support.",
+  free: "Gratuit",
+  perDays: (n: string) => `pour ${n} jours`,
+  maxArtists: (n: string) => `Jusqu'à ${n} artistes`,
+  oneArtist: "1 artiste",
+  current: "Formule actuelle",
+  pendingMarker: "Paiement envoyé",
+  choose: "Choisir",
+  renew: "Renouveler",
+  choosePlan: (name: string) => `Choisir la formule ${name}`,
+  renewPlan: (name: string) => `Renouveler la formule ${name}`,
+
+  freeTitle: (name: string) => `Passer à ${name} ?`,
+  freeBody: "Cette formule est gratuite et s'active immédiatement.",
+  freeConfirm: "Activer",
+  activated: (name: string) => `La formule ${name} est active`,
+
+  payTitle: (name: string) => `Payer ${name}`,
+  payDesc: (price: string) => `Envoyez ${price} via l'une des options ci-dessous, puis saisissez votre référence de paiement.`,
+  howToPay: "Comment payer",
+  payNote:
+    "Payez avec les coordonnées indiquées ici, puis saisissez votre référence de paiement. Notre équipe financière confirme les paiements sous un jour ouvré.",
+  detailLabels: {
+    mpesa_lipa_number: "Numéro Lipa M-Pesa",
+    bank_account: "Compte bancaire",
+    account_name: "Titulaire du compte",
+    bank_name: "Banque",
+    airtel_number: "Numéro Airtel Money",
+    mixx_number: "Numéro Mixx by Yas",
+  } as Record<string, string>,
+  noDetails: "Notre équipe support vous enverra les coordonnées de paiement.",
+  contactSupport: "Contacter le support",
+  method: "Moyen de paiement",
+  methodPlaceholder: "Comment avez-vous payé ?",
+  methods: {
+    mpesa_tz: "M-Pesa",
+    airtel_tz: "Airtel Money",
+    mixx_tz: "Mixx by Yas",
+    bank: "Virement bancaire",
+    card: "Carte",
+  } as Record<string, string>,
+  reference: "Référence de paiement",
+  referenceHint: "Le code de confirmation de votre paiement, par ex. le code du reçu M-Pesa.",
+  referenceRequired: "Saisissez la référence de paiement figurant sur votre reçu.",
+  methodRequired: "Choisissez votre moyen de paiement.",
+  submit: "Envoyer le paiement",
+  submitted: "Paiement envoyé — nous activerons votre formule dès sa confirmation",
+};
+
+export const COPY = { EN, SW, FR };
 export type PlanCopy = typeof EN;

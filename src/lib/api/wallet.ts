@@ -40,17 +40,17 @@ export async function fetchPayoutMethods({ signal }: S = {}): Promise<PayoutMeth
   return res.methods ?? [];
 }
 
+/**
+ * POST /payout-methods body: the provider, options, the password and one
+ * entry per provider `fields[].key` (account_name, account_number,
+ * bank_name, bank_country, swift_code, account_email …).
+ */
 export type PayoutMethodInput = {
   payout_provider_id: number;
-  account_name: string;
-  account_number: string;
-  bank_name?: string | null;
-  bank_branch?: string | null;
-  swift_code?: string | null;
   label?: string | null;
   is_default?: boolean;
   current_password: string;
-};
+} & Record<string, string | number | boolean | null | undefined>;
 
 export async function createPayoutMethod(input: PayoutMethodInput): Promise<PayoutMethod> {
   const res = await request<{ method: PayoutMethod }>("/payout-methods", { method: "POST", body: input });

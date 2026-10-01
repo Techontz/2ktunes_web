@@ -80,8 +80,8 @@ export function PayForPlanDialog({
   const formError =
     action.error && code !== "payment_reference_required" && !fe.payment_reference && !fe.payment_method ? action.error : null;
 
-  // The API writes the note in English; Swahili readers get our translation of it.
-  const note = language === "SW" || !instructions?.note ? c.payNote : instructions.note;
+  // The API writes the note in English; Swahili and French readers get our translation.
+  const note = language !== "EN" || !instructions?.note ? c.payNote : instructions.note;
   const labelFor = (key: string) =>
     c.detailLabels[key] ?? key.replace(/_/g, " ").replace(/^\w/, (m) => m.toUpperCase());
 

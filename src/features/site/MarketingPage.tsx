@@ -22,6 +22,7 @@ import {
   Video,
   Wallet,
   Landmark,
+  ArrowRight,
   type LucideIcon,
 } from "lucide-react";
 import { Badge, Button, DataTable } from "@/components/ui";
@@ -33,7 +34,9 @@ import {
   CtaBand,
   Faq,
   FeatureGrid,
+  HERO_PHOTOS,
   PageHero,
+  Reveal,
   SectionHeader,
   Split,
   TextLink,
@@ -226,7 +229,7 @@ function SectionView({ s, index }: { s: Section; index: number }) {
                 icon: iconNode(it.icon),
                 title: it.title,
                 body: it.body,
-                tag: it.tag ? <Badge tone={tone === "light" ? "accent" : "accent"} size="sm">{it.tag}</Badge> : undefined,
+                tag: it.tag ? <Badge tone="accent" size="sm">{it.tag}</Badge> : undefined,
               }))}
             />
           </div>
@@ -318,11 +321,15 @@ function SectionView({ s, index }: { s: Section; index: number }) {
 
 function SplitNote({ children }: { children: ReactNode }) {
   const { muted } = useMuted();
-  return <p className={cn("mt-6 border-l-2 border-accent-text pl-4 text-body-sm", muted)}>{children}</p>;
+  return (
+    <p className={cn("mt-6 rounded-r-[10px] border-l-2 border-accent-text bg-tint/[0.05] py-3 pl-4 pr-3 text-body-sm", muted)}>
+      {children}
+    </p>
+  );
 }
 
 function Steps({ steps }: { steps: { title: string; body: string }[] }) {
-  const { muted, card, eyebrow } = useMuted();
+  const { muted, card } = useMuted();
   return (
     <ol
       className={cn(
@@ -333,18 +340,30 @@ function Steps({ steps }: { steps: { title: string; body: string }[] }) {
       )}
     >
       {steps.map((st, i) => (
-        <li key={st.title} className={cn("flex min-w-0 gap-4 rounded-card p-5 sm:flex-col sm:gap-0", card)}>
-          <span className={cn("pt-1 text-[0.8125rem] font-bold tabular-nums sm:pt-0", eyebrow)}>
+        <Reveal
+          as="li"
+          key={st.title}
+          delay={i * 80}
+          className={cn("lift flex min-w-0 gap-4 rounded-card p-5 sm:flex-col sm:gap-0", card)}
+        >
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[linear-gradient(135deg,#9e4fe0,#6e16a8)] text-[0.8125rem] font-bold tabular-nums text-white shadow-[0_8px_18px_-8px_rgb(132_29_198/0.8)]">
             {String(i + 1).padStart(2, "0")}
           </span>
           <div className="min-w-0">
             <h3 className="text-[1.125rem] font-bold tracking-[-0.02em] sm:mt-5">{st.title}</h3>
             <p className={cn("mt-1.5 text-body-sm sm:mt-2", muted)}>{st.body}</p>
           </div>
-        </li>
+        </Reveal>
       ))}
     </ol>
   );
+}
+
+/** Stable artist photo per page (same page → same photo, across languages it may differ, which is fine). */
+function heroPhotoIndex(key: string) {
+  let h = 0;
+  for (let i = 0; i < key.length; i++) h = (h * 31 + key.charCodeAt(i)) >>> 0;
+  return h % HERO_PHOTOS.length;
 }
 
 export function MarketingPage({ content }: { content: Localized<PageCopy> }) {
@@ -355,13 +374,14 @@ export function MarketingPage({ content }: { content: Localized<PageCopy> }) {
   return (
     <>
       <PageHero
+        photo={HERO_PHOTOS[heroPhotoIndex(c.meta.title)]}
         eyebrow={c.hero.eyebrow}
         title={c.hero.title}
         lede={c.hero.lede}
         aside={c.hero.visual ? renderVisual(c.hero.visual, true) : undefined}
         actions={
           <>
-            <Button to="/auth?mode=register" size="lg" shape="pill">
+            <Button to="/auth?mode=register" size="lg" shape="pill" rightIcon={<ArrowRight />}>
               {t("cta.release")}
             </Button>
             {c.hero.secondary && (

@@ -107,7 +107,7 @@ export default function WalletPage() {
               ) : methods.loading ? (
                 <InlineLoading />
               ) : (
-                <PayoutMethodsPanel methods={methods.data ?? []} onAdd={() => setAddOpen(true)} onChanged={refresh} />
+                <PayoutMethodsPanel methods={methods.data ?? []} providers={providers.data ?? []} onAdd={() => setAddOpen(true)} onChanged={refresh} />
               )}
             </TabPanel>
           </Tabs>

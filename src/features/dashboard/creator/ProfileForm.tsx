@@ -1,7 +1,10 @@
-import { useRef, useState, type ChangeEvent, type FormEvent } from "react";
+import { useMemo, useRef, useState, type ChangeEvent, type FormEvent } from "react";
 import { Upload } from "lucide-react";
 import { Avatar, Button, Checkbox, Field, Input, Textarea, useToast } from "@/components/ui";
+import { CountrySelect } from "@/components/forms/CountrySelect";
+import { ToggleChips } from "@/components/forms/ToggleChips";
 import { FormAlert, useAction } from "@/features/dashboard/components";
+import { languageOptions } from "@/lib/languages";
 import { useLabels } from "@/features/dashboard/marketplace/labels";
 import { saveMyCreatorProfile, uploadCreatorAvatar, type CreatorProfileInput } from "@/lib/api/marketplace";
 import type { CreatorProfile, SocialAccount } from "@/lib/api/types";
@@ -10,6 +13,7 @@ import { useCopy } from "@/lib/useCopy";
 import { COPY } from "./copy";
 
 const MAX_CATEGORIES = 8;
+const MAX_LANGUAGES = 10;
 const MAX_AVATAR_BYTES = 4 * 1024 * 1024;
 const AVATAR_TYPES = ["image/jpeg", "image/png", "image/webp"];
 
@@ -55,15 +59,17 @@ export function ProfileForm({
   onSaved: (p: CreatorProfile) => void | Promise<void>;
 }) {
   const c = useCopy(COPY);
-  const { t } = useLanguage();
+  const { t, locale } = useLanguage();
   const labels = useLabels();
   const { toast } = useToast();
+  const savedLanguages = profile?.languages;
+  const langOptions = useMemo(() => languageOptions(locale, savedLanguages ?? []), [locale, savedLanguages]);
   const [f, setF] = useState(() => ({
     display_name: profile?.display_name ?? "",
     bio: profile?.bio ?? "",
     country: profile?.country ?? "",
     city: profile?.city ?? "",
-    languages: (profile?.languages ?? []).join(", "),
+    languages: (profile?.languages ?? []).map((l) => l.toLowerCase()),
     categories: profile?.categories ?? [],
     turnaround_days: profile?.turnaround_days != null ? String(profile.turnaround_days) : "",
     is_available: profile?.is_available ?? true,
@@ -78,12 +84,8 @@ export function ProfileForm({
     if (!f.display_name.trim()) errs.display_name = c.displayNameRequired;
     const country = f.country.trim().toUpperCase();
     if (country && !/^[A-Z]{2}$/.test(country)) errs.country = c.countryInvalid;
-    const languages = f.languages
-      .split(/[\s,;]+/)
-      .map((s) => s.trim().toLowerCase())
-      .filter(Boolean);
-    if (languages.length > 10 || languages.some((l) => !/^[a-z]{2,3}(-[a-z0-9]{2,4})?$/.test(l) || l.length > 8))
-      errs.languages = c.languagesInvalid;
+    const languages = f.languages;
+    if (languages.length > MAX_LANGUAGES) errs.languages = c.languagesInvalid;
     if (f.categories.length > MAX_CATEGORIES) errs.categories = c.categoriesMax(MAX_CATEGORIES);
     let turnaround: number | null = null;
     if (f.turnaround_days.trim()) {
@@ -125,13 +127,10 @@ export function ProfileForm({
           <Textarea value={f.bio} onChange={(e) => set({ bio: e.target.value })} maxLength={2000} rows={5} />
         </Field>
         <Field label={c.country} hint={c.countryHint} error={err("country")} {...opt}>
-          <Input value={f.country} onChange={(e) => set({ country: e.target.value })} maxLength={2} autoCapitalize="characters" />
+          <CountrySelect value={f.country} onChange={(code) => set({ country: code })} />
         </Field>
         <Field label={c.city} error={err("city")} {...opt}>
           <Input value={f.city} onChange={(e) => set({ city: e.target.value })} maxLength={80} />
-        </Field>
-        <Field label={c.languages} hint={c.languagesHint} error={err("languages")} {...opt}>
-          <Input value={f.languages} onChange={(e) => set({ languages: e.target.value })} autoCapitalize="none" />
         </Field>
         <Field label={c.turnaround} error={err("turnaround_days")} {...opt}>
           <Input
@@ -144,6 +143,16 @@ export function ProfileForm({
           />
         </Field>
       </div>
+
+      <ToggleChips
+        legend={c.languages}
+        hint={c.languagesHint}
+        options={langOptions}
+        value={f.languages}
+        onChange={(next) => set({ languages: next })}
+        max={MAX_LANGUAGES}
+        error={err("languages")}
+      />
 
       <fieldset className="min-w-0">
         <legend className="text-body-sm font-semibold text-text">{c.categories}</legend>

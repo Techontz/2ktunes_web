@@ -1,57 +1,22 @@
 /**
- * Country + currency choices shared by onboarding, settings and artist forms.
- *
- * Values are ISO 3166-1 alpha-2 codes (ArtistController validates
- * `country: size:2`; the profile accepts any short string, so we send the
- * same code there). Names come from Intl.DisplayNames in the viewer's
- * language, so no hand-maintained translation table is needed.
+ * Currency choices shared by onboarding and settings. Country names and the
+ * ISO list live in src/lib/countries.ts (re-exported here for older imports).
  */
 
-/** Primary African markets, listed first in every picker. */
-export const AFRICAN_COUNTRIES = [
-  "TZ", "KE", "UG", "RW", "BI", "CD", "NG", "GH", "ZA", "ZM", "MW", "MZ", "ZW", "ET", "SO",
-  "SS", "SD", "EG", "MA", "DZ", "TN", "SN", "CI", "CM", "BJ", "TG", "BF", "ML", "NE", "GN",
-  "SL", "LR", "GM", "AO", "NA", "BW", "LS", "SZ", "MG", "MU", "SC", "KM", "DJ", "ER", "GA",
-  "CG", "CF", "TD", "GQ", "CV", "ST", "GW", "MR", "LY",
-] as const;
-
-/** Everywhere else a 2kTunes user commonly lives. */
-export const OTHER_COUNTRIES = [
-  "US", "GB", "CA", "FR", "DE", "NL", "BE", "SE", "NO", "DK", "IT", "ES", "PT", "IE", "CH",
-  "AE", "SA", "QA", "OM", "IN", "CN", "JP", "AU", "BR", "JM",
-] as const;
+export { countryName } from "@/lib/countries";
 
 export const CURRENCIES = ["USD", "TZS", "KES", "UGX", "NGN"] as const;
 export type Currency = (typeof CURRENCIES)[number];
 
-export function countryName(code: string | null | undefined, locale: string): string {
-  if (!code) return "—";
-  if (!/^[A-Za-z]{2}$/.test(code)) return code;
+/** "TZS" → "TZS — Tanzanian Shilling" (name in the viewer's language). */
+export function currencyLabel(code: string, locale: string): string {
   try {
-    const names = new Intl.DisplayNames([locale, "en"], { type: "region" });
-    return names.of(code.toUpperCase()) ?? code;
+    const name = new Intl.DisplayNames([locale, "en"], { type: "currency" }).of(code);
+    if (name && name !== code) return `${code} — ${name.charAt(0).toLocaleUpperCase(locale)}${name.slice(1)}`;
   } catch {
-    return code.toUpperCase();
+    /* fall through */
   }
-}
-
-function sorted(codes: readonly string[], locale: string) {
-  return codes
-    .map((code) => ({ code, name: countryName(code, locale) }))
-    .sort((a, b) => a.name.localeCompare(b.name, locale));
-}
-
-/**
- * Two option groups (Africa first). A saved value that isn't in either list
- * (e.g. an older free-text country) is returned as `extra` so the select can
- * still show it instead of silently blanking it.
- */
-export function countryGroups(locale: string, current?: string | null) {
-  const africa = sorted(AFRICAN_COUNTRIES, locale);
-  const others = sorted(OTHER_COUNTRIES, locale);
-  const known = new Set<string>([...AFRICAN_COUNTRIES, ...OTHER_COUNTRIES]);
-  const extra = current && !known.has(current.toUpperCase()) ? current : null;
-  return { africa, others, extra };
+  return code;
 }
 
 /** A currency suggestion for a country (used only as a default). */

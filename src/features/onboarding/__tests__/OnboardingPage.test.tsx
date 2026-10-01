@@ -30,7 +30,8 @@ describe("OnboardingPage", () => {
     const first = screen.getByLabelText(/First name/);
     await user.clear(first);
     await user.type(first, "Amani");
-    await user.selectOptions(screen.getByLabelText(/^Country/), "KE");
+    await user.type(screen.getByRole("combobox", { name: /^Country/ }), "Kenya");
+    await user.keyboard("{Enter}");
     await user.click(screen.getByRole("button", { name: "Continue" }));
 
     // Creator path skips the artist step.
@@ -45,6 +46,35 @@ describe("OnboardingPage", () => {
       preferred_currency: "KES",
       locale: "en",
     });
+  });
+
+  it("sends the French locale when the app is in French", async () => {
+    const newUser = { ...defaultUser, onboarding_completed_at: null, account_type: "artist", country: null };
+    let completed = false;
+    const api = mockApi({
+      "GET /profile": () => ({ user: completed ? { ...newUser, onboarding_completed_at: "2026-10-01T00:00:00Z" } : newUser }),
+      "GET /release-config": { config },
+      "POST /onboarding/complete": ({ body }) => {
+        completed = true;
+        return { user: { ...newUser, ...(body as object), onboarding_completed_at: "2026-10-01T00:00:00Z" } };
+      },
+    });
+    const user = userEvent.setup();
+    renderPage(<OnboardingPage />, { route: "/onboarding", language: "FR" });
+
+    await user.click(await screen.findByRole("radio", { name: /Créat/ }));
+    const first = screen.getByLabelText(/Prénom/);
+    await user.clear(first);
+    await user.type(first, "Awa");
+    // Country names are French and searchable in French.
+    await user.type(screen.getByRole("combobox", { name: /^Pays/ }), "côte");
+    expect(screen.getByRole("option", { name: /Côte d’Ivoire/ })).toBeInTheDocument();
+    await user.keyboard("{Enter}");
+    await user.click(screen.getAllByRole("button", { name: /Continuer/ })[0]);
+    await user.click(await screen.findByRole("button", { name: /Passer/ }));
+
+    await waitFor(() => expect(api.calls("POST /onboarding/complete")).toHaveLength(1));
+    expect(api.calls("POST /onboarding/complete")[0].body).toMatchObject({ country: "CI", locale: "fr" });
   });
 
   it("asks for the country before continuing", async () => {

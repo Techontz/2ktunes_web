@@ -38,12 +38,12 @@ const EN = {
   bio: "Bio",
   bioHint: "What kind of content do you make, and who watches it?",
   country: "Country",
-  countryHint: "Two-letter code, e.g. TZ",
-  countryInvalid: "Use a two-letter country code, e.g. TZ.",
+  countryHint: "Where you live and create. Type to search.",
+  countryInvalid: "Choose a country from the list.",
   city: "City",
   languages: "Languages",
-  languagesHint: "Language codes separated by commas, e.g. sw, en",
-  languagesInvalid: "Use short language codes separated by commas, e.g. sw, en.",
+  languagesHint: "Tap every language you create content in (up to 10).",
+  languagesInvalid: "Choose no more than 10 languages.",
   categories: "Content categories",
   categoriesHint: (max: number) => `Choose up to ${max}.`,
   categoriesMax: (max: number) => `Choose no more than ${max} categories.`,
@@ -180,12 +180,12 @@ const SW: typeof EN = {
   bio: "Maelezo kukuhusu",
   bioHint: "Unatengeneza maudhui ya aina gani, na nani huyatazama?",
   country: "Nchi",
-  countryHint: "Msimbo wa herufi mbili, mf. TZ",
-  countryInvalid: "Tumia msimbo wa nchi wa herufi mbili, mf. TZ.",
+  countryHint: "Unapoishi na kutengeneza maudhui. Andika kutafuta.",
+  countryInvalid: "Chagua nchi kutoka kwenye orodha.",
   city: "Mji",
   languages: "Lugha",
-  languagesHint: "Misimbo ya lugha ikitenganishwa kwa koma, mf. sw, en",
-  languagesInvalid: "Tumia misimbo mifupi ya lugha ikitenganishwa kwa koma, mf. sw, en.",
+  languagesHint: "Gusa kila lugha unayotumia kutengeneza maudhui (hadi 10).",
+  languagesInvalid: "Chagua lugha zisizozidi 10.",
   categories: "Makundi ya maudhui",
   categoriesHint: (max) => `Chagua hadi ${max}.`,
   categoriesMax: (max) => `Usichague zaidi ya makundi ${max}.`,
@@ -284,4 +284,156 @@ const SW: typeof EN = {
   allOrders: "Tazama oda zote",
 };
 
-export const COPY = { EN, SW };
+const FR: typeof EN = {
+  title: "Espace créateur",
+  intro: "Votre profil de créateur, vos réseaux sociaux, vos offres et les commandes reçues des artistes.",
+
+  /* Start */
+  startTitle: "Créez votre profil de créateur",
+  startIntro:
+    "Sur 2kTunes, les artistes font appel à des créateurs de contenu pour mettre leur musique en avant. Configurez votre profil, ajoutez vos réseaux sociaux et au moins une offre tarifée, puis soumettez-le pour validation. Seuls les profils approuvés sont visibles par les artistes.",
+  startCta: "Créer mon profil",
+  started: "Profil créé",
+  startedBody: "Ajoutez maintenant vos réseaux sociaux et une offre, puis soumettez votre profil pour validation.",
+
+  /* Status */
+  statusDraft:
+    "Votre profil est un brouillon, encore invisible pour les artistes. Soumettez-le pour validation quand il est prêt.",
+  statusPending: "Votre profil est en cours de validation. Nous examinons généralement les profils sous 2 jours ouvrés.",
+  statusApproved: "Votre profil est en ligne. Les artistes peuvent vous trouver et vous passer commande.",
+  statusRejected: "Votre profil n'a pas encore été approuvé. Apportez les modifications ci-dessous et soumettez-le à nouveau.",
+  statusSuspended: "Votre profil est suspendu et masqué aux artistes.",
+  reviewNote: "Note de 2kTunes",
+  submit: "Soumettre",
+  submitted: "Soumis pour validation",
+  submitNeeds:
+    "Pour soumettre votre profil, il faut une bio, votre pays, au moins un compte social et au moins une offre active.",
+  viewPublic: "Voir votre profil public",
+
+  /* Tabs */
+  tabsLabel: "Sections de l'espace créateur",
+  tabProfile: "Profil",
+  tabSocial: "Réseaux",
+  tabPackages: "Offres",
+  tabPortfolio: "Portfolio",
+  tabOrders: "Commandes reçues",
+
+  /* Profile form */
+  displayName: "Nom affiché",
+  displayNameRequired: "Saisissez le nom que verront les artistes.",
+  bio: "Bio",
+  bioHint: "Quel type de contenu créez-vous, et qui le regarde ?",
+  country: "Pays",
+  countryHint: "Là où vous vivez et créez. Tapez pour rechercher.",
+  countryInvalid: "Choisissez un pays dans la liste.",
+  city: "Ville",
+  languages: "Langues",
+  languagesHint: "Touchez chaque langue dans laquelle vous créez (10 maximum).",
+  languagesInvalid: "Choisissez 10 langues au maximum.",
+  categories: "Catégories de contenu",
+  categoriesHint: (max: number) => `Jusqu'à ${max} au choix.`,
+  categoriesMax: (max: number) =>
+    max <= 1 ? `Choisissez au maximum ${max} catégorie.` : `Choisissez au maximum ${max} catégories.`,
+  turnaround: "Délai habituel (jours)",
+  turnaroundInvalid: "Saisissez un nombre de jours entre 1 et 60.",
+  available: "J'accepte de nouvelles commandes",
+  availableHint: "Désactivez pour ne plus recevoir de commandes sans masquer votre profil.",
+  reviewWarning: "Modifier le nom affiché ou la bio d'un profil approuvé le renvoie en validation.",
+  saved: "Profil enregistré",
+
+  /* Avatar */
+  avatar: "Photo de profil",
+  avatarHint: "JPG, PNG ou WebP, 4 Mo max.",
+  avatarChoose: "Importer une photo",
+  avatarType: "Utilisez une image JPG, PNG ou WebP.",
+  avatarSize: "L'image ne doit pas dépasser 4 Mo.",
+  avatarSaved: "Photo mise à jour",
+
+  /* Social */
+  socialIntro: (self: string, admin: string, platform: string) =>
+    `Ajoutez les comptes sur lesquels vous publiez. Les chiffres saisis sont affichés aux artistes avec la mention « ${self} » jusqu'à leur vérification par 2kTunes ; les comptes vérifiés affichent « ${admin} » ou « ${platform} ».`,
+  socialReset:
+    "Si vous modifiez l'identifiant, les abonnés, les vues moyennes ou l'engagement d'un compte vérifié, il repasse en « déclaré » jusqu'à une nouvelle vérification.",
+  socialEmpty: "Aucun compte social pour l'instant.",
+  addAccount: "Ajouter un compte",
+  removeAccount: (n: number) => `Supprimer le compte ${n}`,
+  accountN: (n: number) => `Compte ${n}`,
+  platform: "Plateforme",
+  choosePlatform: "Choisir une plateforme",
+  platformRequired: "Choisissez une plateforme.",
+  platformDuplicate: "Chaque plateforme ne peut être ajoutée qu'une fois.",
+  handle: "Identifiant",
+  handleRequired: "Saisissez votre identifiant.",
+  url: "Lien du profil",
+  urlInvalid: "Saisissez le lien complet, commençant par https://",
+  followers: "Abonnés",
+  avgViews: "Vues moyennes",
+  engagement: "Taux d'engagement (%)",
+  engagementInvalid: "Saisissez un pourcentage entre 0 et 100, ex. 4.5",
+  wholeNumber: "Saisissez un nombre entier.",
+  audience: "Pays de l'audience",
+  audienceHint: "Code pays et pourcentage, ex. CI 60, SN 20",
+  audienceInvalid: "Saisissez un code pays et un pourcentage entier, ex. CI 60, SN 20.",
+  saveAccounts: "Enregistrer les comptes",
+  accountsSaved: "Comptes sociaux enregistrés",
+  maxAccounts: (n: number) => `Vous pouvez ajouter jusqu'à ${n} comptes.`,
+
+  /* Packages */
+  packagesIntro:
+    "Des offres à prix fixe que les artistes peuvent commander. Décrivez précisément ce que vous livrez — ne promettez jamais de vues, de streams ni d'abonnés.",
+  noPackages: "Aucune offre pour l'instant. Ajoutez-en au moins une pour soumettre votre profil.",
+  addPackage: "Ajouter une offre",
+  editPackage: "Modifier l'offre",
+  deletePackage: "Supprimer l'offre",
+  deleteTitle: "Supprimer cette offre ?",
+  deleteBody:
+    "Si des artistes l'ont déjà commandée, elle est désactivée plutôt que supprimée afin de préserver leurs commandes.",
+  deleted: "Offre supprimée",
+  pkgTitle: "Titre",
+  pkgTitleRequired: "Donnez un titre à l'offre.",
+  pkgPlatform: "Plateforme",
+  pkgPrice: "Prix",
+  pkgPriceInvalid: "Saisissez un prix supérieur à zéro, ex. 50000.",
+  pkgCurrency: "Devise",
+  pkgTurnaround: "Délai de livraison (jours)",
+  pkgDeliverable: "Livrable",
+  pkgDeliverableHint: "ex. 1 vidéo TikTok de 15 à 30 secondes, avec le morceau en son",
+  pkgDescription: "Description",
+  pkgActive: "Active — les artistes peuvent la commander",
+  pkgSaved: "Offre enregistrée",
+  inactive: "Inactive",
+  days: (n: number) => (n <= 1 ? `${n} jour` : `${n} jours`),
+  edit: (title: string) => `Modifier ${title}`,
+  remove: (title: string) => `Supprimer ${title}`,
+
+  /* Portfolio */
+  portfolioIntro: (max: number) =>
+    `Présentez jusqu'à ${max} exemples de vos meilleurs contenus. Les liens doivent commencer par https://`,
+  portfolioEmpty: "Aucun exemple pour l'instant.",
+  portfolioFull: (max: number) =>
+    `Vous avez atteint le maximum de ${max} exemples. Supprimez-en un pour en ajouter un autre.`,
+  addExample: "Ajouter un exemple",
+  exUrl: "Lien",
+  exUrlInvalid: "Saisissez un lien https:// complet.",
+  exTitle: "Titre",
+  exViews: "Vues",
+  exAdded: "Exemple ajouté",
+  exRemoved: "Exemple supprimé",
+  removeExample: (title: string) => `Supprimer ${title}`,
+  openExample: (title: string) => `${title} (nouvel onglet)`,
+  example: "Exemple",
+
+  /* Orders */
+  ordersIntro:
+    "Commandes payées par les artistes. Ouvrez une commande pour l'accepter, écrire à l'artiste ou livrer votre travail.",
+  noOrders: "Aucune commande pour l'instant. Une fois votre profil approuvé, les commandes payées des artistes apparaîtront ici.",
+  ordersCaption: "Commandes reçues",
+  colOrder: "Commande",
+  colRelease: "Sortie",
+  colStatus: "Statut",
+  colPayout: "Votre gain",
+  colDue: "Échéance",
+  allOrders: "Voir toutes les commandes",
+};
+
+export const COPY = { EN, SW, FR };

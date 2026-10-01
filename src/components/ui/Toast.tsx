@@ -107,7 +107,7 @@ function ToastView({
         type="button"
         onClick={onDismiss}
         aria-label={dismissLabel}
-        className="-m-1.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-[8px] text-text-subtle hover:bg-white/[0.06] hover:text-text"
+        className="-m-1.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-[8px] text-text-subtle hover:bg-tint/[0.06] hover:text-text"
       >
         <X className="h-4 w-4" aria-hidden />
       </button>

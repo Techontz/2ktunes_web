@@ -100,5 +100,55 @@ const SW: typeof EN = {
     "Idara ya fedha ya 2kTunes ikishaingiza na kuthibitisha ripoti ya duka yenye muziki wako, itaorodheshwa hapa na pesa kuwekwa kwenye pochi yako.",
 };
 
-export const COPY = { EN, SW };
+const FR: typeof EN = {
+  title: "Royalties",
+  intro: "Ce que votre musique a rapporté, par mois, plateforme, pays, sortie, titre ou relevé. Seuls les relevés publiés par le service financier de 2kTunes sont comptabilisés.",
+  filtersLabel: "Filtres du rapport",
+  groupBy: "Répartir par",
+  by: {
+    month: "Mois",
+    store: "Plateforme",
+    territory: "Pays",
+    release: "Sortie",
+    track: "Titre",
+    usage: "Type d'utilisation",
+    statement: "Relevé",
+  },
+  from: "Du",
+  to: "Au",
+  currency: "Devise",
+  allCurrencies: "Toutes les devises",
+  rangeInvalid: "La date de début doit être antérieure ou égale à la date de fin.",
+  showing: (from: string, to: string) => `Du ${from} au ${to}`,
+  breakdownTitle: "Répartition",
+  breakdownCaption: (by: string) => `Royalties par ${by.toLowerCase()}`,
+  colAmount: "Revenus",
+  colUnits: "Unités",
+  colLines: "Lignes du rapport",
+  totalFor: (cur: string) => `Total (${cur})`,
+  emptyTitle: "Pas de royalties sur cette période",
+  emptyBody:
+    "Les royalties apparaissent ici une fois les relevés des plateformes importés et publiés par le service financier de 2kTunes. Les plateformes déclarent généralement 1 à 3 mois après les écoutes.",
+  unknown: "Inconnu",
+  usage: {
+    stream: "Écoutes",
+    streams: "Écoutes",
+    download: "Téléchargements",
+    video: "Vidéo",
+    ugc: "Vidéos d'utilisateurs (UGC)",
+    other: "Autre",
+  },
+  statementsTitle: "Relevés",
+  statementsDesc: "Relevés des plateformes qui ont crédité votre portefeuille.",
+  statementsCaption: "Relevés publiés",
+  colSource: "Source",
+  colPeriod: "Période",
+  colPosted: "Publié le",
+  period: (from: string, to: string) => `${from} – ${to}`,
+  statementsEmptyTitle: "Aucun relevé pour l'instant",
+  statementsEmptyBody:
+    "Dès que le service financier de 2kTunes aura importé et publié un relevé de plateforme incluant votre musique, il apparaîtra ici et sera crédité sur votre portefeuille.",
+};
+
+export const COPY = { EN, SW, FR };
 export type RoyaltiesCopy = typeof EN;

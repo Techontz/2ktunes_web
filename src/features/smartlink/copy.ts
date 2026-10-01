@@ -82,4 +82,45 @@ const SW: typeof EN = {
   goHome: "Nenda 2kTunes",
 };
 
-export const COPY = { EN, SW };
+const FR: typeof EN = {
+  loading: "Chargement de la sortie…",
+  unsubscribed: "Vous êtes désinscrit. Nous ne vous enverrons plus d'e-mail au sujet de cette sortie.",
+  coverAlt: (title, artist) => `Pochette de ${title} par ${artist}`,
+  by: (artist) => `par ${artist}`,
+  typeSingle: "Single",
+  typeEP: "EP",
+  typeAlbum: "Album",
+  releasedOn: (date) => `Sorti le ${date}`,
+  outOn: (date) => `Sortie le ${date}`,
+  listenOn: "Écouter sur",
+  listenAria: (store) => `Écouter sur ${store} (s'ouvre dans un nouvel onglet)`,
+  play: "Écouter",
+  noLinks: "Les liens vers les plateformes apparaîtront ici dès qu'ils seront en ligne.",
+  upcomingTitle: "Bientôt disponible",
+  upcomingBody: (date) => `Cette sortie arrive le ${date}.`,
+  upcomingBodyNoDate: "Cette sortie arrive bientôt.",
+  pendingTitle: "Bientôt sur vos plateformes préférées",
+  pendingBody:
+    "Cette sortie est en cours de livraison aux plateformes musicales. Chaque plateforme publie selon son propre calendrier — revenez bientôt pour l'écouter.",
+  notifyTitle: "Soyez prévenu de la sortie",
+  notifyBody: "Laissez votre e-mail et nous vous enverrons un seul message dès qu'elle sera disponible en streaming.",
+  email: "Adresse e-mail",
+  emailRequired: "Saisissez une adresse e-mail valide.",
+  consent: "J'accepte de recevoir un e-mail au sujet de cette sortie. Mon adresse ne servira à rien d'autre.",
+  consentRequired: "Cochez la case pour que nous puissions vous écrire.",
+  notify: "Me prévenir",
+  notifySuccess: "C'est noté. Nous vous écrirons dès la sortie.",
+  notifyUnavailable: "Les notifications ne sont plus disponibles pour cette sortie.",
+  followArtist: "Suivre l'artiste",
+  instagram: "Instagram",
+  tiktok: "TikTok",
+  youtube: "YouTube",
+  followAria: (network) => `${network} (s'ouvre dans un nouvel onglet)`,
+  poweredBy: "Propulsé par",
+  distributeCta: "Sortez votre propre musique",
+  notFoundTitle: "Sortie introuvable",
+  notFoundBody: "Le lien contient peut-être une erreur, ou la sortie n'est plus disponible.",
+  goHome: "Aller sur 2kTunes",
+};
+
+export const COPY = { EN, SW, FR };

@@ -15,12 +15,16 @@ import { MOCKS } from "./content/mocks";
 
 function Frame({ children, className, caption }: { children: ReactNode; className?: string; caption?: string }) {
   return (
-    <figure className={cn("min-w-0", className)}>
-      <div className="overflow-hidden rounded-panel border border-border bg-[#131315] text-text shadow-overlay">
+    <figure className={cn("relative min-w-0", className)}>
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -inset-6 -z-0 rounded-[2rem] bg-[radial-gradient(60%_60%_at_70%_30%,rgb(158_79_224/0.28),transparent_70%)] blur-xl"
+      />
+      <div className="relative overflow-hidden rounded-panel border border-border-subtle bg-surface-raised text-text shadow-[0_30px_70px_-30px_rgb(42_8_70/0.45)] transition-transform duration-500 ease-[var(--ease-tunes)] hover:-translate-y-1">
         {children}
       </div>
       {caption && (
-        <figcaption className="mt-3 text-center text-[0.75rem] text-text-subtle [.bg-bone_&]:text-ink-subtle">
+        <figcaption className="relative mt-3 text-center text-[0.75rem] text-text-subtle">
           {caption}
         </figcaption>
       )}
@@ -72,7 +76,7 @@ export function ReleaseMock({ className, eager }: { className?: string; eager?: 
           {["Spotify", "Apple Music", "Boomplay", "TikTok", "Audiomack", "YouTube Music"].map((s) => (
             <li
               key={s}
-              className="rounded-[6px] border border-border-subtle bg-white/[0.03] px-2 py-1 text-[0.75rem] font-semibold text-text-muted"
+              className="rounded-[6px] border border-border-subtle bg-tint/[0.03] px-2 py-1 text-[0.75rem] font-semibold text-text-muted"
             >
               {s}
             </li>
@@ -109,7 +113,7 @@ export function WalletMock({ className }: { className?: string }) {
           ))}
         </dl>
       </div>
-      <div className="border-t border-border-subtle bg-white/[0.02] p-5 sm:p-6">
+      <div className="border-t border-border-subtle bg-tint/[0.02] p-5 sm:p-6">
         <p className="text-caption font-semibold text-text-subtle">{m.withdrawTo}</p>
         <ul className="mt-3 grid gap-2 sm:grid-cols-2">
           {m.methods.map((name, i) => (
@@ -122,7 +126,7 @@ export function WalletMock({ className }: { className?: string }) {
             >
               <span
                 aria-hidden
-                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[8px] bg-white/[0.06] text-text-muted"
+                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[8px] bg-tint/[0.06] text-text-muted"
               >
                 {i === 3 ? <Landmark className="h-4 w-4" /> : <Smartphone className="h-4 w-4" />}
               </span>
@@ -149,8 +153,8 @@ export function SplitsMock({ className }: { className?: string }) {
   const m = pick(MOCKS);
   const shares = [
     { who: "Conrad Bubex", pct: 60, color: "bg-accent" },
-    { who: "K. Mwakyusa", pct: 25, color: "bg-success" },
-    { who: "A. Nassoro", pct: 15, color: "bg-warning" },
+    { who: "K. Mwakyusa", pct: 25, color: "bg-brand-400" },
+    { who: "A. Nassoro", pct: 15, color: "bg-orange" },
   ];
   return (
     <Frame className={className} caption={m.sample}>
@@ -214,13 +218,13 @@ export function CampaignMock({ className }: { className?: string }) {
         ))}
       </dl>
       <div className="flex gap-1.5 border-t border-border-subtle p-5">
-        {["#2a1a4d", "#123a2c", "#3b2a10", "#1d2a44", "#3a1426"].map((bg, i) => (
+        {["#841dc6", "#6e16a8", "#9e4fe0", "#5a1389", "#b983ee"].map((bg, i) => (
           <span
             key={bg}
             aria-hidden
-            className="aspect-[9/16] flex-1 rounded-[6px] border border-white/[0.06]"
+            className="aspect-[9/16] flex-1 rounded-[6px] border border-border-subtle"
             style={{
-              background: `linear-gradient(180deg, ${bg}, #0b0b0c)`,
+              background: `linear-gradient(180deg, ${bg}, #2a0f4a)`,
               opacity: 1 - i * 0.12,
             }}
           />
@@ -265,7 +269,7 @@ export function AnalyticsMock({ className }: { className?: string }) {
           {BARS.map((b, i) => (
             <span
               key={i}
-              className={cn("flex-1 rounded-t-[4px]", i === BARS.length - 1 ? "bg-accent" : "bg-white/[0.12]")}
+              className={cn("flex-1 rounded-t-[4px]", i === BARS.length - 1 ? "bg-accent" : "bg-tint/[0.12]")}
               style={{ height: `${(b / max) * 100}%` }}
             />
           ))}
@@ -280,7 +284,7 @@ export function AnalyticsMock({ className }: { className?: string }) {
                 <span className="text-text">{regionName(t.code)}</span>
                 <span className="tabular-nums text-text-muted">{t.share}%</span>
               </div>
-              <div className="mt-1.5 h-1.5 rounded-full bg-white/[0.08]">
+              <div className="mt-1.5 h-1.5 rounded-full bg-tint/[0.08]">
                 <div className="h-full rounded-full bg-accent-text" style={{ width: `${t.share * 2}%` }} />
               </div>
             </li>

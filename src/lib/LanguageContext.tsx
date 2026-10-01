@@ -24,7 +24,7 @@ import {
  *
  *   t("auth.login_btn")                 short UI strings, keyed in src/i18n/*.ts
  *   t("pricing.per_days", { days: 30 }) with {placeholder} interpolation
- *   pick({ EN: {...}, SW: {...} })      long-form structured copy that lives next
+ *   pick({ EN, SW, FR })                long-form structured copy that lives next
  *                                       to the page that renders it (marketing
  *                                       sections, help articles, legal drafts)
  *
@@ -32,13 +32,16 @@ import {
  * visible in QA rather than rendering nothing.
  *
  * The chosen language persists in localStorage and is mirrored onto
- * <html lang>, so screen readers pronounce Swahili pages as Swahili.
+ * <html lang>, so screen readers pronounce Swahili and French pages correctly.
  */
 
 export type { Language };
 
-/** Structured copy for `pick()`. English is required; others optional. */
-export type Localized<T> = { EN: T } & Partial<Record<Language, T>>;
+/**
+ * Structured copy for `pick()`. Every supported language is REQUIRED, so a
+ * page that ships without French (or Swahili) copy fails typecheck.
+ */
+export type Localized<T> = Record<Language, T>;
 
 interface LanguageContextType {
   language: Language;
@@ -59,9 +62,9 @@ function initialLanguage(): Language {
   } catch {
     /* storage blocked */
   }
-  if (typeof navigator !== "undefined" && navigator.language?.toLowerCase().startsWith("sw")) {
-    return "SW";
-  }
+  const nav = typeof navigator !== "undefined" ? navigator.language?.toLowerCase() : "";
+  if (nav?.startsWith("sw")) return "SW";
+  if (nav?.startsWith("fr")) return "FR";
   return "EN";
 }
 
@@ -91,8 +94,8 @@ export function LanguageProvider({
   }, [language]);
 
   const value = useMemo<LanguageContextType>(() => {
-    const dict = DICTIONARIES[language] ?? DICTIONARIES.EN!;
-    const fallback = DICTIONARIES.EN!;
+    const dict = DICTIONARIES[language] ?? DICTIONARIES.EN;
+    const fallback = DICTIONARIES.EN;
     return {
       language,
       setLanguage,

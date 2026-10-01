@@ -1,6 +1,6 @@
 import { useLanguage } from "@/lib/LanguageContext";
 import { cn } from "@/lib/utils";
-import { useMuted, useTone } from "./kit";
+import { isDarkTone, Reveal, useMuted, useTone } from "./kit";
 
 /**
  * Destinations, shown as plain text names — never third-party logos or brand
@@ -26,36 +26,62 @@ export const STORES: { name: string; kind: "stream" | "social" | "africa" }[] = 
   { name: "SoundCloud", kind: "stream" },
 ];
 
+const KIND_DOT = { stream: "bg-accent", social: "bg-brand-400", africa: "bg-orange" } as const;
+
 export function StoreWall({ limit, className }: { limit?: number; className?: string }) {
   const { t } = useLanguage();
   const tone = useTone();
-  const { subtle, line } = useMuted();
+  const { subtle } = useMuted();
   const list = limit ? STORES.slice(0, limit) : STORES;
+  const dark = isDarkTone(tone);
   return (
     <div className={className}>
-      <ul
-        className={cn(
-          "grid grid-cols-2 overflow-hidden rounded-card border sm:grid-cols-3 lg:grid-cols-5",
-          line,
-        )}
-      >
-        {list.map((s) => (
-          <li
+      <ul className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 sm:gap-3 lg:grid-cols-5">
+        {list.map((s, i) => (
+          <Reveal
+            as="li"
             key={s.name}
+            delay={(i % 5) * 50}
             className={cn(
-              "-mb-px -mr-px flex min-h-[4.5rem] items-center justify-center border-b border-r px-3 text-center text-[0.9375rem] font-bold tracking-[-0.01em] sm:min-h-[5.5rem] sm:text-[1.0625rem]",
-              line,
-              tone === "light" ? "text-ink" : "text-text",
+              "group flex min-h-[4.25rem] items-center justify-center gap-2.5 rounded-card border px-3 text-center text-[0.9375rem] font-bold tracking-[-0.01em] transition-[transform,box-shadow,border-color,color] duration-300 hover:-translate-y-1 sm:min-h-[5rem] sm:text-[1.0625rem]",
+              dark
+                ? "border-white/12 bg-tint/[0.06] text-text hover:border-accent-text/50"
+                : "border-border-subtle bg-surface-raised text-text shadow-card-light hover:border-accent/30 hover:text-accent-text hover:shadow-card-hover",
             )}
           >
-            {s.name}
-          </li>
+            <span aria-hidden className={cn("h-2 w-2 shrink-0 rounded-full transition-transform group-hover:scale-125", KIND_DOT[s.kind])} />
+            <span className="min-w-0">{s.name}</span>
+          </Reveal>
         ))}
       </ul>
-      <p className={cn("mt-5 max-w-[60ch] text-[0.875rem] leading-relaxed", subtle)}>
-        {t("stores.note")}
-      </p>
+      <p className={cn("mt-6 max-w-[60ch] text-[0.875rem] leading-relaxed", subtle)}>{t("stores.note")}</p>
       <p className={cn("mt-2 text-[0.8125rem]", subtle)}>{t("stores.disclaimer")}</p>
+    </div>
+  );
+}
+
+/**
+ * Decorative marquee of destination names for dark heroes. aria-hidden: the
+ * same list is announced by <StoreWall> further down the page.
+ */
+export function StoreMarquee({ className }: { className?: string }) {
+  const names = STORES.map((s) => s.name);
+  const row = (key: string) => (
+    <ul key={key} className="flex shrink-0 items-center gap-8 pr-8 sm:gap-12 sm:pr-12">
+      {names.map((n) => (
+        <li key={n} className="flex items-center gap-8 whitespace-nowrap sm:gap-12">
+          <span className="text-[1rem] font-bold tracking-[-0.01em] text-white/75 sm:text-[1.125rem]">{n}</span>
+          <span className="h-1.5 w-1.5 rounded-full bg-brand-400/70" />
+        </li>
+      ))}
+    </ul>
+  );
+  return (
+    <div aria-hidden className={cn("fade-x overflow-hidden", className)}>
+      <div className="flex w-max animate-rail">
+        {row("a")}
+        {row("b")}
+      </div>
     </div>
   );
 }

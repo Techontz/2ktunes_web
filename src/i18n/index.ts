@@ -1,34 +1,52 @@
 import en, { type MessageKey } from "./en";
 import sw from "./sw";
+import fr from "./fr";
 
 /**
  * Locale registry.
  *
- * EN and SW are complete and offered in the language picker. FR/PT/ES remain
- * valid values of `Language` so older call sites keep type-checking, but they
- * resolve to English until real translations exist — offering a language
- * whose pages are mostly English would be worse than not offering it.
+ * English (default), Kiswahili and French are complete and offered in the
+ * language picker. Every dictionary is typed `Record<MessageKey, string>` and
+ * every `Copy`/`Localized` object requires all three, so adding a language
+ * here makes the compiler list every string that still needs translating.
  */
-export type Language = "EN" | "SW" | "FR" | "PT" | "ES";
+export type Language = "EN" | "SW" | "FR";
+
+export const LANGUAGES: readonly Language[] = ["EN", "SW", "FR"];
 
 export const SUPPORTED_LANGUAGES: { code: Language; name: string; short: string }[] = [
   { code: "EN", name: "English", short: "EN" },
   { code: "SW", name: "Kiswahili", short: "SW" },
+  { code: "FR", name: "Français", short: "FR" },
 ];
 
-export const DICTIONARIES: Partial<Record<Language, Record<MessageKey, string>>> = {
+export const DICTIONARIES: Record<Language, Record<MessageKey, string>> = {
   EN: en,
   SW: sw,
+  FR: fr,
 };
 
-/** BCP-47 tags for Intl formatting and <html lang>. */
+/** BCP-47 tags for Intl formatting. */
 export const LOCALE_TAG: Record<Language, string> = {
   EN: "en-TZ",
   SW: "sw-TZ",
-  FR: "fr",
-  PT: "pt",
-  ES: "es",
+  FR: "fr-FR",
 };
+
+/** The `locale` value the API accepts on profile/registration. */
+export const API_LOCALE: Record<Language, "en" | "sw" | "fr"> = {
+  EN: "en",
+  SW: "sw",
+  FR: "fr",
+};
+
+/** API locale ("fr", "sw-TZ", null) → Language, defaulting to English. */
+export function languageFromApi(locale: string | null | undefined): Language {
+  const l = (locale ?? "").toLowerCase();
+  if (l.startsWith("sw")) return "SW";
+  if (l.startsWith("fr")) return "FR";
+  return "EN";
+}
 
 export function interpolate(
   template: string,
@@ -41,4 +59,4 @@ export function interpolate(
 }
 
 export type { MessageKey };
-export { en, sw };
+export { en, sw, fr };

@@ -11,7 +11,8 @@ import { cn } from "@/lib/utils";
  *   </Card>
  *
  * Props
- *   variant  raised (default, dark) | outline | sunken | light (for bone bands)
+ *   variant  raised (default: white card on the light theme, deep purple in .theme-dark)
+ *            | outline | sunken | light (always white)
  *            | accent (violet-tinted) — legacy "glass"/"dark" map to accent/sunken
  *   padding  none | sm | md | lg   (default md; use "none" with CardHeader/Body)
  *   interactive  adds hover affordance (for cards that are links)
@@ -19,7 +20,7 @@ import { cn } from "@/lib/utils";
  */
 
 const VARIANTS = {
-  raised: "bg-surface-raised border border-border-subtle",
+  raised: "bg-surface-raised border border-border-subtle shadow-raised",
   outline: "bg-transparent border border-border",
   sunken: "bg-surface-sunken border border-border-subtle",
   light: "bg-white text-ink border border-line-light shadow-card-light",
@@ -55,7 +56,7 @@ export function Card({
         VARIANTS[v],
         PADDING[padding],
         interactive &&
-          "transition-[border-color,background-color,transform] duration-200 hover:-translate-y-0.5 hover:border-border-strong",
+          "lift hover:border-accent/30",
         className,
       )}
     >

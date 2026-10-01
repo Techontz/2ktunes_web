@@ -24,6 +24,7 @@ const EN = {
   language: "Language",
   langEn: "English",
   langSw: "Kiswahili",
+  langFr: "Français",
   firstNameRequired: "Enter your first name.",
   businessRequired: "Enter your label or company name.",
   countryRequired: "Choose your country.",
@@ -96,6 +97,7 @@ const SW: typeof EN = {
   language: "Lugha",
   langEn: "English",
   langSw: "Kiswahili",
+  langFr: "Français",
   firstNameRequired: "Weka jina lako la kwanza.",
   businessRequired: "Weka jina la lebo au kampuni yako.",
   countryRequired: "Chagua nchi yako.",
@@ -144,7 +146,80 @@ const SW: typeof EN = {
   signOut: "Toka",
 };
 
-export const COPY = { EN, SW };
+const FR: typeof EN = {
+  docTitle: "Configurer votre compte",
+  stepsLabel: "Progression de l’inscription",
+  stepAccount: "Votre compte",
+  stepArtist: "Profil d’artiste",
+  stepCreator: "Profil de créateur",
+  stepOf: (n, total) => `Étape ${n} sur ${total}`,
+
+  accountTitle: "Parlez-nous de vous",
+  accountSub: "Ces informations définissent vos versements, votre devise et votre langue. Vous pourrez tout modifier plus tard dans Paramètres.",
+  typeLegend: "J’utilise 2kTunes en tant que",
+  firstName: "Prénom",
+  lastName: "Nom",
+  businessName: "Nom du label ou de l’entreprise",
+  businessHint: "Le nom qui figure sur vos relevés.",
+  country: "Pays",
+  countryHint: "Votre pays de résidence ou d’immatriculation de votre entreprise.",
+  phone: "Numéro de téléphone",
+  phoneHint: "Indiquez l’indicatif du pays, p. ex. +225 07 12 34 56 78.",
+  currency: "Devise préférée",
+  currencyHint: "Sert à afficher vos revenus. Les versements restent effectués en monnaie locale.",
+  language: "Langue",
+  langEn: "English",
+  langSw: "Kiswahili",
+  langFr: "Français",
+  firstNameRequired: "Saisissez votre prénom.",
+  businessRequired: "Saisissez le nom de votre label ou entreprise.",
+  countryRequired: "Choisissez votre pays.",
+
+  artistTitle: "Votre profil d’artiste",
+  artistSub: "Les sorties sont publiées sous un profil d’artiste. Créez le premier dès maintenant.",
+  artistSubLabel: "Ajoutez le premier artiste que vous gérez. Vous pourrez en ajouter d’autres depuis la page Artistes.",
+  artistExisting: "Vous avez déjà ces profils d’artiste :",
+  artistExistingLabel: "Vous pouvez ajouter d’autres artistes à tout moment depuis la page Artistes de votre tableau de bord.",
+  artistName: "Nom d’artiste",
+  artistNameHint: "Exactement tel qu’il doit apparaître sur les plateformes.",
+  artistNameRequired: "Saisissez le nom d’artiste.",
+  genre: "Genre principal",
+  genrePlaceholder: "Choisissez un genre",
+  artistCountry: "Pays de l’artiste",
+  createArtist: "Créer le profil d’artiste",
+  artistCreated: "Profil d’artiste créé",
+  releasesCount: (n) => (n <= 1 ? `${n} sortie` : `${n} sorties`),
+  configError: "Impossible de charger la liste des genres. Vous pouvez quand même continuer.",
+
+  creatorTitle: "Profil de créateur",
+  creatorSubCreator:
+    "Recommandé : les artistes trouvent et rémunèrent les créateurs via la marketplace. Configurez l’essentiel maintenant et ajoutez vos offres plus tard.",
+  creatorSubOther:
+    "Facultatif : si vous créez aussi du contenu pour d’autres artistes, configurez un profil de créateur pour être rémunéré.",
+  displayName: "Nom affiché",
+  displayNameHint: "Le nom que verront les artistes sur la marketplace.",
+  displayNameRequired: "Saisissez un nom affiché.",
+  categories: "Catégories de contenu",
+  categoriesHint: (max) => `Choisissez-en jusqu’à ${max}.`,
+  languages: "Langues de vos contenus",
+  languagesHint: (max) => `Choisissez-en jusqu’à ${max}.`,
+  saveCreator: "Enregistrer et terminer",
+  skip: "Passer pour l’instant",
+  skipHint: "Vous pourrez configurer un profil de créateur plus tard depuis l’Espace créateur.",
+  creatorSaved: "Profil de créateur enregistré",
+  noOptions: "Impossible de charger les options. Vous pouvez passer cette étape et la terminer plus tard.",
+
+  back: "Retour",
+  continue: "Continuer",
+  finish: "Terminer",
+  finishing: "Finalisation…",
+  welcome: "Bienvenue sur 2kTunes",
+  welcomeBody: "Votre compte est prêt.",
+  signedInAs: (email) => `Connecté en tant que ${email}`,
+  signOut: "Se déconnecter",
+};
+
+export const COPY = { EN, SW, FR };
 
 /** Marketplace content categories (config/marketplace.php). */
 const CATEGORY_EN: Record<string, string> = {
@@ -185,10 +260,23 @@ const CATEGORY_SW: typeof CATEGORY_EN = {
   family: "Familia",
   faith: "Imani",
 };
-export const CATEGORY_COPY = { EN: CATEGORY_EN, SW: CATEGORY_SW };
-
-/** Copy for <CountrySelect>. */
-export const COUNTRY_COPY = {
-  EN: { choose: "Choose a country", africa: "Africa", others: "Rest of the world" },
-  SW: { choose: "Chagua nchi", africa: "Afrika", others: "Nchi nyingine duniani" },
+const CATEGORY_FR: typeof CATEGORY_EN = {
+  dance: "Danse",
+  comedy: "Humour",
+  lifestyle: "Lifestyle",
+  fashion: "Mode",
+  beauty: "Beauté",
+  music: "Musique",
+  lip_sync: "Lip sync",
+  storytelling: "Storytelling",
+  fitness: "Fitness",
+  food: "Cuisine",
+  travel: "Voyage",
+  tech: "Tech",
+  education: "Éducation",
+  sports: "Sport",
+  gaming: "Jeux vidéo",
+  family: "Famille",
+  faith: "Foi",
 };
+export const CATEGORY_COPY = { EN: CATEGORY_EN, SW: CATEGORY_SW, FR: CATEGORY_FR };

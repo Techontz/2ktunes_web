@@ -22,8 +22,8 @@ import {
   PageLoading,
   useAction,
 } from "@/features/dashboard/components";
-import { CountrySelect } from "@/features/onboarding/CountrySelect";
-import { countryName } from "@/features/onboarding/countries";
+import { CountrySelect } from "@/components/forms/CountrySelect";
+import { countryName } from "@/lib/countries";
 import { AVATAR_ACCEPT, checkImage } from "@/features/dashboard/settings/imageFile";
 import { errorCodeOf } from "@/lib/api/errors";
 import {

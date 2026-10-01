@@ -14,6 +14,7 @@ import { COPY } from "./copy";
 export default function HelpPage() {
   const c = useCopy(COPY);
   const { language } = useLanguage();
+  // Help articles are authored in English and Swahili; French readers get English.
   const locale = language === "SW" ? "sw" : "en";
   const [query, setQuery] = useState("");
   const [q, setQ] = useState("");

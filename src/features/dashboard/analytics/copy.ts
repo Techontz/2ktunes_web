@@ -138,5 +138,74 @@ const SW: typeof EN = {
   completedOrders: "Oda zilizokamilika",
 };
 
-export const COPY = { EN, SW };
+const FR: typeof EN = {
+  title: "Statistiques",
+  intro: "Revenus et écoutes issus des relevés publiés des plateformes, ainsi que l'activité de vos liens intelligents.",
+  filtersLabel: "Filtres des statistiques",
+  range: "Période",
+  ranges: { "7d": "7 jours", "30d": "30 jours", "90d": "90 jours", "12m": "12 mois", custom: "Personnalisée" },
+  from: "Du",
+  to: "Au",
+  pickDates: "Choisissez une date de début et de fin pour afficher cette période.",
+  rangeInvalid: "La date de début doit être antérieure ou égale à la date de fin.",
+  release: "Sortie",
+  allReleases: "Toutes les sorties",
+  showing: (from: string, to: string) => `Du ${from} au ${to}`,
+
+  emptyTitle: "Aucune donnée des plateformes sur cette période",
+  emptyBody:
+    "Les écoutes, téléchargements et revenus apparaissent ici une fois les relevés des plateformes importés et publiés par le service financier de 2kTunes — généralement 1 à 3 mois après les écoutes.",
+
+  totalsTitle: "Totaux",
+  revenue: (cur: string) => `Revenus (${cur})`,
+  streams: "Écoutes",
+  downloads: "Téléchargements",
+  videoUses: "Utilisations vidéo",
+  videoUsesHint: "Vidéos et contenus créés par les utilisateurs",
+
+  monthlyTitle: "Par mois",
+  monthlyDesc: "Revenus mensuels issus des relevés publiés.",
+  chartCaption: (cur: string) => `Revenus mensuels en ${cur}`,
+  chartNote: "Les valeurs exactes figurent dans le tableau ci-dessous.",
+  tableCaption: (cur: string) => `Revenus et écoutes mensuels en ${cur}`,
+  colMonth: "Mois",
+  colRevenue: "Revenus",
+  colStreams: "Écoutes",
+  colUnits: "Unités",
+
+  topTitle: "Meilleures performances",
+  topReleases: "Sorties",
+  topTracks: "Titres",
+  topStores: "Plateformes",
+  topTerritories: "Pays",
+  byUsage: "Type d'utilisation",
+  unitsCount: (n: string) => `${n} unités`,
+  unknown: "Inconnu",
+  usage: {
+    stream: "Écoutes",
+    streams: "Écoutes",
+    download: "Téléchargements",
+    video: "Vidéo",
+    ugc: "Vidéos d'utilisateurs (UGC)",
+    other: "Autre",
+  },
+
+  linksTitle: "Liens intelligents",
+  linksDesc: "Visites et clics sur les pages de vos sorties pendant cette période.",
+  views: "Pages vues",
+  uniqueVisitors: "Visiteurs uniques",
+  clicks: "Clics vers plateformes",
+  presaves: "Pré-enregistrements",
+  byStore: "Clics par plateforme",
+  byCountry: "Vues par pays",
+  byDevice: "Vues par appareil",
+  byReferrer: "Principales sources",
+  devices: { mobile: "Mobile", desktop: "Ordinateur", tablet: "Tablette", bot: "Robot" },
+
+  campaignsTitle: "Commandes de promotion",
+  activeOrders: "Commandes en cours",
+  completedOrders: "Commandes terminées",
+};
+
+export const COPY = { EN, SW, FR };
 export type AnalyticsCopy = typeof EN;

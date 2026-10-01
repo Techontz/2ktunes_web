@@ -63,7 +63,7 @@ export function Dialog({
       <div className="fixed inset-0 z-[80] flex items-end justify-center p-0 sm:items-center sm:p-6">
         <div
           aria-hidden
-          className="absolute inset-0 animate-fade-in bg-black/70"
+          className="absolute inset-0 animate-fade-in bg-night/60 backdrop-blur-[2px]"
           onClick={dismissible ? onClose : undefined}
         />
         <div
@@ -98,7 +98,7 @@ export function Dialog({
                 type="button"
                 onClick={onClose}
                 aria-label={closeLabel}
-                className="-mr-2 -mt-1 flex h-10 w-10 shrink-0 items-center justify-center rounded-control text-text-subtle transition-colors hover:bg-white/[0.06] hover:text-text"
+                className="-mr-2 -mt-1 flex h-10 w-10 shrink-0 items-center justify-center rounded-control text-text-subtle transition-colors hover:bg-tint/[0.06] hover:text-text"
               >
                 <X className="h-5 w-5" aria-hidden />
               </button>

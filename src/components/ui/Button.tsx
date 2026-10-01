@@ -47,14 +47,14 @@ export type ButtonSize = "sm" | "md" | "lg" | "xl";
 
 const VARIANTS: Record<Exclude<ButtonVariant, "yellow">, string> = {
   primary:
-    "bg-accent text-white hover:bg-accent-hover active:bg-accent-pressed disabled:bg-accent/50",
+    "bg-accent text-white shadow-[0_8px_22px_-10px_rgb(132_29_198/0.7)] hover:bg-accent-hover hover:shadow-[0_12px_28px_-10px_rgb(132_29_198/0.8)] active:bg-accent-pressed disabled:bg-accent/50",
   secondary:
-    "border border-border bg-white/[0.06] text-text hover:border-border-strong hover:bg-white/[0.1]",
+    "border border-border bg-surface-raised text-text shadow-[0_1px_2px_rgb(42_8_70/0.05)] hover:border-border-strong hover:bg-surface-hover",
   outline:
     "border border-current/25 bg-transparent text-current hover:border-current/50 hover:bg-current/[0.06]",
   ghost: "bg-transparent text-current hover:bg-current/[0.08]",
-  danger: "bg-[#d23a1f] text-white hover:bg-[#bf321a] active:bg-[#a82b16]",
-  inverse: "bg-white text-ink hover:bg-bone-2 active:bg-bone",
+  danger: "bg-[#c2261b] text-white hover:bg-[#a91f15] active:bg-[#8f1a12]",
+  inverse: "bg-white text-brand-800 shadow-[0_8px_24px_-12px_rgb(26_11_46/0.5)] hover:bg-brand-50 active:bg-brand-100",
 };
 
 const SIZES: Record<Exclude<ButtonSize, "xl">, string> = {
@@ -116,7 +116,7 @@ export function buttonClasses({
   const s = size === "xl" ? "lg" : size;
   return cn(
     "inline-flex shrink-0 select-none items-center justify-center whitespace-nowrap font-semibold tracking-[-0.01em]",
-    "transition-[background-color,border-color,color,opacity,transform] duration-150 active:translate-y-px",
+    "transition-[background-color,border-color,color,opacity,transform,box-shadow] duration-200 ease-out hover:-translate-y-px active:translate-y-0",
     "disabled:pointer-events-none disabled:opacity-55 aria-disabled:pointer-events-none aria-disabled:opacity-55",
     "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-text",
     shape === "pill" ? "rounded-full" : "rounded-control",

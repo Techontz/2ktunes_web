@@ -6,6 +6,7 @@ import { useLanguage } from "@/lib/LanguageContext";
 import { cn } from "@/lib/utils";
 import { HELP, type HelpArticle, type HelpCategory } from "../content/help";
 import { usePageMeta } from "../usePageMeta";
+import { Orbs } from "../kit";
 
 /** Lowercase, strip accents and punctuation, so "M-Pesa" matches "mpesa". */
 export function normalise(s: string): string {
@@ -75,8 +76,9 @@ export default function HelpPage() {
 
   return (
     <>
-      <section className="border-b border-border-subtle bg-surface pb-12 pt-28 md:pb-16 md:pt-36">
-        <div className="shell-narrow text-center">
+      <section className="theme-dark bg-hero relative overflow-hidden pb-14 pt-28 text-text md:pb-20 md:pt-36">
+        <Orbs />
+        <div className="shell-narrow relative text-center">
           <p className="t-eyebrow mb-4 text-accent-text">{c.hero.eyebrow}</p>
           <h1 className="t-display">{c.hero.title}</h1>
           <p className="t-lead mx-auto mt-4 max-w-[36rem] text-text-muted">{c.hero.lede}</p>
@@ -121,8 +123,8 @@ export default function HelpPage() {
                       className={cn(
                         "whitespace-nowrap rounded-control px-3.5 py-2 text-left text-[0.9375rem] font-medium transition-colors lg:w-full",
                         active
-                          ? "bg-white/[0.08] text-text"
-                          : "border border-border-subtle text-text-muted hover:text-text lg:border-transparent",
+                          ? "bg-accent text-white shadow-[0_6px_16px_-8px_rgb(132_29_198/0.8)]"
+                          : "border border-border-subtle bg-surface-raised text-text-muted hover:text-accent-text lg:border-transparent lg:bg-transparent",
                       )}
                     >
                       {label}
@@ -170,12 +172,12 @@ export default function HelpPage() {
               <ArticleList articles={results} open={effectiveOpen} setOpen={toggle} />
             )}
 
-            <div className="mt-14 flex flex-col items-start justify-between gap-5 rounded-card border border-border-subtle bg-surface-raised p-6 sm:flex-row sm:items-center sm:p-8">
+            <div className="mt-14 flex flex-col items-start justify-between gap-5 rounded-card border border-border-subtle bg-surface-raised p-6 shadow-card-light sm:flex-row sm:items-center sm:p-8">
               <div>
                 <h2 className="t-card">{t("help.still_need")}</h2>
                 <p className="mt-1.5 text-body text-text-muted">{t("help.still_need_body")}</p>
               </div>
-              <Button to="/contact" variant="inverse" className="shrink-0">
+              <Button to="/contact" className="shrink-0">
                 {t("cta.contact")}
               </Button>
             </div>

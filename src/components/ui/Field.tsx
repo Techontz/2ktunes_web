@@ -113,14 +113,14 @@ export function Field({
 
 export const controlClasses = (invalid?: boolean) =>
   cn(
-    "w-full rounded-control border bg-white/[0.035] text-[1rem] text-text",
+    "w-full rounded-control border bg-surface-raised text-[1rem] text-text shadow-[inset_0_1px_2px_rgb(42_8_70/0.04)]",
     "transition-[border-color,box-shadow,background-color] duration-150",
     "placeholder:text-text-subtle/80",
-    "outline-none focus-visible:outline-none focus:bg-white/[0.05] focus:ring-[3px]",
+    "outline-none focus-visible:outline-none focus:ring-[3px]",
     "disabled:cursor-not-allowed disabled:opacity-55",
     invalid
       ? "border-danger/70 focus:border-danger focus:ring-danger/20"
-      : "border-border hover:border-border-strong focus:border-accent-text focus:ring-accent/25",
+      : "border-border-strong/80 hover:border-accent/50 focus:border-accent-text focus:ring-accent/20",
   );
 
 function useControlProps(
@@ -194,7 +194,7 @@ export function PasswordInput({
           onClick={() => setShown((v) => !v)}
           aria-label={shown ? hideLabel : showLabel}
           aria-pressed={shown}
-          className="flex h-9 w-10 items-center justify-center rounded-[8px] text-text-subtle transition-colors hover:bg-white/[0.06] hover:text-text"
+          className="flex h-9 w-10 items-center justify-center rounded-[8px] text-text-subtle transition-colors hover:bg-tint/[0.06] hover:text-text"
         >
           {shown ? <EyeOff className="h-4 w-4" aria-hidden /> : <Eye className="h-4 w-4" aria-hidden />}
         </button>
@@ -287,7 +287,7 @@ export function Checkbox({
           type="checkbox"
           aria-invalid={error ? true : undefined}
           aria-describedby={cn(descId, errId) || undefined}
-          className="mt-0.5 h-[18px] w-[18px] shrink-0 rounded-[5px] accent-[#6d2bff]"
+          className="mt-0.5 h-[18px] w-[18px] shrink-0 rounded-[5px] accent-[#841DC6]"
         />
         <div className="min-w-0">
           <label htmlFor={id} className="text-[0.9375rem] font-medium leading-snug text-text">
@@ -368,8 +368,8 @@ export function RadioCardGroup<V extends string>({
                 "relative flex cursor-pointer gap-3 rounded-control border p-3.5 transition-colors",
                 "has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-accent-text",
                 checked
-                  ? "border-accent-text bg-accent-soft"
-                  : "border-border bg-white/[0.025] hover:border-border-strong",
+                  ? "border-accent-text bg-accent-soft shadow-[0_0_0_1px_var(--color-accent-text)]"
+                  : "border-border bg-surface-raised hover:border-accent/40",
               )}
             >
               <input
@@ -385,7 +385,7 @@ export function RadioCardGroup<V extends string>({
                   aria-hidden
                   className={cn(
                     "mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-[8px] [&>svg]:h-4 [&>svg]:w-4",
-                    checked ? "bg-accent text-white" : "bg-white/[0.06] text-text-muted",
+                    checked ? "bg-accent text-white" : "bg-accent-soft text-accent-text",
                   )}
                 >
                   {opt.icon}

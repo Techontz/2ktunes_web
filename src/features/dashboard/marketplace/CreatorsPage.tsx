@@ -2,6 +2,7 @@ import { useEffect, useState, type FormEvent } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { MapPin, Search, Users } from "lucide-react";
 import { Avatar, Badge, Button, Card, Checkbox, EmptyState, Field, Input, Select } from "@/components/ui";
+import { CountrySelect } from "@/components/forms/CountrySelect";
 import { LoadError, Money, PageHeader, PageLoading, Pagination } from "@/features/dashboard/components";
 import { fetchCreators, type CreatorFilters } from "@/lib/api/marketplace";
 import type { CreatorSummary } from "@/lib/api/types";
@@ -165,12 +166,7 @@ export default function CreatorsPage() {
             </Select>
           </Field>
           <Field label={c.country} hint={c.countryHint} error={errors.country}>
-            <Input
-              value={form.country}
-              onChange={(e) => setForm({ ...form, country: e.target.value })}
-              maxLength={2}
-              autoCapitalize="characters"
-            />
+            <CountrySelect value={form.country} onChange={(code) => setForm({ ...form, country: code })} />
           </Field>
           <Field label={c.minFollowers} error={errors.min_followers}>
             <Input

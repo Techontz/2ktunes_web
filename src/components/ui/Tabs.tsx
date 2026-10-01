@@ -110,7 +110,7 @@ export function TabList({
       onKeyDown={onKeyDown}
       className={cn(
         variant === "segmented"
-          ? "inline-flex max-w-full gap-1 overflow-x-auto rounded-control border border-border-subtle bg-white/[0.04] p-1 no-scrollbar"
+          ? "inline-flex max-w-full gap-1 overflow-x-auto rounded-control border border-border-subtle bg-tint/[0.05] p-1 no-scrollbar"
           : "flex gap-6 overflow-x-auto border-b border-border no-scrollbar",
         fullWidth && "flex w-full [&>*]:flex-1",
         className,
@@ -149,12 +149,12 @@ export function Tab({
         variant === "segmented"
           ? cn(
               "h-9 rounded-[8px] px-4",
-              selected ? "bg-white/[0.1] text-text shadow-raised" : "text-text-subtle hover:text-text",
+              selected ? "bg-surface-raised text-accent-text shadow-raised" : "text-text-subtle hover:text-text",
             )
           : cn(
               "-mb-px border-b-2 pb-3 pt-1",
               selected
-                ? "border-accent-text text-text"
+                ? "border-accent text-accent-text"
                 : "border-transparent text-text-subtle hover:text-text",
             ),
         className,

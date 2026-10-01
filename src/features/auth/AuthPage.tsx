@@ -17,6 +17,7 @@ import { DASHBOARD_HOME, ONBOARDING_PATH, safeNext } from "@/lib/auth/routes";
 import { ApiError } from "@/lib/api/client";
 import { ACCOUNT_TYPES, PASSWORD_MIN, type AccountType } from "@/lib/api/auth";
 import { useLanguage } from "@/lib/LanguageContext";
+import { API_LOCALE } from "@/i18n";
 import { cn } from "@/lib/utils";
 import AuthLayout, { AuthHeading, FormAlert } from "./AuthLayout";
 import GoogleButton from "./GoogleButton";
@@ -179,7 +180,7 @@ function LoginForm() {
 /* ── Register ───────────────────────────────────────────────────────── */
 
 function RegisterForm() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const auth = useAuth();
   const navigate = useNavigate();
   const [params] = useSearchParams();
@@ -223,6 +224,7 @@ function RegisterForm() {
         password: values.password,
         passwordConfirmation: values.confirm,
         accountType,
+        locale: API_LOCALE[language],
       });
       navigate(ONBOARDING_PATH, { replace: true });
     } catch (err) {

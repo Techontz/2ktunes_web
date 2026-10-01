@@ -124,4 +124,65 @@ export const CREATORS: Localized<PageCopy> = {
     ],
     cta: { title: "Fungua akaunti kama Mtengeneza maudhui au Msanii.", lede: "Chagua aina ya akaunti unapojisajili — unaweza kuagiza vifurushi vya watengeneza maudhui au kutoa vyako." },
   },
+  FR: {
+    meta: {
+      title: "Créateurs de contenu",
+      description: "Proposez vos propres offres de promotion et soyez payé pour mettre en avant la nouvelle musique africaine, ou commandez une offre de créateur de contenu pour votre sortie.",
+    },
+    hero: {
+      eyebrow: "Campagnes de créateurs",
+      title: "Là où les nouveaux titres rencontrent ceux qui les font buzzer.",
+      lede: "Les créateurs de contenu proposent leurs propres offres et fixent leurs prix. Les artistes parcourent les profils et commandent une offre ; le créateur publie, puis est payé dans son portefeuille 2kTunes — et retire vers le mobile money ou sa banque.",
+      secondary: { label: "Comment marche la promotion", to: "/promotion" },
+      visual: "campaign",
+    },
+    sections: [
+      {
+        type: "steps",
+        tone: "raised",
+        eyebrow: "Pour les artistes",
+        title: "Commandez une offre de créateur en quatre étapes.",
+        steps: [
+          { title: "Parcourez les créateurs", body: "Comparez les créateurs de contenu selon leur plateforme, leur audience et leurs offres. Les chiffres d’audience sont indiqués comme déclarés tant que 2kTunes ne les a pas vérifiés." },
+          { title: "Commandez une offre", body: "Choisissez une offre au prix fixé par le créateur et payez depuis votre portefeuille. 2kTunes conserve le paiement pendant que le créateur accepte ou refuse votre commande." },
+          { title: "Validez la publication", body: "Le créateur envoie le lien de sa publication. Validez-la ou demandez une modification — sans réponse de votre part dans le délai de vérification, elle est validée automatiquement." },
+          { title: "Suivez les résultats", body: "Chaque publication livrée est liée à votre commande, pour que vous puissiez suivre ses performances." },
+        ],
+      },
+      {
+        type: "features",
+        tone: "light",
+        eyebrow: "Pour les créateurs",
+        title: "Soyez payé pour le contenu que vous créez déjà.",
+        items: [
+          { icon: "sparkles", title: "Vos offres, vos prix", body: "Créez un profil avec vos comptes TikTok, Instagram ou YouTube et proposez vos offres, aux prix que vous fixez." },
+          { icon: "handshake", title: "Choisissez ce qui vous correspond", body: "Acceptez les commandes qui collent à votre style et à votre audience, et refusez les autres. Aucun quota." },
+          { icon: "wallet", title: "Payé localement", body: "Vos revenus arrivent dans votre portefeuille 2kTunes dans la devise de l’offre, moins 15 % de frais de plateforme, et se retirent vers le mobile money ou votre banque." },
+          { icon: "shield", title: "Des règles claires", body: "Chaque offre précise ce qu’elle inclut, chaque publication payée est signalée comme promotion, et l’équipe 2kTunes règle tout litige." },
+          { icon: "users", title: "Toutes tailles d’audience", body: "Les micro-créateurs avec une communauté locale engagée sont souvent exactement ce dont un artiste a besoin." },
+          { icon: "timer", title: "Payé après validation", body: "Dès que l’artiste valide votre publication — ou que le délai de vérification expire sans réponse — le paiement est versé dans votre portefeuille." },
+        ],
+      },
+      {
+        type: "notice",
+        tone: "dark",
+        title: "Vérifié avant d’être visible",
+        body: "2kTunes vérifie chaque profil de créateur de contenu avant que les artistes puissent le voir, et les chiffres d’audience restent indiqués comme déclarés jusqu’à notre vérification. Chaque publication payée doit être signalée comme promotion. Nous ne payons jamais de fausses vues, de bots ou de publicités non déclarées.",
+      },
+      {
+        type: "faq",
+        tone: "raised",
+        eyebrow: "FAQ créateurs",
+        title: "Questions fréquentes",
+        items: [
+          { q: "Qui peut s’inscrire comme créateur de contenu ?", a: "Toute personne de 18 ans ou plus disposant d’un compte TikTok, Instagram ou YouTube public et en règle. Votre profil est vérifié par 2kTunes avant d’être visible par les artistes." },
+          { q: "Combien gagnent les créateurs ?", a: "Vous fixez le prix de chaque offre que vous proposez. Lorsqu’une commande est validée, vous recevez ce prix moins 15 % de frais de plateforme." },
+          { q: "Et si l’artiste et moi ne sommes pas d’accord ?", a: "Les litiges liés à une commande sont réglés par l’équipe 2kTunes, qui les examine et tranche." },
+          { q: "Dois-je signaler mes publications comme publicités ?", a: "Oui. Les publications payées doivent utiliser la mention de partenariat rémunéré ou de publicité de la plateforme et respecter les règles publicitaires locales." },
+        ],
+        link: { label: "Politique d’utilisation acceptable", to: "/legal/acceptable-use" },
+      },
+    ],
+    cta: { title: "Créez votre compte Créateur ou Artiste.", lede: "Choisissez votre type de compte à l’inscription — vous pourrez commander des offres de créateurs ou proposer les vôtres." },
+  },
 };

@@ -1,6 +1,6 @@
 import { Suspense, useEffect, useRef, useState } from "react";
 import { Link, Outlet, useLocation } from "react-router-dom";
-import { Bell, ExternalLink, LogOut, Menu, Settings } from "lucide-react";
+import { ArrowUpRight, Bell, ExternalLink, LogOut, Menu, Settings } from "lucide-react";
 import { Wordmark } from "@/components/brand/Wordmark";
 import { Avatar, Button, Sheet, useToast } from "@/components/ui";
 import { LanguageSwitch } from "@/features/site/layout/LanguageSwitch";
@@ -28,7 +28,7 @@ function NavList({ onNavigate }: { onNavigate?: () => void }) {
   const { user } = useAuth();
   const { pathname } = useLocation();
   return (
-    <nav aria-label={t("dash.nav_label")} className="space-y-6">
+    <nav aria-label={t("dash.nav_label")} className="space-y-5">
       {NAV.map((group) => {
         const items = group.items.filter((i) => !i.visible || i.visible(user));
         if (!items.length) return null;
@@ -47,15 +47,18 @@ function NavList({ onNavigate }: { onNavigate?: () => void }) {
                       onClick={onNavigate}
                       aria-current={active ? "page" : undefined}
                       className={cn(
-                        "flex min-h-10 items-center gap-3 rounded-control px-3 py-2 text-[0.9rem] font-semibold transition-colors",
+                        "group relative flex min-h-[2.375rem] items-center gap-3 rounded-control px-3 py-1.5 text-[0.9rem] font-semibold transition-[background-color,color] duration-150",
                         "focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-accent-text",
                         active
-                          ? "bg-white/[0.08] text-text"
-                          : "text-text-muted hover:bg-white/[0.04] hover:text-text",
+                          ? "bg-accent-soft text-text before:absolute before:inset-y-2 before:left-0 before:w-[3px] before:rounded-r-full before:bg-accent-text"
+                          : "text-text-muted hover:bg-tint/[0.06] hover:text-text",
                       )}
                     >
                       <item.icon
-                        className={cn("h-[1.05rem] w-[1.05rem] shrink-0", active ? "text-accent-text" : "text-text-subtle")}
+                        className={cn(
+                          "h-[1.05rem] w-[1.05rem] shrink-0 transition-colors",
+                          active ? "text-accent-text" : "text-text-subtle group-hover:text-text",
+                        )}
                         aria-hidden
                       />
                       <span className="min-w-0 truncate">{t(item.label)}</span>
@@ -71,6 +74,56 @@ function NavList({ onNavigate }: { onNavigate?: () => void }) {
   );
 }
 
+/** Current section name, shown on the left of the desktop top bar. */
+function TopBarTitle() {
+  const { t } = useLanguage();
+  const { pathname } = useLocation();
+  const items = NAV.flatMap((g) => g.items).filter((i) => isNavActive(i, pathname));
+  const best = items.sort((a, b) => b.to.length - a.to.length)[0];
+  if (!best) return <div className="hidden lg:block" />;
+  const Icon = best.icon;
+  return (
+    <p className="hidden min-w-0 items-center gap-2.5 text-body-sm font-semibold text-text-muted lg:flex">
+      <span
+        aria-hidden
+        className="flex h-8 w-8 items-center justify-center rounded-[9px] bg-accent-soft text-accent-text"
+      >
+        <Icon className="h-4 w-4" />
+      </span>
+      <span className="truncate">{t(best.label)}</span>
+    </p>
+  );
+}
+
+/** A small branded card at the foot of the sidebar: artist photo + the release shortcut. */
+function SidebarRelease() {
+  const { t } = useLanguage();
+  return (
+    <div className="relative shrink-0 p-3 pt-0 [@media(max-height:960px)]:hidden">
+      <Link
+        to="/dashboard/new-release"
+        className="group relative flex h-[5.5rem] items-end overflow-hidden rounded-card border border-white/10 p-3.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-text"
+      >
+        <img
+          src="/images/artists/artist-2-sm.webp"
+          alt=""
+          width={480}
+          height={960}
+          loading="lazy"
+          className="absolute inset-0 h-full w-full object-cover object-[50%_22%] transition-transform duration-500 group-hover:scale-105"
+        />
+        <span aria-hidden className="absolute inset-0 bg-[linear-gradient(90deg,rgb(26_11_46/0.92)_30%,rgb(132_29_198/0.35))]" />
+        <span className="relative flex w-full items-center justify-between gap-2 text-body-sm font-bold text-white">
+          {t("dash.nav_new_release")}
+          <span className="flex h-7 w-7 items-center justify-center rounded-full bg-accent transition-transform group-hover:translate-x-0.5">
+            <ArrowUpRight className="h-4 w-4" aria-hidden />
+          </span>
+        </span>
+      </Link>
+    </div>
+  );
+}
+
 function NotificationBell() {
   const { t } = useLanguage();
   const { unread } = useUnread();
@@ -79,7 +132,7 @@ function NotificationBell() {
     <Link
       to="/dashboard/notifications"
       aria-label={count > 0 ? t("dash.bell_unread", { count }) : t("dash.bell_none")}
-      className="relative flex h-10 w-10 items-center justify-center rounded-control text-text-muted transition-colors hover:bg-white/[0.06] hover:text-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-text"
+      className="relative flex h-10 w-10 items-center justify-center rounded-control text-text-muted transition-colors hover:bg-tint/[0.06] hover:text-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-text"
     >
       <Bell className="h-5 w-5" aria-hidden />
       {count > 0 && (
@@ -125,7 +178,7 @@ function UserMenu() {
 
   if (!user) return null;
   const itemCls =
-    "flex w-full items-center gap-3 rounded-[8px] px-3 py-2.5 text-left text-body-sm font-semibold text-text-muted hover:bg-white/[0.06] hover:text-text focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-accent-text";
+    "flex w-full items-center gap-3 rounded-[8px] px-3 py-2.5 text-left text-body-sm font-semibold text-text-muted hover:bg-tint/[0.06] hover:text-text focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-accent-text";
 
   return (
     <div ref={wrap} className="relative">
@@ -136,7 +189,7 @@ function UserMenu() {
         aria-controls="dash-user-menu"
         aria-label={t("dash.user_menu")}
         onClick={() => setOpen((v) => !v)}
-        className="flex h-10 items-center gap-2 rounded-control pl-1 pr-1 transition-colors hover:bg-white/[0.06] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-text sm:pr-2"
+        className="flex h-10 items-center gap-2 rounded-control pl-1 pr-1 transition-colors hover:bg-tint/[0.06] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-text sm:pr-2"
       >
         <Avatar name={user.name || user.email} src={user.avatar} size="sm" />
         <span className="hidden max-w-[10rem] truncate text-body-sm font-semibold text-text md:inline">{user.name}</span>
@@ -193,7 +246,7 @@ function VerifyEmailBanner() {
   if (!user || user.email_verified !== false) return null;
   return (
     <div className="border-b border-warning/25 bg-warning-soft px-4 py-2.5 sm:px-6 lg:px-8">
-      <div className="mx-auto flex max-w-[76rem] flex-wrap items-center justify-between gap-x-4 gap-y-2 text-body-sm text-text">
+      <div className="flex max-w-[80rem] flex-wrap items-center justify-between gap-x-4 gap-y-2 text-body-sm text-text">
         <p>{t("dash.unverified")}</p>
         <Button
           size="sm"
@@ -252,18 +305,23 @@ export default function DashboardLayout() {
           {t("common.skip")}
         </a>
 
-        {/* Desktop sidebar */}
-        <aside className="fixed inset-y-0 left-0 z-30 hidden w-64 flex-col border-r border-border-subtle bg-surface-sunken lg:flex">
+        {/* Desktop sidebar: deep brand purple, logo on top, release card below. */}
+        <aside className="theme-dark fixed inset-y-0 left-0 z-30 hidden w-64 flex-col overflow-hidden bg-[linear-gradient(180deg,#1a0b2e_0%,#241040_60%,#2a0f4a_100%)] lg:flex">
+          <div
+            aria-hidden
+            className="pointer-events-none absolute -right-24 -top-24 h-64 w-64 rounded-full bg-[radial-gradient(circle,rgb(132_29_198/0.45),transparent_65%)]"
+          />
           <Link
             to="/dashboard"
-            className="flex h-16 shrink-0 items-center px-6 text-[1.2rem] leading-none focus-visible:outline-2 focus-visible:outline-offset-[-4px] focus-visible:outline-accent-text"
+            className="relative flex h-16 shrink-0 items-center px-5 text-[1.3rem] leading-none focus-visible:outline-2 focus-visible:outline-offset-[-4px] focus-visible:outline-accent-text"
             aria-label={t("nav.home")}
           >
-            <Wordmark />
+            <Wordmark tone="dark" />
           </Link>
-          <div className="min-h-0 flex-1 overflow-y-auto px-3 pb-6 pt-2 no-scrollbar">
+          <div className="relative min-h-0 flex-1 overflow-y-auto px-3 pb-4 pt-3 no-scrollbar">
             <NavList />
           </div>
+          <SidebarRelease />
         </aside>
 
         {/* Mobile navigation */}
@@ -281,23 +339,24 @@ export default function DashboardLayout() {
         </Sheet>
 
         <div className="lg:pl-64">
-          <header className="sticky top-0 z-20 border-b border-border-subtle bg-surface/90 backdrop-blur-md">
-            <div className="mx-auto flex h-16 max-w-[76rem] items-center justify-between gap-2 px-3 sm:px-6 lg:px-8">
+          <header className="sticky top-0 z-20 border-b border-border-subtle bg-white/85 shadow-[0_1px_0_rgb(42_8_70/0.02),0_8px_24px_-20px_rgb(42_8_70/0.35)] backdrop-blur-md">
+            <div className="flex h-16 items-center justify-between gap-2 px-3 sm:px-6 lg:px-8">
               <div className="flex min-w-0 items-center gap-1.5 lg:hidden">
                 <button
                   type="button"
                   onClick={() => setOpen(true)}
                   aria-label={t("common.menu_open")}
                   aria-expanded={open}
-                  className="flex h-10 w-10 items-center justify-center rounded-control text-text-muted hover:bg-white/[0.06] hover:text-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-text"
+                  className="flex h-10 w-10 items-center justify-center rounded-control text-text-muted hover:bg-tint/[0.06] hover:text-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-text"
                 >
                   <Menu className="h-5 w-5" aria-hidden />
                 </button>
-                <Link to="/dashboard" className="text-[1.05rem] leading-none" aria-label={t("nav.home")}>
-                  <Wordmark />
+                <Link to="/dashboard" className="rounded-sm text-[1.1rem] leading-none" aria-label={t("nav.home")}>
+                  <Wordmark tone="light" variant="mark" className="sm:hidden" />
+                  <Wordmark tone="light" className="hidden sm:inline-flex" />
                 </Link>
               </div>
-              <div className="hidden lg:block" />
+              <TopBarTitle />
               <div className="flex items-center gap-1 sm:gap-2">
                 <LanguageSwitch />
                 <NotificationBell />
@@ -310,7 +369,7 @@ export default function DashboardLayout() {
             id="dash-main"
             ref={main}
             tabIndex={-1}
-            className="mx-auto w-full max-w-[76rem] px-4 pb-16 pt-6 focus:outline-none sm:px-6 sm:pt-8 lg:px-8"
+            className="w-full max-w-[80rem] px-4 pb-16 pt-6 focus:outline-none sm:px-6 sm:pt-7 lg:px-8"
           >
             <Suspense fallback={<PageLoading />}>
               <Outlet />

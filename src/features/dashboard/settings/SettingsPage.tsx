@@ -24,8 +24,9 @@ import {
   PasswordConfirmDialog,
   useAction,
 } from "@/features/dashboard/components";
-import { CountrySelect } from "@/features/onboarding/CountrySelect";
-import { CURRENCIES, type Currency } from "@/features/onboarding/countries";
+import { CountrySelect } from "@/components/forms/CountrySelect";
+import { API_LOCALE, SUPPORTED_LANGUAGES, type Language } from "@/i18n";
+import { CURRENCIES, currencyLabel, type Currency } from "@/features/onboarding/countries";
 import { deleteAccount, logoutAll, updateProfile, uploadProfileAvatar, type ProfilePatch } from "@/lib/api/account";
 import type { AuthUser } from "@/lib/api/auth";
 import { errorCodeOf } from "@/lib/api/errors";
@@ -121,11 +122,11 @@ function fromUser(u: AuthUser): ProfileForm {
 
 function ProfileSection({ user }: { user: AuthUser }) {
   const c = useCopy(COPY);
-  const { t, language, setLanguage } = useLanguage();
+  const { t, language, setLanguage, locale } = useLanguage();
   const { refresh } = useAuth();
   const { toast } = useToast();
   const [form, setForm] = useState<ProfileForm>(() => fromUser(user));
-  const [lang, setLang] = useState<"EN" | "SW">(language === "SW" ? "SW" : "EN");
+  const [lang, setLang] = useState<Language>(language);
   const save = useAction((patch: ProfilePatch) => updateProfile(patch));
 
   const set = (k: keyof ProfileForm, v: string) => setForm((f) => ({ ...f, [k]: v }));
@@ -149,7 +150,7 @@ function ProfileSection({ user }: { user: AuthUser }) {
       address_line_2: text("address_line_2"),
       postal_code: text("postal_code"),
       preferred_currency: form.preferred_currency,
-      locale: lang === "SW" ? "sw" : "en",
+      locale: API_LOCALE[lang],
     };
     const res = await save.run(patch);
     if (res.ok) {
@@ -212,19 +213,18 @@ function ProfileSection({ user }: { user: AuthUser }) {
             <Select value={form.preferred_currency} onChange={(e) => set("preferred_currency", e.target.value)}>
               {CURRENCIES.map((cur) => (
                 <option key={cur} value={cur}>
-                  {cur}
+                  {currencyLabel(cur, locale)}
                 </option>
               ))}
             </Select>
           </Field>
           <Field label={c.language} error={err("locale")}>
-            <Select value={lang} onChange={(e) => setLang(e.target.value as "EN" | "SW")}>
-              <option value="EN" lang="en">
-                {c.langEn}
-              </option>
-              <option value="SW" lang="sw">
-                {c.langSw}
-              </option>
+            <Select value={lang} onChange={(e) => setLang(e.target.value as Language)}>
+              {SUPPORTED_LANGUAGES.map((l) => (
+                <option key={l.code} value={l.code} lang={l.code.toLowerCase()}>
+                  {l.name}
+                </option>
+              ))}
             </Select>
           </Field>
         </div>

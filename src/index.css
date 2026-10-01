@@ -4,22 +4,32 @@
  * 2KTUNES DESIGN TOKENS
  * =====================
  *
+ * Brand: purple #841DC6 (sampled from the official logo) with the logo's
+ * orange #F7931E as a rare secondary accent.
+ *
  * Three layers, in this order:
  *
- *   1. Palette     — raw brand colours (ink, carbon, bone, volt, lime…). These
- *                    names predate this file and are used across the app; they
- *                    are kept exactly so nothing downstream breaks.
+ *   1. Palette     — the brand scale (brand-50…950), night purples, and the
+ *                    legacy names (ink, carbon, bone, volt, lime…) re-pointed
+ *                    at the purple palette so older screens follow the brand.
  *   2. Roles       — what a colour is FOR (surface, text-muted, accent, danger…).
- *                    New code should reach for roles, not palette names, so a
- *                    later re-theme is a one-file change.
+ *                    Components use roles, never raw palette names.
  *   3. Scale       — type, radii, shadows, motion.
  *
- * Contrast (measured against --color-surface #0B0B0C):
- *   text          #F5F4F0  ≈ 18.3:1
- *   text-muted    #B4B2AB  ≈  9.6:1
- *   text-subtle   #8E8C86  ≈  5.9:1   ← lowest tone allowed for body copy
- *   accent-text   #9B74FF  ≈  5.6:1
- *   On bone (#F2F0EA): ink ≈ 18:1, ink-muted #4F4D48 ≈ 7.6:1.
+ * THEMES
+ *   Default (`:root`) is LIGHT: lavender page, white cards, deep-purple ink.
+ *   `.theme-dark` re-declares the role tokens for deep-purple surfaces (hero,
+ *   purple bands, footer, dashboard sidebar, auth brand panel). Anything
+ *   inside it — buttons, fields, badges — re-themes automatically.
+ *
+ * Contrast (WCAG 2.x), light theme, on #FAF7FE page / #FFFFFF card:
+ *   text          #1A0B2E  ≈ 17.5:1
+ *   text-muted    #4A3D5C  ≈  9.4:1
+ *   text-subtle   #625573  ≈  6.5:1 (6.0:1 on sunken #F3EEFB)
+ *   accent-text   #841DC6  ≈  6.7:1 / 7.1:1; white on accent ≈ 7.1:1
+ *   success #15803D 5.0:1 · warning #B45309 5.0:1 · danger #C2261B 5.9:1 · info #1D64C4 5.7:1
+ * Dark theme, on #2A0F4A (worst case):
+ *   text #F7F3FC ≈ 15:1 · muted #D9CCEA ≈ 10.9:1 · subtle #BBA9D3 ≈ 7.7:1 · accent-text #C99BF2 ≈ 7.5:1
  */
 
 @theme {
@@ -29,64 +39,86 @@
   /* Legacy alias: older screens used `font-display` (was Syne). */
   --font-display: "Figtree", ui-sans-serif, system-ui, sans-serif;
 
-  /* ── 1. Palette (legacy names, kept) ───────────────────────────────── */
-  --color-brand-primary: #6d2bff;
-  --color-brand-yellow: #cbf24c;
-  --color-brand-black: #0b0b0c;
-  --color-brand-grey: #141416;
+  /* ── 1a. Brand scale ───────────────────────────────────────────────── */
+  --color-brand-50: #faf6fe;
+  --color-brand-100: #f3eafd;
+  --color-brand-200: #e7d5fb;
+  --color-brand-300: #d4b2f6;
+  --color-brand-400: #b983ee;
+  --color-brand-500: #9e4fe0;
+  --color-brand-600: #841dc6;
+  --color-brand-700: #6e16a8;
+  --color-brand-800: #5a1389;
+  --color-brand-900: #45106a;
+  --color-brand-950: #2a0846;
+  --color-night: #1a0b2e;
+  --color-night-2: #2a0f4a;
+  --color-night-3: #13071f;
+  --color-orange: #f7931e;
+  --color-lavender: #faf7fe;
 
-  --color-ink: #000000;
-  --color-carbon: #0e0e0e;
-  --color-carbon-2: #161616;
-  --color-slab: #1d1d1d;
-  --color-slab-2: #262626;
-  --color-bone: #f2f0ea;
-  --color-bone-2: #e8e5dc;
+  /* ── 1b. Legacy names (kept; re-pointed at the brand) ───────────────── */
+  --color-brand-primary: #841dc6;
+  --color-brand-yellow: #f7931e;
+  --color-brand-black: #1a0b2e;
+  --color-brand-grey: #2a0f4a;
+
+  --color-ink: #1a0b2e;
+  --color-carbon: #1a0b2e;
+  --color-carbon-2: #221038;
+  --color-slab: #2a0f4a;
+  --color-slab-2: #351659;
+  --color-bone: #f6f0fd;
+  --color-bone-2: #ece2fa;
   --color-paper: #ffffff;
 
-  --color-volt: #6d2bff;
-  --color-volt-lit: #8a5cff;
-  --color-volt-deep: #4a11cc;
-  --color-lime: #cbf24c;
+  --color-volt: #841dc6;
+  --color-volt-lit: #b983ee;
+  --color-volt-deep: #5a1389;
+  --color-lime: #b6f36a;
   --color-amber: #ffc94a;
   --color-clay: #e1421f;
   --color-clay-deep: #3b1409;
 
-  /* ── 2. Roles ───────────────────────────────────────────────────────── */
-  --color-surface: #0b0b0c;
-  --color-surface-sunken: #060607;
-  --color-surface-raised: #141416;
-  --color-surface-overlay: #1a1a1d;
-  --color-surface-hover: #1f1f23;
+  /* ── 2. Roles (light — the default) ─────────────────────────────────── */
+  --color-surface: #faf7fe;
+  --color-surface-sunken: #f3eefb;
+  --color-surface-raised: #ffffff;
+  --color-surface-overlay: #ffffff;
+  --color-surface-hover: #f5effc;
 
-  --color-border: rgb(255 255 255 / 0.1);
-  --color-border-strong: rgb(255 255 255 / 0.18);
-  --color-border-subtle: rgb(255 255 255 / 0.06);
+  /* `tint` is the colour of translucent fills (hover, tracks, chips):
+     purple ink on light surfaces, white on dark ones. Use `bg-tint/[0.06]`. */
+  --color-tint: #3b0d63;
 
-  --color-text: #f5f4f0;
-  --color-text-muted: #b4b2ab;
-  --color-text-subtle: #8e8c86;
-  --color-text-inverse: #0b0b0c;
+  --color-border: rgb(42 8 70 / 0.13);
+  --color-border-strong: rgb(42 8 70 / 0.24);
+  --color-border-subtle: rgb(42 8 70 / 0.085);
 
-  /* Light surfaces (marketing bands). */
-  --color-ink-muted: #4f4d48;
-  --color-ink-subtle: #6b6962;
-  --color-line-light: rgb(0 0 0 / 0.1);
+  --color-text: #1a0b2e;
+  --color-text-muted: #4a3d5c;
+  --color-text-subtle: #625573;
+  --color-text-inverse: #ffffff;
 
-  --color-accent: #6d2bff;
-  --color-accent-hover: #7c42ff;
-  --color-accent-pressed: #5a1ee6;
-  --color-accent-text: #9b74ff;
-  --color-accent-soft: rgb(109 43 255 / 0.14);
+  /* Kept for older light-band code. */
+  --color-ink-muted: #4a3d5c;
+  --color-ink-subtle: #625573;
+  --color-line-light: rgb(42 8 70 / 0.1);
 
-  --color-success: #cbf24c;
-  --color-success-soft: rgb(203 242 76 / 0.12);
-  --color-warning: #ffc94a;
-  --color-warning-soft: rgb(255 201 74 / 0.13);
-  --color-danger: #ff6a4d;
-  --color-danger-soft: rgb(255 106 77 / 0.12);
-  --color-info: #6cb4ff;
-  --color-info-soft: rgb(108 180 255 / 0.12);
+  --color-accent: #841dc6;
+  --color-accent-hover: #7318b0;
+  --color-accent-pressed: #6e16a8;
+  --color-accent-text: #841dc6;
+  --color-accent-soft: rgb(132 29 198 / 0.1);
+
+  --color-success: #15803d;
+  --color-success-soft: #eaf6ee;
+  --color-warning: #b45309;
+  --color-warning-soft: #fdf3e6;
+  --color-danger: #c2261b;
+  --color-danger-soft: #fcecea;
+  --color-info: #1d64c4;
+  --color-info-soft: #e9f1fb;
 
   /* ── 3a. Type scale ─────────────────────────────────────────────────
      `text-*` sizes for product UI (dashboard/auth). Marketing display sizes
@@ -110,15 +142,17 @@
   --text-h1: 2.125rem;
   --text-h1--line-height: 2.45rem;
 
-  /* ── 3b. Radii (restrained: only badges and avatars are fully round) ─ */
+  /* ── 3b. Radii ─────────────────────────────────────────────────────── */
   --radius-control: 10px;
-  --radius-card: 14px;
-  --radius-panel: 20px;
+  --radius-card: 16px;
+  --radius-panel: 22px;
 
-  /* ── 3c. Shadows ──────────────────────────────────────────────────── */
-  --shadow-raised: 0 1px 0 0 rgb(255 255 255 / 0.04) inset, 0 12px 32px -18px rgb(0 0 0 / 0.8);
-  --shadow-overlay: 0 24px 64px -20px rgb(0 0 0 / 0.85), 0 0 0 1px rgb(255 255 255 / 0.08);
-  --shadow-card-light: 0 1px 2px rgb(0 0 0 / 0.04), 0 8px 24px -12px rgb(0 0 0 / 0.12);
+  /* ── 3c. Shadows (purple-tinted, soft) ─────────────────────────────── */
+  --shadow-raised: 0 1px 2px rgb(42 8 70 / 0.05), 0 4px 16px -8px rgb(42 8 70 / 0.12);
+  --shadow-overlay: 0 24px 64px -20px rgb(42 8 70 / 0.35), 0 0 0 1px rgb(42 8 70 / 0.06);
+  --shadow-card-light: 0 1px 2px rgb(42 8 70 / 0.05), 0 10px 30px -14px rgb(42 8 70 / 0.18);
+  --shadow-card-hover: 0 2px 4px rgb(42 8 70 / 0.05), 0 22px 44px -18px rgb(84 19 137 / 0.32);
+  --shadow-glow: 0 10px 34px -10px rgb(132 29 198 / 0.65);
 
   /* ── 3d. Motion ───────────────────────────────────────────────────── */
   --ease-tunes: cubic-bezier(0.22, 1, 0.36, 1);
@@ -129,6 +163,50 @@
   --animate-slide-in-right: slide-in-right 260ms var(--ease-tunes);
   --animate-slide-in-left: slide-in-left 260ms var(--ease-tunes);
   --animate-shimmer: shimmer 1.6s ease-in-out infinite;
+  --animate-float: float 9s ease-in-out infinite;
+  --animate-float-slow: float 14s ease-in-out infinite;
+  --animate-drift: drift 22s ease-in-out infinite;
+  --animate-eq: eq 1.1s ease-in-out infinite;
+  --animate-pulse-ring: pulse-ring 2.4s var(--ease-tunes) infinite;
+}
+
+/* ── Dark scope: deep purple, never black ─────────────────────────── */
+.theme-dark {
+  --color-surface: #1a0b2e;
+  --color-surface-sunken: #13071f;
+  --color-surface-raised: #251040;
+  --color-surface-overlay: #2a1248;
+  --color-surface-hover: #321758;
+  --color-tint: #ffffff;
+
+  --color-border: rgb(255 255 255 / 0.13);
+  --color-border-strong: rgb(255 255 255 / 0.22);
+  --color-border-subtle: rgb(255 255 255 / 0.085);
+
+  --color-text: #f7f3fc;
+  --color-text-muted: #d9ccea;
+  --color-text-subtle: #bba9d3;
+  --color-text-inverse: #1a0b2e;
+
+  --color-accent: #841dc6;
+  --color-accent-hover: #9233d4;
+  --color-accent-pressed: #6e16a8;
+  --color-accent-text: #c99bf2;
+  --color-accent-soft: rgb(185 131 238 / 0.16);
+
+  --color-success: #8be3a8;
+  --color-success-soft: rgb(139 227 168 / 0.14);
+  --color-warning: #ffc94a;
+  --color-warning-soft: rgb(255 201 74 / 0.14);
+  --color-danger: #ff8a73;
+  --color-danger-soft: rgb(255 138 115 / 0.14);
+  --color-info: #8cc4ff;
+  --color-info-soft: rgb(140 196 255 / 0.14);
+
+  --shadow-raised: 0 1px 0 0 rgb(255 255 255 / 0.05) inset, 0 12px 32px -18px rgb(8 2 16 / 0.8);
+  --shadow-overlay: 0 24px 64px -20px rgb(8 2 16 / 0.85), 0 0 0 1px rgb(255 255 255 / 0.08);
+  color: var(--color-text);
+  color-scheme: dark;
 }
 
 @layer base {
@@ -136,6 +214,7 @@
     scroll-behavior: smooth;
     -webkit-text-size-adjust: 100%;
     text-size-adjust: 100%;
+    color-scheme: light;
   }
   body {
     background: var(--color-surface);
@@ -192,14 +271,62 @@
   }
 }
 
+/*
+ * Translucent white fills written before the light theme (`bg-white/[0.06]`
+ * etc. in feature screens) would vanish on white cards. Re-point them at the
+ * `tint` token: purple ink on light surfaces, still white inside .theme-dark.
+ * Unlayered on purpose so they win over the Tailwind utilities.
+ */
+.bg-white\/\[0\.02\],
+.hover\:bg-white\/\[0\.02\]:hover {
+  background-color: color-mix(in oklab, var(--color-tint) 3%, transparent);
+}
+.bg-white\/\[0\.025\],
+.bg-white\/\[0\.03\],
+.hover\:bg-white\/\[0\.03\]:hover,
+.bg-white\/\[0\.035\] {
+  background-color: color-mix(in oklab, var(--color-tint) 3.5%, transparent);
+}
+.bg-white\/\[0\.04\],
+.hover\:bg-white\/\[0\.04\]:hover,
+.bg-white\/\[0\.05\],
+.hover\:bg-white\/\[0\.05\]:hover,
+.focus\:bg-white\/\[0\.05\]:focus {
+  background-color: color-mix(in oklab, var(--color-tint) 5%, transparent);
+}
+.bg-white\/\[0\.06\],
+.hover\:bg-white\/\[0\.06\]:hover,
+.bg-white\/\[0\.07\],
+.file\:bg-white\/\[0\.06\]::file-selector-button {
+  background-color: color-mix(in oklab, var(--color-tint) 7%, transparent);
+}
+.bg-white\/\[0\.08\],
+.hover\:bg-white\/\[0\.08\]:hover,
+.bg-white\/\[0\.1\],
+.hover\:bg-white\/\[0\.1\]:hover,
+.hover\:file\:bg-white\/\[0\.1\]:hover::file-selector-button {
+  background-color: color-mix(in oklab, var(--color-tint) 10%, transparent);
+}
+.bg-white\/\[0\.12\] {
+  background-color: color-mix(in oklab, var(--color-tint) 13%, transparent);
+}
+.border-white\/\[0\.06\] {
+  border-color: color-mix(in oklab, var(--color-tint) 8%, transparent);
+}
+/* A "current" step dot drawn as white-on-ink needs an edge on white pages. */
+span.bg-white.text-ink.rounded-full:not(.theme-dark *) {
+  background-color: var(--color-accent-soft);
+  color: var(--color-accent-text);
+  box-shadow: inset 0 0 0 2px var(--color-accent);
+}
+
 /* ── Marketing type scale ──────────────────────────────────────────────
-   Deliberately smaller than before: confident, not shouting. Every size
-   clamps so a 360px phone never gets a word that cannot fit. */
+   Every size clamps so a 360px phone never gets a word that cannot fit. */
 
 @utility t-hero {
-  font-size: clamp(2.25rem, 1.1rem + 3vw, 3.625rem);
-  line-height: 1.04;
-  letter-spacing: -0.035em;
+  font-size: clamp(2.375rem, 1.2rem + 3vw, 3.625rem);
+  line-height: 1.02;
+  letter-spacing: -0.04em;
   font-weight: 800;
 }
 
@@ -252,6 +379,48 @@
   font-weight: 450;
 }
 
+/* Purple → orange accent for one word in a headline (decorative only; the
+   text keeps a solid fallback colour for forced-colours mode). */
+@utility text-brand-gradient {
+  color: #d4b2f6;
+  background-image: linear-gradient(100deg, #e7d5fb 0%, #c99bf2 45%, #ffb35c 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* ── Brand surfaces ─────────────────────────────────────────────────── */
+
+@utility bg-hero {
+  background-color: #1a0b2e;
+  background-image:
+    radial-gradient(60rem 40rem at 85% -10%, rgb(132 29 198 / 0.55), transparent 60%),
+    radial-gradient(40rem 30rem at -10% 110%, rgb(132 29 198 / 0.35), transparent 60%),
+    linear-gradient(180deg, #1a0b2e 0%, #2a0f4a 100%);
+}
+
+@utility bg-band {
+  background-color: #2a0f4a;
+  background-image:
+    radial-gradient(50rem 30rem at 100% 0%, rgb(132 29 198 / 0.45), transparent 60%),
+    radial-gradient(40rem 26rem at 0% 100%, rgb(247 147 30 / 0.08), transparent 60%),
+    linear-gradient(160deg, #1a0b2e 0%, #2a0f4a 100%);
+}
+
+@utility bg-brand {
+  background-color: #841dc6;
+  background-image:
+    radial-gradient(40rem 24rem at 100% 0%, rgb(255 255 255 / 0.14), transparent 60%),
+    linear-gradient(120deg, #3f0d66 0%, #6e16a8 50%, #841dc6 100%);
+}
+
+@utility bg-lavender-grid {
+  background-color: #faf7fe;
+  background-image:
+    radial-gradient(circle at 1px 1px, rgb(132 29 198 / 0.09) 1px, transparent 0);
+  background-size: 22px 22px;
+}
+
 /* ── Layout ─────────────────────────────────────────────────────────── */
 
 @utility shell {
@@ -283,7 +452,7 @@
     padding-block: 6rem;
   }
   @media (min-width: 1280px) {
-    padding-block: 7.5rem;
+    padding-block: 7rem;
   }
 }
 
@@ -296,6 +465,44 @@
   scrollbar-width: none;
   &::-webkit-scrollbar {
     display: none;
+  }
+}
+
+/* ── Hover lift for cards (marketing + dashboard links) ─────────────── */
+@utility lift {
+  transition:
+    transform 260ms var(--ease-tunes),
+    box-shadow 260ms var(--ease-tunes),
+    border-color 200ms ease;
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-card-hover);
+  }
+}
+
+/* ── Scroll reveal (see useReveal in features/site/kit) ─────────────── */
+.reveal {
+  opacity: 0;
+  transform: translate3d(0, 22px, 0);
+  transition:
+    opacity 700ms var(--ease-tunes),
+    transform 700ms var(--ease-tunes);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+.reveal[data-shown="true"] {
+  opacity: 1;
+  transform: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+@media (scripting: none) {
+  .reveal {
+    opacity: 1;
+    transform: none;
   }
 }
 
@@ -335,5 +542,44 @@
   }
   50% {
     opacity: 1;
+  }
+}
+@keyframes float {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, -14px, 0);
+  }
+}
+@keyframes drift {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  33% {
+    transform: translate3d(4%, -6%, 0) scale(1.08);
+  }
+  66% {
+    transform: translate3d(-5%, 4%, 0) scale(0.96);
+  }
+}
+@keyframes eq {
+  0%,
+  100% {
+    transform: scaleY(0.3);
+  }
+  50% {
+    transform: scaleY(1);
+  }
+}
+@keyframes pulse-ring {
+  0% {
+    box-shadow: 0 0 0 0 rgb(182 243 106 / 0.55);
+  }
+  80%,
+  100% {
+    box-shadow: 0 0 0 8px rgb(182 243 106 / 0);
   }
 }

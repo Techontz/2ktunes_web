@@ -105,4 +105,61 @@ const SW: typeof EN = {
   openTickets: "Tiketi za msaada zilizo wazi",
 };
 
-export const COPY = { EN, SW };
+const FR: typeof EN = {
+  greeting: (name) => (name ? `Bon retour, ${name}` : "Bon retour"),
+  description: "Vos sorties, vos revenus et ce qui demande votre attention.",
+  newRelease: "Nouvelle sortie",
+  finishSetupTitle: "Terminez la configuration de votre compte",
+  finishSetupBody: "Dites-nous si vous êtes artiste, label ou créateur, puis ajoutez votre premier profil d'artiste.",
+  finishSetup: "Continuer",
+  nextActions: "Prochaines étapes",
+  noActions: "Vous êtes à jour.",
+  actions: {
+    verify_email: "Confirmez votre adresse e-mail pour sécuriser votre compte.",
+    changes_requested: (title) =>
+      title ? `« ${title} » doit être modifié avant de pouvoir sortir.` : "Une sortie doit être modifiée avant de pouvoir sortir.",
+    drafts: (n) => (n === 1 ? "Vous avez 1 brouillon inachevé." : `Vous avez ${n} brouillons inachevés.`),
+    plan: "Choisissez une offre pour soumettre vos sorties à la distribution.",
+    plan_pending: "Le paiement de votre offre est en cours de confirmation par notre équipe.",
+    payout_method: "Ajoutez M-Pesa, Airtel Money, Mixx ou un compte bancaire pour retirer vos revenus.",
+    split_invites: (n) =>
+      n === 1
+        ? "Vous avez 1 invitation de partage de royalties à examiner."
+        : `Vous avez ${n} invitations de partage de royalties à examiner.`,
+  },
+  balances: "Soldes",
+  toWallet: "Portefeuille",
+  available: "Disponible",
+  held: (x) => `${x} en cours de retrait`,
+  pending: (x) => `${x} en attente`,
+  noBalanceTitle: "Aucun revenu pour l'instant",
+  noBalanceBody: "Les royalties apparaissent ici une fois que les plateformes ont déclaré vos écoutes et que 2kTunes a publié le relevé.",
+  releases: "Sorties",
+  toCatalog: "Catalogue",
+  groups: {
+    drafts: "Brouillons",
+    in_review: "En vérification",
+    distributing: "En distribution",
+    live: "En ligne",
+    inactive: "Inactives",
+  },
+  noReleasesTitle: "Aucune sortie pour l'instant",
+  noReleasesBody: "Lancez votre première sortie — elle est enregistrée comme brouillon pendant que vous travaillez.",
+  recent: "Sorties récentes",
+  updated: (when) => `Mis à jour ${when}`,
+  analytics: "Performances",
+  toAnalytics: "Statistiques",
+  streams: "Écoutes (12 mois)",
+  videoUses: "Utilisations vidéo (12 mois)",
+  topStore: "Top plateforme",
+  topTerritory: "Top pays",
+  topRelease: "Top sortie",
+  noAnalyticsTitle: "Aucune donnée de performance pour l'instant",
+  noAnalyticsBody: "Les chiffres apparaissent une fois les relevés des plateformes reçus et publiés. Nous ne faisons jamais d'estimation.",
+  activity: "Activité",
+  unread: "Notifications non lues",
+  activeOrders: "Commandes créateurs en cours",
+  openTickets: "Tickets de support ouverts",
+};
+
+export const COPY = { EN, SW, FR };

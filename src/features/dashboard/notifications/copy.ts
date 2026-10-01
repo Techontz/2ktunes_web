@@ -74,4 +74,41 @@ const SW: typeof EN = {
   },
 };
 
-export const COPY = { EN, SW };
+const FR: typeof EN = {
+  title: "Notifications",
+  description: "Les actualités de vos sorties, de votre argent, de vos commandes et de vos tickets de support.",
+  unreadCount: (n) => (n <= 1 ? `${n} non lue` : `${n} non lues`),
+  markAll: "Tout marquer comme lu",
+  markedAll: "Toutes les notifications ont été marquées comme lues",
+  markRead: "Marquer comme lu",
+  unread: "Non lu",
+  open: "Ouvrir",
+  emptyTitle: "Aucune notification pour l'instant",
+  emptyBody: "Dès qu'il se passe quelque chose sur vos sorties, vos revenus ou vos commandes, vous le verrez ici.",
+  listLabel: "Notifications",
+
+  prefsTitle: "Préférences de notification",
+  prefsDescription: "Choisissez comment nous vous informons pour chaque type d'actualité.",
+  inApp: "Dans l'appli",
+  email: "E-mail",
+  savePrefs: "Enregistrer",
+  prefsSaved: "Préférences enregistrées",
+  categories: {
+    releases: "Sorties",
+    royalties: "Royalties et partages",
+    payouts: "Retraits et paiements",
+    marketplace: "Marketplace et campagnes",
+    support: "Tickets de support",
+    product_updates: "Nouveautés produit",
+  },
+  categoryHints: {
+    releases: "Résultats de vérification, livraison et mise en ligne de votre musique.",
+    royalties: "Nouveaux relevés, invitations de partage et modifications.",
+    payouts: "Demandes de retrait, validations et paiements.",
+    marketplace: "Commandes, livraisons et messages des créateurs.",
+    support: "Réponses à vos tickets de support.",
+    product_updates: "Nouvelles fonctionnalités et conseils ponctuels.",
+  },
+};
+
+export const COPY = { EN, SW, FR };
