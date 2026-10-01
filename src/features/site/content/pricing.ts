@@ -26,7 +26,7 @@ export const PRICING: Localized<PageCopy> = {
         items: [
           { icon: "shield", title: "100% of your rights", body: "You own your masters and compositions. Take a release down whenever you want." },
           { icon: "globe", title: "Global & African stores", body: "Deliver to global services and African platforms from the same upload." },
-          { icon: "wallet", title: "TZS wallet", body: "See every royalty in shillings and withdraw to mobile money or bank." },
+          { icon: "wallet", title: "Royalty wallet", body: "Royalties stay in the currency stores pay; withdraw to mobile money or bank, converted to TZS at a rate shown before you confirm." },
           { icon: "pie", title: "Royalty splits", body: "Pay collaborators their share automatically." },
           { icon: "chart", title: "Analytics", body: "Streams, territories and earnings by release as store reports arrive." },
           { icon: "languages", title: "Bilingual support", body: "Help in English and Kiswahili from a team based in Tanzania." },
@@ -71,7 +71,7 @@ export const PRICING: Localized<PageCopy> = {
         items: [
           { icon: "shield", title: "Haki zako 100%", body: "Unamiliki master na utunzi wako. Ondoa toleo wakati wowote." },
           { icon: "globe", title: "Maduka ya kimataifa na Afrika", body: "Sambaza kwenye huduma za kimataifa na majukwaa ya Afrika kwa upakiaji uleule." },
-          { icon: "wallet", title: "Pochi ya TZS", body: "Ona kila mrabaha kwa shilingi na toa kwenda pesa ya simu au benki." },
+          { icon: "wallet", title: "Pochi ya mirabaha", body: "Mirabaha inabaki kwa sarafu ambayo maduka hulipa; toa kwenda pesa ya simu au benki, ikibadilishwa kuwa TZS kwa kiwango kinachoonyeshwa kabla ya kuthibitisha." },
           { icon: "pie", title: "Mgawanyo wa mirabaha", body: "Walipe washirika sehemu yao moja kwa moja." },
           { icon: "chart", title: "Takwimu", body: "Usikilizaji, nchi na mapato kwa kila toleo kadiri ripoti zinavyofika." },
           { icon: "languages", title: "Msaada kwa lugha mbili", body: "Msaada kwa Kiingereza na Kiswahili kutoka timu iliyoko Tanzania." },

@@ -182,7 +182,7 @@ const en = {
   "auth.brand_title": "Your music in the world's stores. Your royalties at home.",
   "auth.brand_point_1": "Delivery to global and African stores",
   "auth.brand_point_2": "Promotion and creator campaigns in one place",
-  "auth.brand_point_3": "Royalties in TZS, withdrawn to mobile money or bank",
+  "auth.brand_point_3": "Royalties withdrawn to mobile money or bank, converted to TZS",
   "auth.back": "Back to 2kTunes",
 
   "auth.forgot_title": "Reset your password",

@@ -178,7 +178,7 @@ const sw: Record<MessageKey, string> = {
   "auth.brand_title": "Muziki wako kwenye maduka ya dunia. Mirabaha yako nyumbani.",
   "auth.brand_point_1": "Usambazaji kwenye maduka ya kimataifa na ya Afrika",
   "auth.brand_point_2": "Utangazaji na kampeni za watengeneza maudhui mahali pamoja",
-  "auth.brand_point_3": "Mirabaha kwa TZS, inatolewa kwenda pesa ya simu au benki",
+  "auth.brand_point_3": "Mirabaha inatolewa kwenda pesa ya simu au benki, ikibadilishwa kuwa TZS",
   "auth.back": "Rudi 2kTunes",
 
   "auth.forgot_title": "Weka upya nenosiri",

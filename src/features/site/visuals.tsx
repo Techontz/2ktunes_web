@@ -90,7 +90,7 @@ export function WalletMock({ className }: { className?: string }) {
   const { pick, locale } = useLanguage();
   const m = pick(MOCKS).wallet;
   const sample = pick(MOCKS).sample;
-  const lines = [842300, 316900, 125300];
+  const lines = [342.18, 128.74, 50.9];
   const total = lines.reduce((a, b) => a + b, 0);
   return (
     <Frame className={className} caption={sample}>
@@ -98,13 +98,13 @@ export function WalletMock({ className }: { className?: string }) {
         <p className="text-caption font-semibold text-text-subtle">{m.title}</p>
         <p className="mt-3 text-caption text-text-muted">{m.available}</p>
         <p className="mt-1 text-[1.875rem] font-bold leading-none tracking-[-0.03em] tabular-nums sm:text-[2.125rem]">
-          {formatMoney(total, "TZS", locale)}
+          {formatMoney(total, "USD", locale)}
         </p>
         <dl className="mt-5 space-y-2 border-t border-border-subtle pt-4">
           {m.lines.map((label, i) => (
             <div key={label} className="flex items-center justify-between gap-3 text-body-sm">
               <dt className="text-text-muted">{label}</dt>
-              <dd className="tabular-nums text-text">{formatMoney(lines[i], "TZS", locale)}</dd>
+              <dd className="tabular-nums text-text">{formatMoney(lines[i], "USD", locale)}</dd>
             </div>
           ))}
         </dl>

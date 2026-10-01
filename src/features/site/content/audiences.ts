@@ -20,8 +20,8 @@ export const ARTISTS: Localized<PageCopy> = {
         items: [
           { icon: "globe", title: "Global & African stores", body: "Your music on the platforms fans use, from Spotify to Boomplay." },
           { icon: "shield", title: "Your rights, always", body: "No exclusivity, no hidden ownership clauses. Leave whenever you want." },
-          { icon: "megaphone", title: "Promotion that's honest", body: "Pitching, curators, creator campaigns and ads — clearly explained." },
-          { icon: "wallet", title: "Get paid in TZS", body: "Withdraw to M-Pesa, Airtel Money, Mixx by Yas or your bank." },
+          { icon: "megaphone", title: "Promotion that's honest", body: "Editorial pitching and creator campaigns today; curators and ads not available yet — all clearly explained." },
+          { icon: "wallet", title: "Withdraw locally", body: "Withdraw to M-Pesa, Airtel Money, Mixx by Yas or your bank, converted to TZS at a rate shown before you confirm." },
           { icon: "pie", title: "Split with your team", body: "Producers and writers get their share automatically." },
           { icon: "chart", title: "Know your audience", body: "See which songs, countries and platforms are moving." },
         ],
@@ -40,7 +40,7 @@ export const ARTISTS: Localized<PageCopy> = {
         tone: "dark",
         eyebrow: "Getting paid",
         title: "From streams to your phone.",
-        lede: "Royalties from every store collect in one wallet, shown in shillings. Withdraw to mobile money or your bank once you pass the minimum.",
+        lede: "Royalties from every store collect in one wallet, in the currency each store paid. Withdraw to mobile money or your bank once you pass the minimum — converted to shillings at the rate shown before you confirm.",
         visual: "wallet",
         reverse: true,
         link: { label: "How royalties work", to: "/royalties" },
@@ -66,8 +66,8 @@ export const ARTISTS: Localized<PageCopy> = {
         items: [
           { icon: "globe", title: "Maduka ya kimataifa na Afrika", body: "Muziki wako kwenye majukwaa ambayo mashabiki wanatumia, kutoka Spotify hadi Boomplay." },
           { icon: "shield", title: "Haki zako, daima", body: "Hakuna upekee wa lazima, hakuna vipengele vya umiliki vilivyofichwa. Ondoka wakati wowote." },
-          { icon: "megaphone", title: "Utangazaji wa uaminifu", body: "Kuwasilisha kwa wahariri, wachaguzi, kampeni na matangazo — vimeelezwa wazi." },
-          { icon: "wallet", title: "Lipwa kwa TZS", body: "Toa kwenda M-Pesa, Airtel Money, Mixx by Yas au benki yako." },
+          { icon: "megaphone", title: "Utangazaji wa uaminifu", body: "Kuwasilisha kwa wahariri na kampeni za watengeneza maudhui sasa; wachaguzi na matangazo bado hayapatikani — yote yameelezwa wazi." },
+          { icon: "wallet", title: "Toa pesa nyumbani", body: "Toa kwenda M-Pesa, Airtel Money, Mixx by Yas au benki yako, ikibadilishwa kuwa TZS kwa kiwango kinachoonyeshwa kabla ya kuthibitisha." },
           { icon: "pie", title: "Gawana na timu yako", body: "Watayarishaji na watunzi wanapata sehemu yao moja kwa moja." },
           { icon: "chart", title: "Ijue hadhira yako", body: "Ona nyimbo, nchi na majukwaa yanayofanya vizuri." },
         ],
@@ -86,7 +86,7 @@ export const ARTISTS: Localized<PageCopy> = {
         tone: "dark",
         eyebrow: "Kulipwa",
         title: "Kutoka usikilizaji hadi simu yako.",
-        lede: "Mirabaha kutoka kila duka inakusanyika kwenye pochi moja, ikionyeshwa kwa shilingi. Toa kwenda pesa ya simu au benki ukipita kiwango cha chini.",
+        lede: "Mirabaha kutoka kila duka inakusanyika kwenye pochi moja, kwa sarafu ambayo kila duka lililipa. Toa kwenda pesa ya simu au benki ukipita kiwango cha chini — ikibadilishwa kuwa shilingi kwa kiwango kinachoonyeshwa kabla ya kuthibitisha.",
         visual: "wallet",
         reverse: true,
         link: { label: "Jinsi mirabaha inavyofanya kazi", to: "/royalties" },
@@ -199,8 +199,8 @@ export const ABOUT: Localized<PageCopy> = {
         eyebrow: "Why we exist",
         title: "Global distribution was never built with us in mind.",
         paragraphs: [
-          "For years, artists here have had two options: sign away rights to someone with access, or use a distributor built for another market — English-only dashboards, dollar balances, bank-only payouts and support in a different time zone.",
-          "2kTunes is the third option. We deliver to the same global stores, add the African platforms your fans actually use, and pay out through the mobile money and bank accounts you already have, in the currency you spend.",
+          "For years, artists here have had two options: sign away rights to someone with access, or use a distributor built for another market — English-only dashboards, bank-only payouts and support in a different time zone.",
+          "2kTunes is the third option. We deliver to the same global stores, add the African platforms your fans actually use, and pay out through the mobile money and bank accounts you already have, converted to the currency you spend when you withdraw.",
           "We're also honest about the hard part. No one can guarantee streams or playlist spots, and anyone who promises them is selling something risky. What we can do is give you clean delivery, transparent money and real routes to an audience.",
         ],
         aside: [
@@ -216,7 +216,7 @@ export const ABOUT: Localized<PageCopy> = {
         title: "Principles we build by.",
         items: [
           { icon: "shield", title: "Artists own their work", body: "We're a service you hire, not a label you sign to." },
-          { icon: "dollar", title: "Money should be legible", body: "Every shilling traced to its source; every fee shown before you pay." },
+          { icon: "dollar", title: "Money should be legible", body: "Every amount traced to its source; every fee shown before you pay." },
           { icon: "badge", title: "No fake promises", body: "We never sell guaranteed streams, placements or features." },
         ],
       },
@@ -238,8 +238,8 @@ export const ABOUT: Localized<PageCopy> = {
         eyebrow: "Kwa nini tupo",
         title: "Usambazaji wa kimataifa haukujengwa ukitufikiria sisi.",
         paragraphs: [
-          "Kwa miaka mingi, wasanii wa hapa wamekuwa na njia mbili: kuachia haki zao kwa mtu mwenye uwezo wa kufika, au kutumia msambazaji aliyejengwa kwa soko jingine — dashibodi za Kiingereza tu, salio kwa dola, malipo ya benki tu na msaada kutoka saa za eneo jingine.",
-          "2kTunes ni njia ya tatu. Tunasambaza kwenye maduka yaleyale ya kimataifa, tunaongeza majukwaa ya Afrika ambayo mashabiki wako wanatumia, na tunalipa kupitia pesa ya simu na akaunti za benki ulizonazo tayari, kwa sarafu unayotumia.",
+          "Kwa miaka mingi, wasanii wa hapa wamekuwa na njia mbili: kuachia haki zao kwa mtu mwenye uwezo wa kufika, au kutumia msambazaji aliyejengwa kwa soko jingine — dashibodi za Kiingereza tu, malipo ya benki tu na msaada kutoka saa za eneo jingine.",
+          "2kTunes ni njia ya tatu. Tunasambaza kwenye maduka yaleyale ya kimataifa, tunaongeza majukwaa ya Afrika ambayo mashabiki wako wanatumia, na tunalipa kupitia pesa ya simu na akaunti za benki ulizonazo tayari, ikibadilishwa kuwa sarafu unayotumia unapotoa.",
           "Pia tuko wazi kuhusu sehemu ngumu. Hakuna anayeweza kuhakikisha usikilizaji au nafasi kwenye orodha, na anayeahidi hivyo anauza kitu cha hatari. Tunachoweza ni kukupa usambazaji safi, pesa zilizo wazi na njia halisi za kufikia hadhira.",
         ],
         aside: [
@@ -255,7 +255,7 @@ export const ABOUT: Localized<PageCopy> = {
         title: "Misingi tunayojenga nayo.",
         items: [
           { icon: "shield", title: "Wasanii wanamiliki kazi zao", body: "Sisi ni huduma unayoiajiri, si lebo unayojifunga nayo." },
-          { icon: "dollar", title: "Pesa ieleweke", body: "Kila shilingi inaonyesha ilikotoka; kila ada inaonyeshwa kabla ya kulipa." },
+          { icon: "dollar", title: "Pesa ieleweke", body: "Kila kiasi kinaonyesha kilikotoka; kila ada inaonyeshwa kabla ya kulipa." },
           { icon: "badge", title: "Hakuna ahadi za uongo", body: "Hatuuzi usikilizaji, nafasi wala kuchaguliwa kulikohakikishwa." },
         ],
       },

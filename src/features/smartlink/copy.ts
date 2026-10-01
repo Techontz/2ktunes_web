@@ -2,6 +2,7 @@
 
 const EN = {
   loading: "Loading release…",
+  unsubscribed: "You're unsubscribed. We won't email you about this release again.",
   coverAlt: (title: string, artist: string) => `Cover art for ${title} by ${artist}`,
   by: (artist: string) => `by ${artist}`,
   typeSingle: "Single",
@@ -42,6 +43,7 @@ const EN = {
 
 const SW: typeof EN = {
   loading: "Inapakia kazi…",
+  unsubscribed: "Umejiondoa. Hatutakutumia barua pepe tena kuhusu kazi hii.",
   coverAlt: (title, artist) => `Picha ya jalada ya ${title} ya ${artist}`,
   by: (artist) => `na ${artist}`,
   typeSingle: "Wimbo mmoja",

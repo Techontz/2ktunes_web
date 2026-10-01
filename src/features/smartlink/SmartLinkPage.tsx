@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type FormEvent, type ReactNode } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useSearchParams } from "react-router-dom";
 import { CalendarClock, CheckCircle2, Disc3, ExternalLink, Instagram, Music2, Play, Youtube } from "lucide-react";
 import { Wordmark } from "@/components/brand/Wordmark";
 import { Button, Checkbox, Field, Input, Skeleton } from "@/components/ui";
@@ -131,6 +131,7 @@ function NotFound() {
 
 function ReleaseView({ release, slug }: { release: PublicSmartLink; slug: string }) {
   const c = useCopy(COPY);
+  const [params] = useSearchParams();
   const { locale } = useLanguage();
   const typeLabel =
     release.type === "Single" ? c.typeSingle : release.type === "EP" ? c.typeEP : release.type === "Album" ? c.typeAlbum : release.type;
@@ -138,6 +139,11 @@ function ReleaseView({ release, slug }: { release: PublicSmartLink; slug: string
 
   return (
     <article>
+      {params.get("unsubscribed") === "1" && (
+        <p role="status" className="mb-4 rounded-card border border-border-subtle bg-surface-raised px-4 py-3 text-center text-caption text-text-muted">
+          {c.unsubscribed}
+        </p>
+      )}
       <div className="overflow-hidden rounded-card border border-border-subtle bg-surface-raised shadow-raised">
         {release.cover_url ? (
           <img

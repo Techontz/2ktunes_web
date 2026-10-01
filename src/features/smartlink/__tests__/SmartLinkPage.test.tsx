@@ -50,6 +50,15 @@ describe("SmartLinkPage", () => {
     expect(views[0].body).toEqual({ type: "view" });
   });
 
+  it("confirms an unsubscribe from the release email", async () => {
+    mockApi({
+      "GET /public/releases/:slug": { release: live },
+      "POST /public/releases/:slug/events": { status: 202, body: { status: true } },
+    });
+    renderPage(<SmartLinkPage />, { route: "/r/abc?unsubscribed=1", path: "/r/:slug", signedIn: false });
+    expect(await screen.findByText(/You're unsubscribed/)).toBeInTheDocument();
+  });
+
   it("renders store links for a live release and logs clicks", async () => {
     const api = mockApi({
       "GET /public/releases/:slug": { release: live },

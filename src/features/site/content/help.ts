@@ -27,7 +27,7 @@ export const HELP: Localized<HelpCopy> = {
         category: "start",
         q: "What is 2kTunes?",
         a: [
-          "2kTunes is a music distribution platform built in Tanzania. We deliver your releases to global and African streaming stores, offer promotion options including creator campaigns, and pay your royalties in TZS to mobile money or a bank account.",
+          "2kTunes is a music distribution platform built in Tanzania. We deliver your releases to global and African streaming stores, offer promotion options including creator campaigns, and pay out your royalties to mobile money or a bank account, converted to TZS when you withdraw.",
           "You keep full ownership of your music. We act on your behalf under a non-exclusive licence you can end at any time.",
         ],
         keywords: "about distributor",
@@ -37,7 +37,7 @@ export const HELP: Localized<HelpCopy> = {
         category: "start",
         q: "Which account type should I choose?",
         a: [
-          "Choose Artist if you release your own music. Choose Label / Team if you manage several artists or a catalogue. Choose Creator / Influencer if you want to join paid campaigns that feature music in your content.",
+          "Choose Artist if you release your own music. Choose Label / Team if you manage several artists or a catalogue. Choose Creator / Influencer if you want to list paid promotion packages that artists can order to feature their music in your content.",
           "Not sure? Pick the closest one — contact support if you need to change it later.",
         ],
         keywords: "artist label creator influencer register sign up",
@@ -127,7 +127,7 @@ export const HELP: Localized<HelpCopy> = {
         category: "promotion",
         q: "What promotion options are there?",
         a: [
-          "Four: editorial pitching to stores, independent curator services, creator campaigns, and advertising. They work differently — see the Promotion page for who decides and what you pay for.",
+          "Four: editorial pitching to stores, independent curator services, creator campaigns, and advertising. Editorial pitching and creator campaigns are available today; independent curator services and advertising are not available yet. They work differently — see the Promotion page for who decides and what you pay for.",
           "No option guarantees streams, playlist placements or editorial features.",
         ],
         keywords: "playlist pitch marketing campaign ads",
@@ -155,7 +155,7 @@ export const HELP: Localized<HelpCopy> = {
         category: "royalties",
         q: "How do I withdraw my earnings?",
         a: [
-          "Open your wallet, choose Withdraw and pick a payout method — M-Pesa, Airtel Money, Mixx by Yas or bank transfer, where available in your country. The minimum amount, any fee and the exchange rate are shown before you confirm.",
+          "Open your wallet, choose Withdraw and pick a payout method — M-Pesa, Airtel Money, Mixx by Yas or bank transfer, where available in your country. The minimum amount, any fee and the exchange rate are shown before you confirm. The 2kTunes finance team then processes the withdrawal, and your wallet shows each step and its status.",
         ],
         keywords: "mpesa m-pesa airtel mixx yas bank cash out payout",
       },
@@ -214,7 +214,7 @@ export const HELP: Localized<HelpCopy> = {
         category: "start",
         q: "2kTunes ni nini?",
         a: [
-          "2kTunes ni jukwaa la usambazaji wa muziki lililojengwa Tanzania. Tunasambaza matoleo yako kwenye maduka ya kimataifa na ya Afrika, tunatoa njia za utangazaji zikiwemo kampeni za watengeneza maudhui, na tunalipa mirabaha yako kwa TZS kwenda pesa ya simu au benki.",
+          "2kTunes ni jukwaa la usambazaji wa muziki lililojengwa Tanzania. Tunasambaza matoleo yako kwenye maduka ya kimataifa na ya Afrika, tunatoa njia za utangazaji zikiwemo kampeni za watengeneza maudhui, na tunalipa mirabaha yako kwenda pesa ya simu au benki, ikibadilishwa kuwa TZS unapotoa.",
           "Unabaki na umiliki kamili wa muziki wako. Tunafanya kazi kwa niaba yako chini ya leseni isiyo ya upekee ambayo unaweza kusitisha wakati wowote.",
         ],
         keywords: "kuhusu msambazaji",
@@ -224,7 +224,7 @@ export const HELP: Localized<HelpCopy> = {
         category: "start",
         q: "Nichague aina gani ya akaunti?",
         a: [
-          "Chagua Msanii kama unatoa muziki wako mwenyewe. Chagua Lebo / Timu kama unasimamia wasanii kadhaa au kazi nyingi. Chagua Mtengeneza maudhui kama unataka kujiunga na kampeni za kulipia zinazotumia muziki kwenye maudhui yako.",
+          "Chagua Msanii kama unatoa muziki wako mwenyewe. Chagua Lebo / Timu kama unasimamia wasanii kadhaa au kazi nyingi. Chagua Mtengeneza maudhui kama unataka kuorodhesha vifurushi vya utangazaji wa kulipia ambavyo wasanii wanaweza kuagiza ili muziki wao utumike kwenye maudhui yako.",
           "Huna uhakika? Chagua iliyo karibu zaidi — wasiliana na msaada ukihitaji kubadilisha baadaye.",
         ],
         keywords: "msanii lebo mtengeneza maudhui kujisajili",
@@ -314,7 +314,7 @@ export const HELP: Localized<HelpCopy> = {
         category: "promotion",
         q: "Kuna njia gani za utangazaji?",
         a: [
-          "Nne: kuwasilisha kwa wahariri wa maduka, huduma za wachaguzi huru, kampeni za watengeneza maudhui, na matangazo. Zinafanya kazi tofauti — angalia ukurasa wa Utangazaji kujua nani anaamua na unalipia nini.",
+          "Nne: kuwasilisha kwa wahariri wa maduka, huduma za wachaguzi huru, kampeni za watengeneza maudhui, na matangazo. Kuwasilisha kwa wahariri na kampeni za watengeneza maudhui vinapatikana sasa; huduma za wachaguzi huru na matangazo bado hazipatikani. Zinafanya kazi tofauti — angalia ukurasa wa Utangazaji kujua nani anaamua na unalipia nini.",
           "Hakuna njia inayohakikisha usikilizaji, nafasi kwenye orodha au kuchaguliwa na wahariri.",
         ],
         keywords: "orodha playlist kampeni matangazo",
@@ -342,7 +342,7 @@ export const HELP: Localized<HelpCopy> = {
         category: "royalties",
         q: "Natoaje mapato yangu?",
         a: [
-          "Fungua pochi yako, chagua Toa pesa na uchague njia ya malipo — M-Pesa, Airtel Money, Mixx by Yas au benki, pale zinapopatikana nchini kwako. Kiwango cha chini, ada yoyote na kiwango cha ubadilishaji vinaonyeshwa kabla ya kuthibitisha.",
+          "Fungua pochi yako, chagua Toa pesa na uchague njia ya malipo — M-Pesa, Airtel Money, Mixx by Yas au benki, pale zinapopatikana nchini kwako. Kiwango cha chini, ada yoyote na kiwango cha ubadilishaji vinaonyeshwa kabla ya kuthibitisha. Kisha timu ya fedha ya 2kTunes inashughulikia utoaji huo, na pochi yako inaonyesha kila hatua na hali yake.",
         ],
         keywords: "mpesa m-pesa airtel mixx yas benki kutoa",
       },

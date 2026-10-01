@@ -36,9 +36,9 @@ export const HOME: Localized<HomeCopy> = {
       eyebrow: "Music distribution · Built in Tanzania",
       lines: ["Distribute worldwide.", "Grow your audience.", "Get paid locally."],
       lede:
-        "2kTunes delivers your music to the stores and platforms where people listen, helps you reach new fans through creators and campaigns, and pays your royalties out in shillings — to mobile money or your bank.",
+        "2kTunes delivers your music to the stores and platforms where people listen, helps you reach new fans through creators and campaigns, and pays your royalties out to mobile money or your bank — converted to shillings when you withdraw.",
       secondary: "How it works",
-      trust: ["You keep 100% of your rights", "Royalties shown in TZS", "Support in English & Kiswahili"],
+      trust: ["You keep 100% of your rights", "Withdraw to M-Pesa, Airtel Money, Mixx & banks", "Support in English & Kiswahili"],
     },
     promises: [
       {
@@ -47,11 +47,11 @@ export const HOME: Localized<HomeCopy> = {
       },
       {
         title: "African creator marketing",
-        body: "Put your song in front of listeners through creator campaigns, curated promotion and release planning built for this market.",
+        body: "Put your song in front of listeners through creator campaigns, editorial pitching and release planning built for this market.",
       },
       {
         title: "Local royalty payouts",
-        body: "Earnings land in one wallet, shown in TZS, and withdraw to M-Pesa, Airtel Money, Mixx by Yas or a bank account.",
+        body: "Earnings land in one wallet in the currency stores pay, and withdraw to M-Pesa, Airtel Money, Mixx by Yas or a bank account.",
       },
     ],
     stores: {
@@ -74,7 +74,7 @@ export const HOME: Localized<HomeCopy> = {
     promotion: {
       eyebrow: "Promotion",
       title: "Distribution gets you listed. Promotion gets you heard.",
-      lede: "Four different routes to new listeners — and we're clear about which is which, what it costs and what it can and can't do.",
+      lede: "Four different routes to new listeners — and we're clear about which is which, which are available today, what it costs and what it can and can't do.",
       kinds: [
         {
           tag: "Free with your release",
@@ -82,17 +82,17 @@ export const HOME: Localized<HomeCopy> = {
           body: "Submit an unreleased song for store editors to consider. Editors decide independently; a pitch is a request, not a placement.",
         },
         {
-          tag: "Independent",
+          tag: "Not available yet",
           title: "Curator services",
           body: "Offer your track to independent playlist curators and blogs who choose whether to feature it. You pay for review, never for a guaranteed add.",
         },
         {
           tag: "Paid campaign",
           title: "Creator campaigns",
-          body: "Brief TikTok, Instagram and YouTube creators to use your song in their content. Creators are paid for the posts they publish, and every post is disclosed as promotion.",
+          body: "Browse TikTok, Instagram and YouTube creators and order a package to feature your song. Creators are paid once you approve the post, and every post is disclosed as promotion.",
         },
         {
-          tag: "Paid media",
+          tag: "Not available yet",
           title: "Advertising",
           body: "Run ads that point listeners to your release on the platforms you choose, with a budget and audience you set.",
         },
@@ -103,11 +103,11 @@ export const HOME: Localized<HomeCopy> = {
     royalties: {
       eyebrow: "Royalties & local payouts",
       title: "Earned globally. Paid out at home.",
-      lede: "Stores pay in many currencies on their own schedules. 2kTunes brings it into one wallet, shows it in shillings and lets you withdraw the way you already get paid.",
+      lede: "Stores pay in many currencies on their own schedules. 2kTunes brings it into one wallet in the currency each store paid, and converts it to shillings when you withdraw the way you already get paid.",
       points: [
         { title: "One wallet, every store", body: "Each line traces back to a store, a territory and a reporting period." },
-        { title: "TZS first", body: "Balances are shown in Tanzanian shillings, with the original currency always visible." },
-        { title: "Mobile money or bank", body: "Withdraw to M-Pesa, Airtel Money, Mixx by Yas or a local bank account." },
+        { title: "Converted when you withdraw", body: "Balances stay in the currency stores pay. Withdraw to a TZS payout method and you see the exchange rate and fee before you confirm." },
+        { title: "Mobile money or bank", body: "Withdraw to M-Pesa, Airtel Money, Mixx by Yas or a local bank account. Our finance team processes each request, and your dashboard shows every step." },
       ],
       link: "How royalties work",
     },
@@ -129,7 +129,7 @@ export const HOME: Localized<HomeCopy> = {
       lede: "Most distributors were built for other markets and bolted Africa on later. 2kTunes starts from how East African artists release, promote and get paid.",
       points: [
         { title: "African platforms included", body: "Boomplay and Audiomack sit alongside global stores, not as an afterthought." },
-        { title: "Local money, local language", body: "Shilling balances, mobile-money withdrawals and a dashboard in English and Kiswahili." },
+        { title: "Local money, local language", body: "Withdrawals in shillings to mobile money or bank, and a dashboard in English and Kiswahili." },
         { title: "People who know the scene", body: "Support and campaign planning from a team that works with East African artists every day." },
       ],
     },
@@ -153,7 +153,7 @@ export const HOME: Localized<HomeCopy> = {
         },
         {
           q: "How do I get paid?",
-          a: "Royalties from store reports are added to your 2kTunes wallet and shown in TZS. Once you pass the minimum withdrawal amount shown in your dashboard, you can withdraw to mobile money or a bank account.",
+          a: "Royalties from store reports are added to your 2kTunes wallet in the currency the store paid, often US dollars. Once you pass the minimum withdrawal amount shown in your dashboard, you can withdraw to mobile money or a bank account. For a TZS payout, the exchange rate and fee are shown before you confirm, and our finance team processes the withdrawal.",
         },
         {
           q: "Can you guarantee streams or playlist placements?",
@@ -180,9 +180,9 @@ export const HOME: Localized<HomeCopy> = {
       eyebrow: "Usambazaji wa muziki · Imejengwa Tanzania",
       lines: ["Sambaza duniani.", "Kuza hadhira yako.", "Lipwa nyumbani."],
       lede:
-        "2kTunes inasambaza muziki wako kwenye maduka na majukwaa ambayo watu husikiliza, inakusaidia kufikia mashabiki wapya kupitia watengeneza maudhui na kampeni, na inakulipa mirabaha yako kwa shilingi — kwenda pesa ya simu au benki yako.",
+        "2kTunes inasambaza muziki wako kwenye maduka na majukwaa ambayo watu husikiliza, inakusaidia kufikia mashabiki wapya kupitia watengeneza maudhui na kampeni, na inakulipa mirabaha yako kwenda pesa ya simu au benki yako — ikibadilishwa kuwa shilingi unapotoa.",
       secondary: "Jinsi inavyofanya kazi",
-      trust: ["Unabaki na haki zako 100%", "Mirabaha huonyeshwa kwa TZS", "Msaada kwa Kiingereza na Kiswahili"],
+      trust: ["Unabaki na haki zako 100%", "Toa kwenda M-Pesa, Airtel Money, Mixx na benki", "Msaada kwa Kiingereza na Kiswahili"],
     },
     promises: [
       {
@@ -191,11 +191,11 @@ export const HOME: Localized<HomeCopy> = {
       },
       {
         title: "Utangazaji kupitia watengeneza maudhui wa Afrika",
-        body: "Weka wimbo wako mbele ya wasikilizaji kupitia kampeni za watengeneza maudhui, utangazaji maalum na mipango ya kutoa muziki iliyoundwa kwa soko hili.",
+        body: "Weka wimbo wako mbele ya wasikilizaji kupitia kampeni za watengeneza maudhui, kuwasilisha kwa wahariri na mipango ya kutoa muziki iliyoundwa kwa soko hili.",
       },
       {
         title: "Malipo ya mirabaha nyumbani",
-        body: "Mapato yanaingia kwenye pochi moja, yanaonyeshwa kwa TZS, na unatoa kwenda M-Pesa, Airtel Money, Mixx by Yas au akaunti ya benki.",
+        body: "Mapato yanaingia kwenye pochi moja kwa sarafu ambayo maduka hulipa, na unatoa kwenda M-Pesa, Airtel Money, Mixx by Yas au akaunti ya benki.",
       },
     ],
     stores: {
@@ -218,7 +218,7 @@ export const HOME: Localized<HomeCopy> = {
     promotion: {
       eyebrow: "Utangazaji",
       title: "Usambazaji unakuweka dukani. Utangazaji unakufanya usikike.",
-      lede: "Njia nne tofauti za kufikia wasikilizaji wapya — na tuko wazi kuhusu kila moja, gharama yake na kile inachoweza na isichoweza kufanya.",
+      lede: "Njia nne tofauti za kufikia wasikilizaji wapya — na tuko wazi kuhusu kila moja, ipi inapatikana sasa, gharama yake na kile inachoweza na isichoweza kufanya.",
       kinds: [
         {
           tag: "Bure na toleo lako",
@@ -226,17 +226,17 @@ export const HOME: Localized<HomeCopy> = {
           body: "Wasilisha wimbo ambao haujatoka ili wahariri wa maduka wauzingatie. Wahariri huamua wenyewe; kuwasilisha ni ombi, si uhakika wa kuwekwa.",
         },
         {
-          tag: "Huru",
+          tag: "Bado haipatikani",
           title: "Huduma za wachaguzi wa orodha",
           body: "Peleka wimbo wako kwa wachaguzi huru wa orodha za nyimbo na blogu wanaoamua kama wataushirikisha. Unalipia ukaguzi, si uhakika wa kuongezwa.",
         },
         {
           tag: "Kampeni ya kulipia",
           title: "Kampeni za watengeneza maudhui",
-          body: "Waelekeze watengeneza maudhui wa TikTok, Instagram na YouTube kutumia wimbo wako. Wanalipwa kwa machapisho wanayoweka, na kila chapisho linaonyeshwa wazi kuwa ni tangazo.",
+          body: "Pitia watengeneza maudhui wa TikTok, Instagram na YouTube na uagize kifurushi ili watumie wimbo wako. Wanalipwa baada ya wewe kuidhinisha chapisho, na kila chapisho linaonyeshwa wazi kuwa ni tangazo.",
         },
         {
-          tag: "Matangazo ya kulipia",
+          tag: "Bado haipatikani",
           title: "Matangazo",
           body: "Endesha matangazo yanayowaelekeza wasikilizaji kwenye toleo lako kwenye majukwaa unayochagua, kwa bajeti na hadhira unayoweka.",
         },
@@ -247,11 +247,11 @@ export const HOME: Localized<HomeCopy> = {
     royalties: {
       eyebrow: "Mirabaha na malipo ya ndani",
       title: "Unapata duniani. Unalipwa nyumbani.",
-      lede: "Maduka hulipa kwa sarafu nyingi na kwa ratiba zao. 2kTunes inaleta yote kwenye pochi moja, inaonyesha kwa shilingi na inakuruhusu kutoa pesa kwa njia unayoitumia tayari.",
+      lede: "Maduka hulipa kwa sarafu nyingi na kwa ratiba zao. 2kTunes inaleta yote kwenye pochi moja kwa sarafu ambayo kila duka lililipa, na inabadilisha kuwa shilingi unapotoa pesa kwa njia unayoitumia tayari.",
       points: [
         { title: "Pochi moja, maduka yote", body: "Kila mstari unaonyesha duka, nchi na kipindi cha ripoti." },
-        { title: "TZS kwanza", body: "Salio linaonyeshwa kwa shilingi za Tanzania, na sarafu ya asili inaonekana daima." },
-        { title: "Pesa ya simu au benki", body: "Toa kwenda M-Pesa, Airtel Money, Mixx by Yas au akaunti ya benki ya ndani." },
+        { title: "Inabadilishwa unapotoa", body: "Salio linabaki kwa sarafu ambayo maduka hulipa. Ukitoa kwenda njia ya malipo ya TZS, unaona kiwango cha ubadilishaji na ada kabla ya kuthibitisha." },
+        { title: "Pesa ya simu au benki", body: "Toa kwenda M-Pesa, Airtel Money, Mixx by Yas au akaunti ya benki ya ndani. Timu yetu ya fedha inashughulikia kila ombi, na dashibodi yako inaonyesha kila hatua." },
       ],
       link: "Jinsi mirabaha inavyofanya kazi",
     },
@@ -273,7 +273,7 @@ export const HOME: Localized<HomeCopy> = {
       lede: "Wasambazaji wengi walijengwa kwa masoko mengine na Afrika ikaongezwa baadaye. 2kTunes inaanzia jinsi wasanii wa Afrika Mashariki wanavyotoa muziki, kujitangaza na kulipwa.",
       points: [
         { title: "Majukwaa ya Afrika yamo", body: "Boomplay na Audiomack yako sambamba na maduka ya kimataifa, si nyongeza ya baadaye." },
-        { title: "Pesa na lugha ya nyumbani", body: "Salio kwa shilingi, utoaji kwenda pesa ya simu na dashibodi kwa Kiingereza na Kiswahili." },
+        { title: "Pesa na lugha ya nyumbani", body: "Utoaji kwa shilingi kwenda pesa ya simu au benki, na dashibodi kwa Kiingereza na Kiswahili." },
         { title: "Watu wanaoijua tasnia", body: "Msaada na mipango ya kampeni kutoka kwa timu inayofanya kazi na wasanii wa Afrika Mashariki kila siku." },
       ],
     },
@@ -297,7 +297,7 @@ export const HOME: Localized<HomeCopy> = {
         },
         {
           q: "Nalipwaje?",
-          a: "Mirabaha kutoka ripoti za maduka inaongezwa kwenye pochi yako ya 2kTunes na kuonyeshwa kwa TZS. Ukipita kiwango cha chini cha kutoa kinachoonyeshwa kwenye dashibodi, unaweza kutoa kwenda pesa ya simu au akaunti ya benki.",
+          a: "Mirabaha kutoka ripoti za maduka inaongezwa kwenye pochi yako ya 2kTunes kwa sarafu ambayo duka lililipa, mara nyingi dola za Marekani. Ukipita kiwango cha chini cha kutoa kinachoonyeshwa kwenye dashibodi, unaweza kutoa kwenda pesa ya simu au akaunti ya benki. Ukitoa kwa TZS, kiwango cha ubadilishaji na ada vinaonyeshwa kabla ya kuthibitisha, na timu yetu ya fedha inashughulikia utoaji huo.",
         },
         {
           q: "Mnaweza kuhakikisha usikilizaji au kuwekwa kwenye orodha?",
