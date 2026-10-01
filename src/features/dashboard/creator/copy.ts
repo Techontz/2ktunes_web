@@ -93,7 +93,7 @@ const EN = {
 
   /* Packages */
   packagesIntro:
-    "Fixed-price offers artists can order. Describe exactly what you deliver — never promise views, streams or followers.",
+    "Fixed-price offers artists can order. Describe exactly what you deliver, and never promise views, streams or followers.",
   noPackages: "No packages yet. Add at least one to submit your profile.",
   addPackage: "Add package",
   editPackage: "Edit package",
@@ -109,9 +109,9 @@ const EN = {
   pkgCurrency: "Currency",
   pkgTurnaround: "Delivery time (days)",
   pkgDeliverable: "Deliverable",
-  pkgDeliverableHint: "e.g. 1 TikTok video, 15–30 seconds, using the song as the sound",
+  pkgDeliverableHint: "e.g. 1 TikTok video, 15 to 30 seconds, using the song as the sound",
   pkgDescription: "Description",
-  pkgActive: "Active — artists can order it",
+  pkgActive: "Active (artists can order it)",
   pkgSaved: "Package saved",
   inactive: "Inactive",
   days: (n: number) => (n === 1 ? "1 day" : `${n} days`),
@@ -232,7 +232,7 @@ const SW: typeof EN = {
   maxAccounts: (n) => `Unaweza kuongeza hadi akaunti ${n}.`,
 
   packagesIntro:
-    "Ofa za bei maalum ambazo wasanii wanaweza kuagiza. Eleza wazi utakachowasilisha — usiahidi kamwe watazamaji, streams au wafuasi.",
+    "Ofa za bei maalum ambazo wasanii wanaweza kuagiza. Eleza wazi utakachowasilisha, na usiahidi kamwe watazamaji, streams au wafuasi.",
   noPackages: "Bado hakuna vifurushi. Ongeza angalau kimoja ili uwasilishe wasifu wako.",
   addPackage: "Ongeza kifurushi",
   editPackage: "Hariri kifurushi",
@@ -249,9 +249,9 @@ const SW: typeof EN = {
   pkgCurrency: "Sarafu",
   pkgTurnaround: "Muda wa kuwasilisha (siku)",
   pkgDeliverable: "Utakachowasilisha",
-  pkgDeliverableHint: "mf. Video 1 ya TikTok, sekunde 15–30, ikitumia wimbo kama sauti",
+  pkgDeliverableHint: "mf. Video 1 ya TikTok, sekunde 15 hadi 30, ikitumia wimbo kama sauti",
   pkgDescription: "Maelezo",
-  pkgActive: "Kinapatikana — wasanii wanaweza kukiagiza",
+  pkgActive: "Kinapatikana (wasanii wanaweza kukiagiza)",
   pkgSaved: "Kifurushi kimehifadhiwa",
   inactive: "Hakipatikani",
   days: (n) => (n === 1 ? "Siku 1" : `Siku ${n}`),
@@ -380,7 +380,7 @@ const FR: typeof EN = {
 
   /* Packages */
   packagesIntro:
-    "Des offres à prix fixe que les artistes peuvent commander. Décrivez précisément ce que vous livrez — ne promettez jamais de vues, de streams ni d'abonnés.",
+    "Des offres à prix fixe que les artistes peuvent commander. Décrivez précisément ce que vous livrez, et ne promettez jamais de vues, de streams ni d'abonnés.",
   noPackages: "Aucune offre pour l'instant. Ajoutez-en au moins une pour soumettre votre profil.",
   addPackage: "Ajouter une offre",
   editPackage: "Modifier l'offre",
@@ -399,7 +399,7 @@ const FR: typeof EN = {
   pkgDeliverable: "Livrable",
   pkgDeliverableHint: "ex. 1 vidéo TikTok de 15 à 30 secondes, avec le morceau en son",
   pkgDescription: "Description",
-  pkgActive: "Active — les artistes peuvent la commander",
+  pkgActive: "Active (les artistes peuvent la commander)",
   pkgSaved: "Offre enregistrée",
   inactive: "Inactive",
   days: (n: number) => (n <= 1 ? `${n} jour` : `${n} jours`),

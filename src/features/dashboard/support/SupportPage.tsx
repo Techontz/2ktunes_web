@@ -215,7 +215,7 @@ function NewTicketDialog({
                 <option value="">{c.releaseNone}</option>
                 {releaseList.map((r) => (
                   <option key={r.id} value={String(r.id)}>
-                    {`${r.release_title}${r.version ? ` (${r.version})` : ""} — ${r.artist_name}`}
+                    {`${r.release_title}${r.version ? ` (${r.version})` : ""} · ${r.artist_name}`}
                   </option>
                 ))}
               </Select>

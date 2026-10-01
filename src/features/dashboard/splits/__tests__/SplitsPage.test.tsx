@@ -34,7 +34,7 @@ describe("SplitsPage", () => {
 
     const dialog = await screen.findByRole("dialog");
     const submit = within(dialog).getByRole("button", { name: "Send invitations" });
-    await within(dialog).findByRole("option", { name: /Nyota — Neema Said/ });
+    await within(dialog).findByRole("option", { name: /Nyota · Neema Said/ });
     await waitFor(() => expect(within(dialog).getByLabelText(/^Release/)).toHaveValue("7"));
     expect(submit).toBeDisabled();
 

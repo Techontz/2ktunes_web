@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 
-const BASE_TITLE = "2kTunes — Distribute worldwide. Grow your audience. Get paid locally.";
+const BASE_TITLE = "2kTunes · Distribute worldwide. Grow your audience. Get paid locally.";
 
 /** The description shipped in index.html, captured once so pages can restore it. */
 let defaultDescription: string | null = null;

@@ -13,7 +13,7 @@ function parse(value: string | null | undefined): Date | null {
 
 export function formatDate(value: string | null | undefined, locale = "en-TZ"): string {
   const d = parse(value);
-  if (!d) return "—";
+  if (!d) return "-";
   try {
     return new Intl.DateTimeFormat(locale, { day: "numeric", month: "short", year: "numeric" }).format(d);
   } catch {
@@ -23,7 +23,7 @@ export function formatDate(value: string | null | undefined, locale = "en-TZ"): 
 
 export function formatDateTime(value: string | null | undefined, locale = "en-TZ"): string {
   const d = parse(value);
-  if (!d) return "—";
+  if (!d) return "-";
   try {
     return new Intl.DateTimeFormat(locale, {
       day: "numeric",
@@ -40,7 +40,7 @@ export function formatDateTime(value: string | null | undefined, locale = "en-TZ
 /** "2026-03" → "Mar 2026". */
 export function formatMonth(value: string | null | undefined, locale = "en-TZ"): string {
   const m = /^(\d{4})-(\d{2})/.exec(value ?? "");
-  if (!m) return value ?? "—";
+  if (!m) return value ?? "-";
   try {
     return new Intl.DateTimeFormat(locale, { month: "short", year: "numeric" }).format(
       new Date(Number(m[1]), Number(m[2]) - 1, 1),
@@ -53,7 +53,7 @@ export function formatMonth(value: string | null | undefined, locale = "en-TZ"):
 /** "3 hours ago" / "saa 3 zilizopita", via Intl.RelativeTimeFormat. */
 export function relativeTime(value: string | null | undefined, locale = "en-TZ", now = Date.now()): string {
   const d = parse(value);
-  if (!d) return "—";
+  if (!d) return "-";
   const diff = (d.getTime() - now) / 1000;
   const abs = Math.abs(diff);
   const [n, unit]: [number, Intl.RelativeTimeFormatUnit] =

@@ -67,7 +67,7 @@ export function useIssueText() {
 }
 
 export function formatDuration(ms: number | null | undefined): string {
-  if (!ms || ms <= 0) return "—";
+  if (!ms || ms <= 0) return "-";
   const total = Math.round(ms / 1000);
   const m = Math.floor(total / 60);
   const s = String(total % 60).padStart(2, "0");
@@ -75,7 +75,7 @@ export function formatDuration(ms: number | null | undefined): string {
 }
 
 export function formatBytes(bytes: number | null | undefined): string {
-  if (!bytes || bytes <= 0) return "—";
+  if (!bytes || bytes <= 0) return "-";
   const units = ["B", "KB", "MB", "GB"];
   let v = bytes;
   let u = 0;

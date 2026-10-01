@@ -55,9 +55,9 @@ export default function AuthPage() {
   }, [mode, t]);
 
   return (
-    <AuthLayout>
+    <AuthLayout wide={mode === "register"}>
       <Tabs value={mode} onValueChange={setMode}>
-        <TabList aria-label={t("auth.tabs_label")} fullWidth className="mb-8">
+        <TabList aria-label={t("auth.tabs_label")} fullWidth className={mode === "register" ? "mb-6" : "mb-8"}>
           <Tab value="login">{t("auth.tab_login")}</Tab>
           <Tab value="register">{t("auth.tab_register")}</Tab>
         </TabList>
@@ -179,6 +179,12 @@ function LoginForm() {
 
 /* ── Register ───────────────────────────────────────────────────────── */
 
+const TYPE_DESC = {
+  artist: "auth.type_artist_desc",
+  label: "auth.type_label_desc",
+  creator: "auth.type_creator_desc",
+} as const satisfies Record<AccountType, string>;
+
 function RegisterForm() {
   const { t, language } = useLanguage();
   const auth = useAuth();
@@ -246,72 +252,78 @@ function RegisterForm() {
 
   return (
     <>
-      <AuthHeading title={t("auth.title_register")} sub={t("auth.sub_register")} />
-      <form noValidate onSubmit={onSubmit} className="space-y-5">
-        <RadioCardGroup<AccountType>
-          legend={t("auth.account_type")}
-          name="account_type"
-          value={accountType}
-          onChange={setAccountType}
-          options={[
-            { value: "artist", label: t("auth.type_artist"), description: t("auth.type_artist_desc"), icon: <Mic2 /> },
-            { value: "label", label: t("auth.type_label"), description: t("auth.type_label_desc"), icon: <Building2 /> },
-            { value: "creator", label: t("auth.type_creator"), description: t("auth.type_creator_desc"), icon: <Clapperboard /> },
-          ]}
-        />
-        <Field label={t("auth.name")} error={errors.name}>
-          <Input name="name" autoComplete="name" value={values.name} onChange={set("name")} />
-        </Field>
-        <Field label={t("auth.email")} error={errors.email}>
-          <Input
-            type="email"
-            name="email"
-            inputMode="email"
-            autoComplete="email"
-            value={values.email}
-            onChange={set("email")}
+      <AuthHeading title={t("auth.title_register")} sub={t("auth.sub_register")} compact />
+      <form noValidate onSubmit={onSubmit} className="space-y-4">
+        <div>
+          <RadioCardGroup<AccountType>
+            legend={t("auth.account_type")}
+            name="account_type"
+            value={accountType}
+            onChange={setAccountType}
+            columns={3}
+            options={[
+              { value: "artist", label: t("auth.type_artist"), icon: <Mic2 /> },
+              { value: "label", label: t("auth.type_label"), icon: <Building2 /> },
+              { value: "creator", label: t("auth.type_creator"), icon: <Clapperboard /> },
+            ]}
           />
-        </Field>
-        <Field
-          label={t("auth.password")}
-          error={errors.password}
-          hint={
-            <span className={hintClass(lengthOk)}>
-              {lengthOk && <Check aria-hidden className="h-3.5 w-3.5" strokeWidth={3} />}
-              {t("auth.pw_hint")}
-            </span>
-          }
-        >
-          <PasswordInput
-            name="password"
-            autoComplete="new-password"
-            value={values.password}
-            onChange={set("password")}
-            showLabel={t("auth.show_pw")}
-            hideLabel={t("auth.hide_pw")}
-          />
-        </Field>
-        <Field
-          label={t("auth.confirm")}
-          error={errors.confirm}
-          hint={
-            matchOk ? (
-              <span className={hintClass(true)}>
-                <Check aria-hidden className="h-3.5 w-3.5" strokeWidth={3} />
-                {t("auth.pw_match")}
+          <p className="mt-2 text-caption text-text-subtle">{t(TYPE_DESC[accountType])}</p>
+        </div>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <Field label={t("auth.name")} error={errors.name}>
+            <Input name="name" autoComplete="name" value={values.name} onChange={set("name")} />
+          </Field>
+          <Field label={t("auth.email")} error={errors.email}>
+            <Input
+              type="email"
+              name="email"
+              inputMode="email"
+              autoComplete="email"
+              value={values.email}
+              onChange={set("email")}
+            />
+          </Field>
+          <Field
+            label={t("auth.password")}
+            error={errors.password}
+            hint={
+              <span className={hintClass(lengthOk)}>
+                {lengthOk && <Check aria-hidden className="h-3.5 w-3.5" strokeWidth={3} />}
+                {t("auth.pw_hint")}
               </span>
-            ) : undefined
-          }
-        >
-          <PasswordInput
-            name="password_confirmation"
-            autoComplete="new-password"
-            value={values.confirm}
-            onChange={set("confirm")}
-            showLabel={t("auth.show_pw")}
-            hideLabel={t("auth.hide_pw")}
-          />
-        </Field>
+            }
+          >
+            <PasswordInput
+              name="password"
+              autoComplete="new-password"
+              value={values.password}
+              onChange={set("password")}
+              showLabel={t("auth.show_pw")}
+              hideLabel={t("auth.hide_pw")}
+            />
+          </Field>
+          <Field
+            label={t("auth.confirm")}
+            error={errors.confirm}
+            hint={
+              matchOk ? (
+                <span className={hintClass(true)}>
+                  <Check aria-hidden className="h-3.5 w-3.5" strokeWidth={3} />
+                  {t("auth.pw_match")}
+                </span>
+              ) : undefined
+            }
+          >
+            <PasswordInput
+              name="password_confirmation"
+              autoComplete="new-password"
+              value={values.confirm}
+              onChange={set("confirm")}
+              showLabel={t("auth.show_pw")}
+              hideLabel={t("auth.hide_pw")}
+            />
+          </Field>
+        </div>
         {formError && <FormAlert>{formError}</FormAlert>}
         <Button type="submit" size="lg" fullWidth loading={busy}>
           {busy ? t("auth.creating") : t("auth.register_btn")}

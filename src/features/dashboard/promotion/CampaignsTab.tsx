@@ -42,7 +42,7 @@ export function CampaignsTab() {
       key: "release",
       header: c.colRelease,
       hideOnMobile: true,
-      cell: (x) => (x.release ? `${x.release.release_title} — ${x.release.artist_name}` : "—"),
+      cell: (x) => (x.release ? `${x.release.release_title} · ${x.release.artist_name}` : "-"),
     },
     { key: "orders", header: c.colOrders, align: "right", cell: (x) => formatCount(x.orders_count ?? 0, locale) },
     {

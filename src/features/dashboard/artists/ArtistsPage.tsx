@@ -250,7 +250,7 @@ function ArtistCard({
           <label htmlFor={inputId} className="cursor-pointer">
             <Camera className="h-4 w-4" aria-hidden />
             {upload.pending ? c.uploading : artist.avatar_url ? c.changePhoto : c.uploadPhoto}
-            <span className="sr-only"> — {c.photoFor(artist.name)}. {c.photoRules}</span>
+            <span className="sr-only">, {c.photoFor(artist.name)}. {c.photoRules}</span>
           </label>
         </Button>
       </div>

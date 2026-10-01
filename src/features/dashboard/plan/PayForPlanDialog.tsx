@@ -1,7 +1,7 @@
 import { useEffect, useState, type FormEvent } from "react";
-import { Button, Dialog, Field, Input, Select } from "@/components/ui";
+import { Button, Dialog, Field, Input, RadioCardGroup, Select } from "@/components/ui";
 import { CopyButton, FormAlert, useAction } from "@/features/dashboard/components";
-import { subscribe } from "@/lib/api/account";
+import { planPrices, subscribe } from "@/lib/api/account";
 import { errorCodeOf } from "@/lib/api/errors";
 import type { PaymentMethodCode, Plan, SubscriptionInfo } from "@/lib/api/types";
 import { useLanguage } from "@/lib/LanguageContext";
@@ -31,6 +31,7 @@ export function PayForPlanDialog({
 }) {
   const c = useCopy(COPY);
   const { t, locale, language } = useLanguage();
+  const [currency, setCurrency] = useState("");
   const [method, setMethod] = useState("");
   const [reference, setReference] = useState("");
   const [errors, setErrors] = useState<{ method?: string; reference?: string }>({});
@@ -38,20 +39,38 @@ export function PayForPlanDialog({
   const { reset } = action;
 
   const open = !!plan;
-  const methods = (instructions?.methods ?? []).filter((m) => !!m);
+  const prices = plan ? planPrices(plan) : [];
+  const chosen = prices.find((p) => p.currency === currency) ?? prices[0];
+  const allMethods = (instructions?.methods ?? []).filter((m) => !!m);
+  // Older APIs don't send methods_by_currency: assume mobile money is TZS only.
+  const methodsFor = (cur: string | undefined) => {
+    const allowed = instructions?.methods_by_currency?.[cur ?? ""];
+    if (allowed) return allMethods.filter((m) => allowed.includes(m));
+    return cur && cur !== "TZS" ? allMethods.filter((m) => m === "bank" || m === "card") : allMethods;
+  };
+  const methods = methodsFor(chosen?.currency);
   const details = paymentDetails(instructions);
 
   useEffect(() => {
     if (!open) return;
-    setMethod(methods.length === 1 ? methods[0] : "");
+    const first = prices[0]?.currency ?? "";
+    const firstMethods = methodsFor(first);
+    setCurrency(first);
+    setMethod(firstMethods.length === 1 ? firstMethods[0] : "");
     setReference("");
     setErrors({});
     reset();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, plan?.id]);
 
-  if (!plan) return null;
-  const price = formatDecimal(plan.price, plan.currency || "TZS", locale);
+  if (!plan || !chosen) return null;
+  const price = formatDecimal(chosen.amount, chosen.currency, locale);
+
+  const pickCurrency = (cur: string) => {
+    setCurrency(cur);
+    const next = methodsFor(cur);
+    setMethod((m) => (next.includes(m) ? m : next.length === 1 ? next[0] : ""));
+  };
 
   const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -63,6 +82,7 @@ export function PayForPlanDialog({
 
     const res = await action.run({
       plan_id: plan.id,
+      currency: chosen.currency,
       payment_method: method as PaymentMethodCode,
       payment_reference: reference.trim(),
     });
@@ -138,6 +158,20 @@ export function PayForPlanDialog({
         </section>
 
         <form id={FORM_ID} onSubmit={onSubmit} noValidate className="space-y-4">
+          {prices.length > 1 && (
+            <RadioCardGroup
+              legend={c.currency}
+              name="plan-currency"
+              value={chosen.currency}
+              onChange={pickCurrency}
+              columns={2}
+              options={prices.map((p) => ({
+                value: p.currency,
+                label: formatDecimal(p.amount, p.currency, locale),
+                description: methodsFor(p.currency).some((m) => m.endsWith("_tz")) ? c.currencyMobileMoney : c.currencyBankOnly,
+              }))}
+            />
+          )}
           <Field label={c.method} required error={errors.method ?? fe.payment_method}>
             <Select value={method} onChange={(e) => setMethod(e.target.value)} placeholder={c.methodPlaceholder}>
               {methods.map((m) => (

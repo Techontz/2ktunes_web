@@ -111,6 +111,10 @@ export type Plan = {
   /** Decimal string in major units, e.g. "9.99". */
   price: string;
   currency: string | null;
+  /** Optional second price in USD (decimal string), set by the admin. */
+  price_usd?: string | null;
+  /** Every currency the plan can be paid in, main price first. */
+  prices?: { currency: string; amount: string }[] | null;
   duration: number | null;
   description: string | null;
   max_artists: number | null;
@@ -139,6 +143,8 @@ export type SubscriptionInfo = {
   pending_payment: SubscriptionPayment | null;
   payment_instructions: {
     methods: string[];
+    /** Which of `methods` accept each currency (mobile money is TZS only). */
+    methods_by_currency?: Record<string, string[]>;
     note: string;
     details: Record<string, string>;
   };

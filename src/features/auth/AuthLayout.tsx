@@ -8,19 +8,21 @@ import { FEATURED_RELEASE } from "@/features/site/art/release";
 import { useLanguage } from "@/lib/LanguageContext";
 import { ArtistPhoto, EqBars } from "@/features/site/kit";
 import { MOCKS } from "@/features/site/content/mocks";
+import { cn } from "@/lib/utils";
 
 /**
  * Shared frame for /auth, /forgot-password, /reset-password and
  * /email-verified: a quiet brand panel on large screens and a focused form
  * column. No marketing chrome — the only exits are home and the legal links.
  */
-export default function AuthLayout({ children }: { children: ReactNode }) {
+/** `wide` gives the create-account form room for two columns, so it fits one screen. */
+export default function AuthLayout({ children, wide }: { children: ReactNode; wide?: boolean }) {
   const { t, pick } = useLanguage();
   return (
     <div className="flex min-h-svh bg-surface text-text">
-      <aside className="theme-dark relative hidden w-[44%] max-w-[40rem] flex-col justify-between overflow-hidden bg-night p-12 text-text lg:flex xl:p-14">
+      <aside className="theme-dark sticky top-0 hidden h-svh w-[44%] max-w-[40rem] shrink-0 flex-col justify-between overflow-hidden bg-night p-12 text-text lg:flex xl:p-14">
         <div aria-hidden className="absolute inset-0">
-          <ArtistPhoto id={2} eager sizes="44vw" position="50% 20%" className="opacity-90" />
+          <ArtistPhoto id={4} eager sizes="44vw" position="50% 22%" className="opacity-90" />
           <span className="absolute inset-0 bg-[linear-gradient(180deg,rgb(26_11_46/0.55)_0%,rgb(42_15_74/0.35)_35%,rgb(26_11_46/0.92)_72%,#1a0b2e_100%)]" />
           <span className="absolute inset-0 bg-[radial-gradient(70%_50%_at_0%_100%,rgb(132_29_198/0.55),transparent_70%)]" />
         </div>
@@ -64,23 +66,30 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
         </div>
       </aside>
 
-      <div className="flex min-w-0 flex-1 flex-col">
+      <div className="relative flex min-w-0 flex-1 flex-col">
         {/* Phones/tablets: a slim brand bar with an artist photo. */}
         <header className="theme-dark relative flex h-16 items-center justify-between gap-4 overflow-hidden bg-hero px-4 sm:px-8 lg:hidden">
           <div aria-hidden className="absolute inset-y-0 right-0 w-1/2 opacity-40 [mask-image:linear-gradient(90deg,transparent,#000)]">
-            <ArtistPhoto id={2} sizes="50vw" position="50% 30%" />
+            <ArtistPhoto id={4} sizes="50vw" position="50% 25%" />
           </div>
           <Link to="/" aria-label={t("nav.home")} className="relative rounded-sm text-[1.3rem]">
             <Wordmark tone="dark" />
           </Link>
           <LanguageSwitch className="relative" />
         </header>
-        <header className="hidden h-16 items-center justify-end gap-4 px-8 lg:flex">
+        <div className="absolute right-8 top-4 z-10 hidden lg:block">
           <LanguageSwitch />
-        </header>
+        </div>
 
-        <main id="main" className="flex flex-1 items-start justify-center px-4 py-8 sm:items-center sm:px-8 sm:py-12">
-          <div className="w-full max-w-[28rem] animate-slide-up sm:rounded-panel sm:border sm:border-border-subtle sm:bg-white sm:p-8 sm:shadow-card-light">{children}</div>
+        <main id="main" className="flex flex-1 items-start justify-center px-4 py-8 sm:items-center sm:px-8 sm:py-12 lg:pb-2 lg:pt-14">
+          <div
+            className={cn(
+              "w-full animate-slide-up sm:rounded-panel sm:border sm:border-border-subtle sm:bg-white sm:p-8 sm:shadow-card-light",
+              wide ? "max-w-[36rem] lg:py-6" : "max-w-[28rem]",
+            )}
+          >
+            {children}
+          </div>
         </main>
 
         <footer className="flex flex-col gap-3 px-4 pb-6 text-[0.8125rem] text-text-subtle sm:flex-row sm:items-center sm:justify-between sm:px-8">
@@ -103,9 +112,9 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
 }
 
 /** Heading block used by every auth screen. */
-export function AuthHeading({ title, sub }: { title: ReactNode; sub?: ReactNode }) {
+export function AuthHeading({ title, sub, compact }: { title: ReactNode; sub?: ReactNode; compact?: boolean }) {
   return (
-    <div className="mb-8">
+    <div className={compact ? "mb-5" : "mb-8"}>
       <h1 className="text-[1.875rem] font-extrabold leading-tight tracking-[-0.03em] text-text sm:text-[2.125rem]">
         {title}
       </h1>

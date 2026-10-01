@@ -52,7 +52,7 @@ function displayNames(locale: string): Intl.DisplayNames | null {
 
 /** Localised country name; unknown/free-text values are returned unchanged. */
 export function countryName(code: string | null | undefined, locale: string): string {
-  if (!code) return "—";
+  if (!code) return "-";
   if (!/^[A-Za-z]{2}$/.test(code)) return code;
   try {
     return displayNames(locale)?.of(code.toUpperCase()) ?? code.toUpperCase();

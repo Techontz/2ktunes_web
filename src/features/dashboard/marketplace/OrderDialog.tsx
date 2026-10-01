@@ -199,7 +199,7 @@ function OrderForm({
                 <option value="">{c.noRelease}</option>
                 {d.releases.map((r) => (
                   <option key={r.id} value={String(r.id)}>
-                    {r.release_title} — {r.artist_name}
+                    {r.release_title} · {r.artist_name}
                   </option>
                 ))}
               </Select>

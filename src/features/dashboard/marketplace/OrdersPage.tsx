@@ -118,9 +118,9 @@ function OrderList({
       cell: (o) =>
         role === "creator"
           ? o.release
-            ? `${o.release.title} — ${o.release.artist}`
-            : "—"
-          : (o.creator?.display_name ?? (o.service ? `${o.service.name} · ${c.serviceBy2k}` : "—")),
+            ? `${o.release.title} · ${o.release.artist}`
+            : "-"
+          : (o.creator?.display_name ?? (o.service ? `${o.service.name} · ${c.serviceBy2k}` : "-")),
     },
     { key: "status", header: c.colStatus, cell: (o) => <StatusPill status={o.status} /> },
     {

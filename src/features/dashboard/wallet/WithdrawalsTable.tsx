@@ -60,7 +60,7 @@ export function WithdrawalsTable({
     {
       key: "destination",
       header: c.colDestination,
-      cell: (w) => <span className="break-words">{w.destination ?? "—"}</span>,
+      cell: (w) => <span className="break-words">{w.destination ?? "-"}</span>,
     },
     {
       key: "reference",

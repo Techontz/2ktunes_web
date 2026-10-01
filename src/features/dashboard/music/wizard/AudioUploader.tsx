@@ -108,8 +108,8 @@ export function AudioUploader({
                 {" · "}
                 {c.audioFacts(
                   (a.format ?? "").toUpperCase(),
-                  a.sample_rate ? `${a.sample_rate / 1000} kHz` : "—",
-                  a.bit_depth ? `${a.bit_depth}-bit` : "—",
+                  a.sample_rate ? `${a.sample_rate / 1000} kHz` : "-",
+                  a.bit_depth ? `${a.bit_depth}-bit` : "-",
                   formatDuration(a.duration_ms),
                 )}
                 {a.size ? ` · ${formatBytes(a.size)}` : ""}

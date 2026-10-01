@@ -3,7 +3,7 @@
 const EN = {
   title: "Promotion",
   intro:
-    "Share your music with smart links, plan campaigns, and hire creators or 2kTunes services. We describe exactly what each service does — results such as streams, followers or playlist placement are never guaranteed.",
+    "Share your music with smart links, plan campaigns, and hire creators or 2kTunes services. We describe exactly what each service does. Results such as streams, followers or playlist placement are never guaranteed.",
   tabsLabel: "Promotion sections",
   tabLinks: "Smart links",
   tabCampaigns: "Campaigns",
@@ -73,7 +73,7 @@ const EN = {
   colOrders: "Orders",
   colBudget: "Budget",
   campaignsCaption: "Your campaigns",
-  noBudget: "—",
+  noBudget: "-",
 
   /* Campaign form */
   createTitle: "New campaign",
@@ -96,7 +96,7 @@ const EN = {
   fCountriesHint: "Search by name and add every country you want to reach.",
   fCountriesInvalid: "Use two-letter country codes separated by commas, e.g. TZ, KE.",
   fAudience: "Target audience",
-  fAudienceHint: "Who should hear this? e.g. Bongo Flava fans aged 18–30 in Dar es Salaam",
+  fAudienceHint: "Who should hear this? e.g. Bongo Flava fans aged 18 to 30 in Dar es Salaam",
   fBrief: "Brief",
   fBriefHint: "Shared with creators you order from, unless you write a separate brief on the order.",
   fPitch: "Playlist pitch",
@@ -123,7 +123,7 @@ const EN = {
   countries: "Target countries",
   audience: "Target audience",
   dates: "Dates",
-  datesValue: (a: string, b: string) => `${a} – ${b}`,
+  datesValue: (a: string, b: string) => `${a} to ${b}`,
   createdAt: "Created",
   brief: "Brief",
   noBrief: "No brief yet.",
@@ -159,13 +159,13 @@ const EN = {
   orderBrief: "Brief for this order",
   orderBriefHint: "Leave empty to use the campaign brief.",
   createOrder: "Create order",
-  orderCreated: "Order created — pay for it to get started",
+  orderCreated: "Order created. Pay for it to get started",
 };
 
 const SW: typeof EN = {
   title: "Utangazaji",
   intro:
-    "Sambaza muziki wako kwa smart link, panga kampeni, na uajiri watengeneza maudhui au huduma za 2kTunes. Tunaeleza wazi kila huduma inachofanya — matokeo kama streams, wafuasi au kuwekwa kwenye playlist hayahakikishwi kamwe.",
+    "Sambaza muziki wako kwa smart link, panga kampeni, na uajiri watengeneza maudhui au huduma za 2kTunes. Tunaeleza wazi kila huduma inachofanya. Matokeo kama streams, wafuasi au kuwekwa kwenye playlist hayahakikishwi kamwe.",
   tabsLabel: "Sehemu za utangazaji",
   tabLinks: "Smart link",
   tabCampaigns: "Kampeni",
@@ -233,7 +233,7 @@ const SW: typeof EN = {
   colOrders: "Oda",
   colBudget: "Bajeti",
   campaignsCaption: "Kampeni zako",
-  noBudget: "—",
+  noBudget: "-",
 
   createTitle: "Kampeni mpya",
   editTitle: "Hariri kampeni",
@@ -256,7 +256,7 @@ const SW: typeof EN = {
   fCountriesHint: "Tafuta kwa jina na uongeze kila nchi unayotaka kufikia.",
   fCountriesInvalid: "Tumia misimbo ya nchi ya herufi mbili ikitenganishwa kwa koma, mf. TZ, KE.",
   fAudience: "Hadhira lengwa",
-  fAudienceHint: "Nani asikie wimbo huu? mf. wapenzi wa Bongo Flava wenye umri wa miaka 18–30 jijini Dar es Salaam",
+  fAudienceHint: "Nani asikie wimbo huu? mf. wapenzi wa Bongo Flava wenye umri wa miaka 18 hadi 30 jijini Dar es Salaam",
   fBrief: "Maelekezo",
   fBriefHint: "Yanashirikishwa na watengeneza maudhui unaowaagiza, isipokuwa ukiandika maelekezo tofauti kwenye oda.",
   fPitch: "Maelezo ya kupendekeza kwa playlist",
@@ -283,7 +283,7 @@ const SW: typeof EN = {
   countries: "Nchi lengwa",
   audience: "Hadhira lengwa",
   dates: "Tarehe",
-  datesValue: (a, b) => `${a} – ${b}`,
+  datesValue: (a, b) => `${a} hadi ${b}`,
   createdAt: "Ilianzishwa",
   brief: "Maelekezo",
   noBrief: "Bado hakuna maelekezo.",
@@ -317,13 +317,13 @@ const SW: typeof EN = {
   orderBrief: "Maelekezo ya oda hii",
   orderBriefHint: "Acha wazi ili kutumia maelekezo ya kampeni.",
   createOrder: "Tengeneza oda",
-  orderCreated: "Oda imetengenezwa — ilipie ili ianze",
+  orderCreated: "Oda imetengenezwa. Ilipie ili ianze",
 };
 
 const FR: typeof EN = {
   title: "Promotion",
   intro:
-    "Partagez votre musique avec des liens intelligents, planifiez des campagnes et faites appel à des créateurs ou aux services 2kTunes. Nous décrivons précisément chaque service — les résultats (streams, abonnés, entrées en playlist) ne sont jamais garantis.",
+    "Partagez votre musique avec des liens intelligents, planifiez des campagnes et faites appel à des créateurs ou aux services 2kTunes. Nous décrivons précisément chaque service. Les résultats (streams, abonnés, entrées en playlist) ne sont jamais garantis.",
   tabsLabel: "Sections Promotion",
   tabLinks: "Liens intelligents",
   tabCampaigns: "Campagnes",
@@ -397,7 +397,7 @@ const FR: typeof EN = {
   colOrders: "Commandes",
   colBudget: "Budget",
   campaignsCaption: "Vos campagnes",
-  noBudget: "—",
+  noBudget: "-",
 
   /* Campaign form */
   createTitle: "Nouvelle campagne",
@@ -449,7 +449,7 @@ const FR: typeof EN = {
   countries: "Pays ciblés",
   audience: "Public cible",
   dates: "Dates",
-  datesValue: (a: string, b: string) => `${a} – ${b}`,
+  datesValue: (a: string, b: string) => `du ${a} au ${b}`,
   createdAt: "Créée le",
   brief: "Brief",
   noBrief: "Aucun brief pour l'instant.",
@@ -485,7 +485,7 @@ const FR: typeof EN = {
   orderBrief: "Brief de cette commande",
   orderBriefHint: "Laissez vide pour utiliser le brief de la campagne.",
   createOrder: "Créer la commande",
-  orderCreated: "Commande créée — payez-la pour démarrer",
+  orderCreated: "Commande créée. Payez-la pour démarrer",
 };
 
 export const COPY = { EN, SW, FR };

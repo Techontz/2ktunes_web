@@ -224,9 +224,9 @@ const withdrawals = [
 ];
 
 const providers = [
-  { id: 1, code: "mpesa_tz", name: "M-Pesa (Vodacom)", type: "mobile_money", country: "TZ", currency: "TZS", min_minor: 10_000_00, max_minor: 5_000_000_00, daily_limit_minor: 10_000_000_00, monthly_limit_minor: null, fee_fixed_minor: 1_000_00, fee_percent_bp: 0, is_sandbox: false, processing: "Processed by the 2kTunes finance team, usually within 1–2 business days." },
+  { id: 1, code: "mpesa_tz", name: "M-Pesa (Vodacom)", type: "mobile_money", country: "TZ", currency: "TZS", min_minor: 10_000_00, max_minor: 5_000_000_00, daily_limit_minor: 10_000_000_00, monthly_limit_minor: null, fee_fixed_minor: 1_000_00, fee_percent_bp: 0, is_sandbox: false, processing: "Processed by the 2kTunes finance team, usually within 1 to 2 business days." },
   { id: 2, code: "airtel_tz", name: "Airtel Money", type: "mobile_money", country: "TZ", currency: "TZS", min_minor: 10_000_00, max_minor: 3_000_000_00, daily_limit_minor: null, monthly_limit_minor: null, fee_fixed_minor: 0, fee_percent_bp: 150, is_sandbox: true, processing: "Processed automatically." },
-  { id: 3, code: "bank_tz", name: "Bank transfer (TZ)", type: "bank", country: "TZ", currency: "TZS", min_minor: 50_000_00, max_minor: null, daily_limit_minor: null, monthly_limit_minor: null, fee_fixed_minor: 5_000_00, fee_percent_bp: 0, is_sandbox: false, processing: "Processed by the 2kTunes finance team, usually within 1–2 business days." },
+  { id: 3, code: "bank_tz", name: "Bank transfer (TZ)", type: "bank", country: "TZ", currency: "TZS", min_minor: 50_000_00, max_minor: null, daily_limit_minor: null, monthly_limit_minor: null, fee_fixed_minor: 5_000_00, fee_percent_bp: 0, is_sandbox: false, processing: "Processed by the 2kTunes finance team, usually within 1 to 2 business days." },
 ];
 
 const methods = [
@@ -236,7 +236,7 @@ const methods = [
 const ledger = [
   { id: 501, type: "withdrawal", description: "Withdrawal WD-7Q2M9K", account: "held", amount_minor: 50_000_00, balance_after_minor: 50_000_00, currency: "TZS", reference: "tx-4b1e", created_at: "2026-09-29T08:00:00Z" },
   { id: 500, type: "withdrawal", description: "Withdrawal WD-7Q2M9K", account: "available", amount_minor: -50_000_00, balance_after_minor: 184_250_00, currency: "TZS", reference: "tx-4b1e", created_at: "2026-09-29T08:00:00Z" },
-  { id: 480, type: "royalty", description: "Royalties — Spotify, August 2026", account: "available", amount_minor: 96_400_00, balance_after_minor: 234_250_00, currency: "TZS", reference: "tx-9ac2", created_at: "2026-09-20T08:00:00Z" },
+  { id: 480, type: "royalty", description: "Royalties from Spotify, August 2026", account: "available", amount_minor: 96_400_00, balance_after_minor: 234_250_00, currency: "TZS", reference: "tx-9ac2", created_at: "2026-09-20T08:00:00Z" },
 ];
 
 const analytics = {
@@ -303,7 +303,7 @@ const creatorFull = {
   review_note: null,
   completed_orders: 12,
   packages: [
-    { id: 11, title: "One TikTok dance video", platform: "tiktok", description: "A 15–30 second original dance to your song, posted on my account.", deliverable: "1 TikTok post", price_minor: 150_000_00, currency: "TZS", turnaround_days: 5, is_active: true },
+    { id: 11, title: "One TikTok dance video", platform: "tiktok", description: "A 15 to 30 second original dance to your song, posted on my account.", deliverable: "1 TikTok post", price_minor: 150_000_00, currency: "TZS", turnaround_days: 5, is_active: true },
     { id: 12, title: "Instagram Reel + Story", platform: "instagram", description: null, deliverable: "1 Reel, 1 Story", price_minor: 220_000_00, currency: "TZS", turnaround_days: 7, is_active: true },
   ],
   portfolio: [{ id: 1, platform: "tiktok", url: "https://www.tiktok.com/@amanidances/video/1", title: "Amapiano challenge", views: 210_000 }],
@@ -353,7 +353,7 @@ const campaign = {
   budget_minor: 600_000_00,
   currency: "TZS",
   target_countries: ["TZ", "KE"],
-  target_audience: "18–30, dance and Bongo Flava fans",
+  target_audience: "Ages 18 to 30, dance and Bongo Flava fans",
   brief: "Short dance videos to the chorus.",
   pitch: null,
   starts_on: "2026-09-20",
@@ -384,7 +384,7 @@ const ticket = {
   ...tickets[0],
   messages: [
     { id: 1, body: "My withdrawal WD-7Q2M9K has been processing since yesterday.", is_staff: false, attachment_name: null, created_at: "2026-09-29T12:00:00Z", user: { id: 1, name: "Neema Said" } },
-    { id: 2, body: "Habari Neema, M-Pesa payouts are confirmed by our finance team within 1–2 business days. We'll update you here.", is_staff: true, attachment_name: null, created_at: "2026-09-30T10:00:00Z", user: { id: 90, name: "Rehema (Support)" } },
+    { id: 2, body: "Habari Neema, M-Pesa payouts are confirmed by our finance team within 1 to 2 business days. We'll update you here.", is_staff: true, attachment_name: null, created_at: "2026-09-30T10:00:00Z", user: { id: 90, name: "Rehema (Support)" } },
   ],
 };
 
@@ -399,9 +399,8 @@ const help = {
 };
 
 const plans = [
-  { id: 1, name: "Free", price: "0.00", currency: "TZS", duration: 365, description: "One artist, pay-as-you-go features.", max_artists: 1, is_active: true, order: 1, features: ["1 artist profile", "Smart links"] },
-  { id: 2, name: "Artist", price: "60000.00", currency: "TZS", duration: 365, description: "Unlimited releases for one artist.", max_artists: 1, is_active: true, order: 2, features: ["Unlimited releases", "Pre-save pages", "Priority support"] },
-  { id: 3, name: "Label", price: "250000.00", currency: "TZS", duration: 365, description: "For teams managing several artists.", max_artists: 10, is_active: true, order: 3, features: ["Up to 10 artists", "Split sheets", "Team support"] },
+  { id: 1, name: "Single Artist", price: "39000.00", currency: "TZS", price_usd: "15.00", prices: [{ currency: "TZS", amount: "39000.00" }, { currency: "USD", amount: "15.00" }], duration: 365, description: "For independent artists releasing their own music.", max_artists: 1, is_active: true, order: 1, features: ["Unlimited releases for a year", "Delivery to all major stores and platforms", "Keep 100% of your rights"] },
+  { id: 2, name: "2 Artists", price: "59000.00", currency: "TZS", price_usd: "23.00", prices: [{ currency: "TZS", amount: "59000.00" }, { currency: "USD", amount: "23.00" }], duration: 365, description: "For duos and artists who manage a second act.", max_artists: 2, is_active: true, order: 2, features: ["Everything in Single Artist", "Separate analytics per artist", "Royalty splits between collaborators"] },
 ];
 
 const splits = {

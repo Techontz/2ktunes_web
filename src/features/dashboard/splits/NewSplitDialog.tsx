@@ -171,7 +171,7 @@ export function NewSplitDialog({
             >
               {releaseList.map((r) => (
                 <option key={r.id} value={String(r.id)}>
-                  {[r.release_title, r.version ? `(${r.version})` : null, "—", r.artist_name].filter(Boolean).join(" ")}
+                  {[r.release_title, r.version ? `(${r.version})` : null, "·", r.artist_name].filter(Boolean).join(" ")}
                 </option>
               ))}
             </Select>

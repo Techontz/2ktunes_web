@@ -70,7 +70,7 @@ export function StatusPill({
   const text = label ?? (translated === `status.${key}` ? key.replace(/_/g, " ") : translated);
   return (
     <Badge tone={TONE[key] ?? "neutral"} dot size={size} className={className}>
-      {text || "—"}
+      {text || "-"}
     </Badge>
   );
 }
@@ -85,7 +85,7 @@ export function SandboxBadge({ className }: { className?: string }) {
       <Badge tone="warning" size="sm">
         <FlaskConical className="mr-1 inline h-3 w-3 align-[-2px]" aria-hidden />
         {t("badge.sandbox")}
-        <span className="sr-only"> — {t("badge.sandbox_hint")}</span>
+        <span className="sr-only">, {t("badge.sandbox_hint")}</span>
       </Badge>
     </span>
   );

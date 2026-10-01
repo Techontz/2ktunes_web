@@ -181,7 +181,7 @@ export default function ReleaseWizardPage() {
                   {errors > 0 && release && (
                     <span className="ml-auto rounded-full bg-warning-soft px-1.5 text-[0.7rem] font-bold text-warning">
                       {errors}
-                      <span className="sr-only"> — {c.stepHasErrors(errors)}</span>
+                      <span className="sr-only">, {c.stepHasErrors(errors)}</span>
                     </span>
                   )}
                 </button>

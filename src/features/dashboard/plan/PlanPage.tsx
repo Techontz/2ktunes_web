@@ -11,7 +11,7 @@ import {
   Section,
   StatusPill,
 } from "@/features/dashboard/components";
-import { fetchPlanList, fetchSubscription, subscribe } from "@/lib/api/account";
+import { fetchPlanList, fetchSubscription, planPrices, subscribe } from "@/lib/api/account";
 import type { Plan, SubscriptionInfo } from "@/lib/api/types";
 import { useResource } from "@/lib/api/useResource";
 import { useAuth } from "@/lib/auth/AuthProvider";
@@ -145,7 +145,7 @@ function CurrentSubscription({ info, c }: { info: SubscriptionInfo; c: PlanCopy 
               </div>
               <DefinitionList
                 items={[
-                  { label: c.pendingPlan, value: pay.plan?.name ?? "—", hidden: !pay.plan },
+                  { label: c.pendingPlan, value: pay.plan?.name ?? "-", hidden: !pay.plan },
                   { label: c.pendingMethod, value: c.methods[pay.method] ?? pay.method },
                   { label: c.pendingReference, value: <span className="break-all font-mono">{pay.payer_reference}</span> },
                   { label: c.pendingAmount, value: formatMinor(pay.amount_minor, pay.currency, locale) },
@@ -173,6 +173,7 @@ function PlanCard({
 }) {
   const { locale } = useLanguage();
   const free = isZeroDecimal(plan.price);
+  const [main, ...others] = planPrices(plan);
   const isCurrent = info.subscription_status === "active" && info.plan?.id === plan.id;
   const isPending = info.pending_payment?.plan_id === plan.id;
   const features = (plan.features ?? []).filter((f) => typeof f === "string" && f.trim());
@@ -201,10 +202,17 @@ function PlanCard({
         )}
       </div>
       <p className="mt-3 break-words text-[1.625rem] font-bold leading-tight tracking-[-0.025em] text-text">
-        {free ? c.free : formatDecimal(plan.price, plan.currency || "TZS", locale)}
+        {free ? c.free : formatDecimal(main.amount, main.currency, locale)}
       </p>
+      {!free && others.length > 0 && (
+        <p className="text-body-sm font-semibold text-text-muted">
+          {others.map((p) => c.orPrice(formatDecimal(p.amount, p.currency, locale))).join(" · ")}
+        </p>
+      )}
       {plan.duration ? (
-        <p className="text-body-sm text-text-subtle">{c.perDays(formatCount(plan.duration, locale))}</p>
+        <p className="text-body-sm text-text-subtle">
+          {plan.duration === 365 || plan.duration === 366 ? c.perYear : c.perDays(formatCount(plan.duration, locale))}
+        </p>
       ) : null}
       {plan.description && <p className="mt-3 text-body-sm text-text-muted">{plan.description}</p>}
 

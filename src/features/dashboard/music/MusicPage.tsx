@@ -84,10 +84,10 @@ export default function MusicPage() {
           <ReleaseCover src={r.cover_image} title={r.release_title} size="sm" />
           <span className="min-w-0">
             <span className="block truncate font-semibold text-text">
-              {r.release_title || "—"}
+              {r.release_title || "-"}
               {r.version ? <span className="font-normal text-text-subtle"> ({r.version})</span> : null}
             </span>
-            <span className="block truncate text-caption text-text-subtle">{r.artist_name || "—"}</span>
+            <span className="block truncate text-caption text-text-subtle">{r.artist_name || "-"}</span>
           </span>
         </Link>
       ),

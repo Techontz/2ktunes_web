@@ -5,12 +5,12 @@ export const PROMOTION: Localized<PageCopy> = {
   EN: {
     meta: {
       title: "Promotion",
-      description: "Editorial pitching, independent curators, creator campaigns and advertising — clearly explained, never guaranteed.",
+      description: "Editorial pitching, independent curators, creator campaigns and advertising, clearly explained and never guaranteed.",
     },
     hero: {
       eyebrow: "Promotion",
       title: "Reach listeners, honestly.",
-      lede: "Getting on a store is the start. 2kTunes lays out four distinct ways to find an audience — two of them available today — and tells you plainly who decides, what you pay for and what no one can promise.",
+      lede: "Getting on a store is the start. 2kTunes lays out four distinct ways to find an audience (two of them available today) and tells you plainly who decides, what you pay for and what no one can promise.",
       secondary: { label: "Creator campaigns", to: "/creators" },
       visual: "campaign",
     },
@@ -34,7 +34,7 @@ export const PROMOTION: Localized<PageCopy> = {
             name: "Independent curators",
             what: "Not available yet. Your track would be offered to independent playlist curators and blogs for review.",
             who: "Each curator",
-            guaranteed: "No — you pay for review",
+            guaranteed: "No, you pay for review",
           },
           {
             name: "Creator campaigns",
@@ -62,7 +62,7 @@ export const PROMOTION: Localized<PageCopy> = {
             icon: "list",
             tag: "Included",
             title: "Editorial pitching",
-            body: "For eligible stores, submit one upcoming song with genre, mood, language and story. We format the pitch the way editors ask for it. Editors are independent and most pitches are not selected — that's normal.",
+            body: "For eligible stores, submit one upcoming song with genre, mood, language and story. We format the pitch the way editors ask for it. Editors are independent and most pitches are not selected. That's normal.",
           },
           {
             icon: "headphones",
@@ -111,12 +111,12 @@ export const PROMOTION: Localized<PageCopy> = {
   SW: {
     meta: {
       title: "Utangazaji",
-      description: "Kuwasilisha kwa wahariri, wachaguzi huru, kampeni za watengeneza maudhui na matangazo — yameelezwa wazi, bila ahadi za uongo.",
+      description: "Kuwasilisha kwa wahariri, wachaguzi huru, kampeni za watengeneza maudhui na matangazo, yameelezwa wazi bila ahadi za uongo.",
     },
     hero: {
       eyebrow: "Utangazaji",
       title: "Fikia wasikilizaji, kwa uaminifu.",
-      lede: "Kuingia dukani ni mwanzo tu. 2kTunes inaeleza njia nne tofauti za kupata hadhira — mbili kati yake zinapatikana sasa — na inakueleza wazi nani anaamua, unalipia nini na nini hakuna anayeweza kuahidi.",
+      lede: "Kuingia dukani ni mwanzo tu. 2kTunes inaeleza njia nne tofauti za kupata hadhira (mbili kati yake zinapatikana sasa) na inakueleza wazi nani anaamua, unalipia nini na nini hakuna anayeweza kuahidi.",
       secondary: { label: "Kampeni za watengeneza maudhui", to: "/creators" },
       visual: "campaign",
     },
@@ -131,7 +131,7 @@ export const PROMOTION: Localized<PageCopy> = {
         headers: ["Njia", "Ni nini", "Nani anaamua", "Matokeo yamehakikishwa?"],
         rows: [
           { name: "Kuwasilisha kwa wahariri", what: "Ombi kwa wahariri wa maduka kuzingatia toleo linalokuja.", who: "Timu za wahariri wa maduka", guaranteed: "Hapana" },
-          { name: "Wachaguzi huru", what: "Bado haipatikani. Wimbo wako utapelekwa kwa wachaguzi huru wa orodha na blogu kwa ukaguzi.", who: "Kila mchaguzi", guaranteed: "Hapana — unalipia ukaguzi" },
+          { name: "Wachaguzi huru", what: "Bado haipatikani. Wimbo wako utapelekwa kwa wachaguzi huru wa orodha na blogu kwa ukaguzi.", who: "Kila mchaguzi", guaranteed: "Hapana, unalipia ukaguzi" },
           { name: "Kampeni za watengeneza maudhui", what: "Unaagiza kifurushi kutoka kwa mtengeneza maudhui, naye anaweka maudhui yanayotumia wimbo wako, yakionyeshwa wazi kuwa tangazo.", who: "Wewe unamchagua na kuidhinisha chapisho; yeye anakubali au kukataa agizo", guaranteed: "Machapisho, si idadi ya watazamaji" },
           { name: "Matangazo", what: "Bado haipatikani. Matangazo ya kulipia kwenye majukwaa unayochagua, kwa bajeti na hadhira yako.", who: "Wewe, ndani ya sheria za jukwaa", guaranteed: "Matangazo kuonyeshwa, si usikilizaji" },
         ],
@@ -144,7 +144,7 @@ export const PROMOTION: Localized<PageCopy> = {
         title: "Jinsi kila njia inavyofanya kazi.",
         columns: 2,
         items: [
-          { icon: "list", tag: "Imejumuishwa", title: "Kuwasilisha kwa wahariri", body: "Kwa maduka yanayoruhusu, wasilisha wimbo mmoja unaokuja pamoja na aina, hisia, lugha na hadithi yake. Tunaandaa ombi jinsi wahariri wanavyotaka. Wahariri ni huru na maombi mengi hayachaguliwi — hilo ni kawaida." },
+          { icon: "list", tag: "Imejumuishwa", title: "Kuwasilisha kwa wahariri", body: "Kwa maduka yanayoruhusu, wasilisha wimbo mmoja unaokuja pamoja na aina, hisia, lugha na hadithi yake. Tunaandaa ombi jinsi wahariri wanavyotaka. Wahariri ni huru na maombi mengi hayachaguliwi. Hilo ni kawaida." },
           { icon: "headphones", tag: "Bado haipatikani", title: "Huduma za wachaguzi huru", body: "Huduma hii bado haipatikani. Itakapopatikana: chagua wachaguzi kwa aina ya muziki na eneo. Kila mmoja anasikiliza na kuamua kama ataongeza au kuandika kuhusu wimbo wako, na anatoa maoni kwa vyovyote. Ada yako ni ya muda wao, si nafasi." },
           { icon: "video", tag: "Kampeni ya kulipia", title: "Kampeni za watengeneza maudhui", body: "Pitia watengeneza maudhui waliokaguliwa na uagize kifurushi kwa bei wanayoweka. 2kTunes inashikilia malipo yako hadi uidhinishe chapisho au muda wa ukaguzi upite, na kila chapisho lazima lionyeshwe kuwa ni tangazo la kulipia." },
           { icon: "megaphone", tag: "Bado haipatikani", title: "Matangazo", body: "Huduma hii bado haipatikani. Itakapopatikana: tangaza toleo kwa matangazo yanayoelekeza kwenye kiungo au ukurasa wa duka. Unadhibiti bajeti, tarehe na hadhira; ripoti zinaonyesha matumizi na matokeo." },
@@ -177,12 +177,12 @@ export const PROMOTION: Localized<PageCopy> = {
   FR: {
     meta: {
       title: "Promotion",
-      description: "Pitch éditorial, curateurs indépendants, campagnes de créateurs de contenu et publicité — clairement expliqués, jamais garantis.",
+      description: "Pitch éditorial, curateurs indépendants, campagnes de créateurs de contenu et publicité, clairement expliqués et jamais garantis.",
     },
     hero: {
       eyebrow: "Promotion",
       title: "Touchez des auditeurs, honnêtement.",
-      lede: "Être sur les plateformes n’est qu’un début. 2kTunes présente quatre façons distinctes de trouver un public — dont deux disponibles dès aujourd’hui — et vous dit clairement qui décide, ce que vous payez et ce que personne ne peut promettre.",
+      lede: "Être sur les plateformes n’est qu’un début. 2kTunes présente quatre façons distinctes de trouver un public (dont deux disponibles dès aujourd’hui) et vous dit clairement qui décide, ce que vous payez et ce que personne ne peut promettre.",
       secondary: { label: "Campagnes de créateurs", to: "/creators" },
       visual: "campaign",
     },
@@ -206,7 +206,7 @@ export const PROMOTION: Localized<PageCopy> = {
             name: "Curateurs indépendants",
             what: "Pas encore disponible. Votre titre serait proposé à des curateurs de playlists et blogs indépendants pour écoute.",
             who: "Chaque curateur",
-            guaranteed: "Non — vous payez l’écoute",
+            guaranteed: "Non, vous payez l’écoute",
           },
           {
             name: "Campagnes de créateurs",
@@ -234,7 +234,7 @@ export const PROMOTION: Localized<PageCopy> = {
             icon: "list",
             tag: "Inclus",
             title: "Pitch éditorial",
-            body: "Pour les plateformes éligibles, soumettez un titre à venir avec son genre, son ambiance, sa langue et son histoire. Nous mettons en forme le pitch comme les éditeurs le demandent. Les éditeurs sont indépendants et la plupart des pitchs ne sont pas retenus — c’est normal.",
+            body: "Pour les plateformes éligibles, soumettez un titre à venir avec son genre, son ambiance, sa langue et son histoire. Nous mettons en forme le pitch comme les éditeurs le demandent. Les éditeurs sont indépendants et la plupart des pitchs ne sont pas retenus. C’est normal.",
           },
           {
             icon: "headphones",

@@ -17,7 +17,7 @@ const emptyDashboard = {
 };
 
 describe("OverviewPage", () => {
-  it("shows honest empty states for a new account — no invented numbers", async () => {
+  it("shows honest empty states for a new account, no invented numbers", async () => {
     mockApi({ "GET /dashboard": emptyDashboard });
     renderPage(<OverviewPage />);
     expect(await screen.findByText("No earnings yet")).toBeInTheDocument();

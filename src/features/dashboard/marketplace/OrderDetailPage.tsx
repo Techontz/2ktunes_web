@@ -107,7 +107,7 @@ export default function OrderDetailPage() {
   ) : o.service ? (
     `${o.service.name} · ${c.serviceBy2k}`
   ) : (
-    "—"
+    "-"
   );
 
   return (
@@ -128,10 +128,10 @@ export default function OrderDetailPage() {
                   { label: isService ? c.service : c.creator, value: counterpart },
                   {
                     label: c.release,
-                    value: o.release ? `${o.release.title} — ${o.release.artist}` : "—",
+                    value: o.release ? `${o.release.title} · ${o.release.artist}` : "-",
                     hidden: !o.release,
                   },
-                  { label: c.track, value: o.track?.title ?? "—", hidden: !o.track },
+                  { label: c.track, value: o.track?.title ?? "-", hidden: !o.track },
                   { label: c.price, value: <Money minor={o.price_minor} currency={o.currency} /> },
                   {
                     label: c.platformFee,
@@ -615,7 +615,7 @@ function Messages({ order, onSent }: { order: Order; onSent: () => void }) {
                     )}
                   >
                     <p className="text-caption font-semibold text-text-subtle">
-                      {m.mine ? c.you : (m.author ?? "—")}
+                      {m.mine ? c.you : (m.author ?? "-")}
                       <span aria-hidden> · </span>
                       <time dateTime={m.created_at} className="font-normal">
                         {formatDateTime(m.created_at, locale)}

@@ -36,7 +36,7 @@ export function IncomingOrders() {
         </div>
       ),
     },
-    { key: "release", header: c.colRelease, cell: (o) => (o.release ? `${o.release.title} — ${o.release.artist}` : "—") },
+    { key: "release", header: c.colRelease, cell: (o) => (o.release ? `${o.release.title} · ${o.release.artist}` : "-") },
     { key: "status", header: c.colStatus, cell: (o) => <StatusPill status={o.status} /> },
     {
       key: "payout",

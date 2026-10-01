@@ -111,7 +111,7 @@ export default function ContactPage() {
     }
     const topicLabel = t(`contact.topic_${values.topic}`);
     const subject = `${c.subject}: ${topicLabel}`;
-    const body = `${values.message.trim()}\n\n— ${values.name.trim()}\n${values.email.trim()}\n${t("contact.topic")}: ${topicLabel}`;
+    const body = `${values.message.trim()}\n\n${values.name.trim()}\n${values.email.trim()}\n${t("contact.topic")}: ${topicLabel}`;
     setComposed({ subject, body });
     setCopied(false);
     window.location.href = buildMailto(CONTACT_EMAIL, subject, body);

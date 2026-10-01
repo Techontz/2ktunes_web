@@ -63,7 +63,7 @@ describe("WalletPage", () => {
   });
 });
 
-describe("Withdraw flow — idempotency", () => {
+describe("Withdraw flow: idempotency", () => {
   it("reuses the key across retries of one attempt and mints a new one when the amount changes", async () => {
     const user = userEvent.setup();
     let posts = 0;

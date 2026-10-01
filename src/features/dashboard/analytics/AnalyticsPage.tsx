@@ -83,7 +83,7 @@ export default function AnalyticsPage() {
                 <option value="">{c.allReleases}</option>
                 {releaseOptions.map((r) => (
                   <option key={r.id} value={r.id}>
-                    {r.release_title} — {r.artist_name}
+                    {r.release_title} · {r.artist_name}
                   </option>
                 ))}
               </Select>

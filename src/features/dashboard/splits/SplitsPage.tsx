@@ -200,7 +200,7 @@ function Invitations({ invitations, onChanged }: { invitations: SplitInvitation[
   const [acceptingId, setAcceptingId] = useState<number | null>(null);
   const accept = useAction((id: number) => respondToShare(id, true));
 
-  const roleLabel = (r: string | null) => (r ? (c.roles[r] ?? r.replace(/_/g, " ")) : "—");
+  const roleLabel = (r: string | null) => (r ? (c.roles[r] ?? r.replace(/_/g, " ")) : "-");
 
   return (
     <Section id="split-invitations" title={c.invitationsTitle}>
@@ -293,7 +293,7 @@ function MySheets({ sheets, onNew }: { sheets: SplitSheet[]; onNew: () => void }
     groups.set(s.release.id, g);
   }
 
-  const roleLabel = (r: string | null) => (r ? (c.roles[r] ?? r.replace(/_/g, " ")) : "—");
+  const roleLabel = (r: string | null) => (r ? (c.roles[r] ?? r.replace(/_/g, " ")) : "-");
 
   return (
     <Section id="split-sheets" title={c.mineTitle}>

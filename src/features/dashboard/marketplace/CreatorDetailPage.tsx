@@ -85,12 +85,12 @@ export default function CreatorDetailPage() {
               <DefinitionList
                 className="mt-5"
                 items={[
-                  { label: c.languages, value: cr.languages.length ? cr.languages.join(", ").toUpperCase() : "—" },
+                  { label: c.languages, value: cr.languages.length ? cr.languages.join(", ").toUpperCase() : "-" },
                   {
                     label: c.categories,
-                    value: cr.categories.length ? cr.categories.map(labels.category).join(", ") : "—",
+                    value: cr.categories.length ? cr.categories.map(labels.category).join(", ") : "-",
                   },
-                  { label: c.turnaround, value: cr.turnaround_days ? c.days(cr.turnaround_days) : "—" },
+                  { label: c.turnaround, value: cr.turnaround_days ? c.days(cr.turnaround_days) : "-" },
                   { label: c.completedOrders, value: formatCount(cr.completed_orders ?? 0, locale) },
                 ]}
               />

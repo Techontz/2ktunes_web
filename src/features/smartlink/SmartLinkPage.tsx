@@ -46,7 +46,7 @@ export default function SmartLinkPage() {
 
   const notFound = res.errorObj instanceof ApiError && res.errorObj.status === 404;
   usePageMeta(
-    release ? `${release.title} — ${release.artist}` : null,
+    release ? `${release.title} · ${release.artist}` : null,
     release ? c.by(release.artist) : undefined,
     { noindex: notFound },
   );

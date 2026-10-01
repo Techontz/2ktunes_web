@@ -19,7 +19,7 @@ const EN = {
   upcomingBodyNoDate: "This release is on its way.",
   pendingTitle: "Coming soon to your favourite stores",
   pendingBody:
-    "This release is being delivered to music stores. Each store publishes on its own schedule — check back soon to listen.",
+    "This release is being delivered to music stores. Each store publishes on its own schedule, so check back soon to listen.",
   notifyTitle: "Get notified when it's out",
   notifyBody: "Leave your email and we'll send you one message when it's available to stream.",
   email: "Email address",
@@ -60,7 +60,7 @@ const SW: typeof EN = {
   upcomingBodyNoDate: "Kazi hii iko njiani.",
   pendingTitle: "Inakuja hivi karibuni kwenye maduka unayopenda",
   pendingBody:
-    "Kazi hii inapelekwa kwenye maduka ya muziki. Kila duka huchapisha kwa ratiba yake — rudi hivi karibuni kusikiliza.",
+    "Kazi hii inapelekwa kwenye maduka ya muziki. Kila duka huchapisha kwa ratiba yake, kwa hiyo rudi hivi karibuni kusikiliza.",
   notifyTitle: "Pata taarifa itakapotoka",
   notifyBody: "Acha barua pepe yako na tutakutumia ujumbe mmoja itakapopatikana kusikilizwa.",
   email: "Barua pepe",
@@ -101,7 +101,7 @@ const FR: typeof EN = {
   upcomingBodyNoDate: "Cette sortie arrive bientôt.",
   pendingTitle: "Bientôt sur vos plateformes préférées",
   pendingBody:
-    "Cette sortie est en cours de livraison aux plateformes musicales. Chaque plateforme publie selon son propre calendrier — revenez bientôt pour l'écouter.",
+    "Cette sortie est en cours de livraison aux plateformes musicales. Chaque plateforme publie selon son propre calendrier : revenez bientôt pour l'écouter.",
   notifyTitle: "Soyez prévenu de la sortie",
   notifyBody: "Laissez votre e-mail et nous vous enverrons un seul message dès qu'elle sera disponible en streaming.",
   email: "Adresse e-mail",

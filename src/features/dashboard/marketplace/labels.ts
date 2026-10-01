@@ -186,17 +186,17 @@ export const LABELS = { EN, SW, FR };
 
 export function humanize(value: string | null | undefined): string {
   const s = (value ?? "").replace(/_/g, " ").trim();
-  return s ? s.charAt(0).toUpperCase() + s.slice(1) : "—";
+  return s ? s.charAt(0).toUpperCase() + s.slice(1) : "-";
 }
 
 export function useLabels() {
   const l = useCopy(LABELS);
   return {
-    platform: (v: string | null | undefined) => (v ? (PLATFORMS[v] ?? humanize(v)) : "—"),
-    category: (v: string | null | undefined) => (v ? (l.categories[v] ?? humanize(v)) : "—"),
-    campaignType: (v: string | null | undefined) => (v ? (l.campaignTypes[v] ?? humanize(v)) : "—"),
-    objective: (v: string | null | undefined) => (v ? (l.objectives[v] ?? humanize(v)) : "—"),
-    disputeReason: (v: string | null | undefined) => (v ? (l.disputeReasons[v] ?? humanize(v)) : "—"),
+    platform: (v: string | null | undefined) => (v ? (PLATFORMS[v] ?? humanize(v)) : "-"),
+    category: (v: string | null | undefined) => (v ? (l.categories[v] ?? humanize(v)) : "-"),
+    campaignType: (v: string | null | undefined) => (v ? (l.campaignTypes[v] ?? humanize(v)) : "-"),
+    objective: (v: string | null | undefined) => (v ? (l.objectives[v] ?? humanize(v)) : "-"),
+    disputeReason: (v: string | null | undefined) => (v ? (l.disputeReasons[v] ?? humanize(v)) : "-"),
     device: (v: string | null | undefined) => (v ? (l.devices[v] ?? humanize(v)) : l.unknown),
     unknown: l.unknown,
   };
@@ -215,7 +215,7 @@ export const DISPUTE_REASONS = ["not_delivered", "not_as_described", "late", "qu
 
 /** Country name for an ISO-3166 alpha-2 code in the UI locale; the code if unknown. */
 export function countryName(code: string | null | undefined, locale: string): string {
-  if (!code) return "—";
+  if (!code) return "-";
   try {
     const dn = new Intl.DisplayNames([locale], { type: "region" });
     return dn.of(code.toUpperCase()) ?? code;

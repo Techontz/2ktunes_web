@@ -10,7 +10,7 @@ export const CREATORS: Localized<PageCopy> = {
     hero: {
       eyebrow: "Creator campaigns",
       title: "Where new songs meet the people who make them trend.",
-      lede: "Creators list their own packages and prices. Artists browse creators and order a package; the creator posts, and gets paid into their 2kTunes wallet — then withdraws to mobile money or bank.",
+      lede: "Creators list their own packages and prices. Artists browse creators and order a package; the creator posts, and gets paid into their 2kTunes wallet, then withdraws to mobile money or bank.",
       secondary: { label: "How promotion works", to: "/promotion" },
       visual: "campaign",
     },
@@ -23,7 +23,7 @@ export const CREATORS: Localized<PageCopy> = {
         steps: [
           { title: "Browse creators", body: "Compare creators by platform, audience and the packages they offer. Audience figures are marked self-reported until 2kTunes verifies them." },
           { title: "Order a package", body: "Pick a package at the creator's price and pay from your wallet. 2kTunes holds the money while the creator accepts or declines your order." },
-          { title: "Approve the post", body: "The creator submits the post link. Approve it or ask for a revision — if you don't respond within the review window, it's approved automatically." },
+          { title: "Approve the post", body: "The creator submits the post link. Approve it or ask for a revision. If you don't respond within the review window, it's approved automatically." },
           { title: "See the results", body: "Every delivered post is linked in your order, so you can follow how it performs." },
         ],
       },
@@ -38,7 +38,7 @@ export const CREATORS: Localized<PageCopy> = {
           { icon: "wallet", title: "Paid locally", body: "Earnings land in your 2kTunes wallet in the package's currency, minus a 15% platform fee, and withdraw to mobile money or bank." },
           { icon: "shield", title: "Clear rules", body: "Every package states what's included, every paid post is disclosed as promotion, and 2kTunes staff resolve any dispute." },
           { icon: "users", title: "Any audience size", body: "Micro-creators with engaged local followings are often exactly what an artist needs." },
-          { icon: "timer", title: "Paid after approval", body: "Once the artist approves your post — or the review window passes without a response — payment is released to your wallet." },
+          { icon: "timer", title: "Paid after approval", body: "Once the artist approves your post (or the review window passes without a response), payment is released to your wallet." },
         ],
       },
       {
@@ -61,7 +61,7 @@ export const CREATORS: Localized<PageCopy> = {
         link: { label: "Acceptable Use Policy", to: "/legal/acceptable-use" },
       },
     ],
-    cta: { title: "Create your account as a Creator or an Artist.", lede: "Choose your account type when you sign up — you can order creator packages or offer your own." },
+    cta: { title: "Create your account as a Creator or an Artist.", lede: "Choose your account type when you sign up. You can order creator packages or offer your own." },
   },
   SW: {
     meta: {
@@ -71,7 +71,7 @@ export const CREATORS: Localized<PageCopy> = {
     hero: {
       eyebrow: "Kampeni za watengeneza maudhui",
       title: "Mahali nyimbo mpya zinapokutana na wanaozifanya zivume.",
-      lede: "Watengeneza maudhui wanaorodhesha vifurushi na bei zao wenyewe. Wasanii wanawapitia na kuagiza kifurushi; mtengeneza maudhui anaweka chapisho, na analipwa kwenye pochi yake ya 2kTunes — kisha anatoa kwenda pesa ya simu au benki.",
+      lede: "Watengeneza maudhui wanaorodhesha vifurushi na bei zao wenyewe. Wasanii wanawapitia na kuagiza kifurushi; mtengeneza maudhui anaweka chapisho, na analipwa kwenye pochi yake ya 2kTunes, kisha anatoa kwenda pesa ya simu au benki.",
       secondary: { label: "Jinsi utangazaji unavyofanya kazi", to: "/promotion" },
       visual: "campaign",
     },
@@ -84,7 +84,7 @@ export const CREATORS: Localized<PageCopy> = {
         steps: [
           { title: "Pitia watengeneza maudhui", body: "Linganisha watengeneza maudhui kwa jukwaa, hadhira na vifurushi wanavyotoa. Takwimu za hadhira zinaonyeshwa kuwa zimetolewa na wao wenyewe hadi 2kTunes izithibitishe." },
           { title: "Agiza kifurushi", body: "Chagua kifurushi kwa bei ya mtengeneza maudhui na ulipe kutoka pochi yako. 2kTunes inashikilia pesa wakati mtengeneza maudhui anakubali au kukataa agizo lako." },
-          { title: "Idhinisha chapisho", body: "Mtengeneza maudhui anawasilisha kiungo cha chapisho. Idhinisha au omba marekebisho — usipojibu ndani ya muda wa ukaguzi, linaidhinishwa lenyewe." },
+          { title: "Idhinisha chapisho", body: "Mtengeneza maudhui anawasilisha kiungo cha chapisho. Idhinisha au omba marekebisho. Usipojibu ndani ya muda wa ukaguzi, linaidhinishwa lenyewe." },
           { title: "Ona matokeo", body: "Kila chapisho lililowasilishwa linaonyeshwa kwenye agizo lako, ili ufuatilie linavyofanya." },
         ],
       },
@@ -99,7 +99,7 @@ export const CREATORS: Localized<PageCopy> = {
           { icon: "wallet", title: "Unalipwa nyumbani", body: "Mapato yanaingia kwenye pochi yako ya 2kTunes kwa sarafu ya kifurushi, baada ya kukatwa ada ya jukwaa ya 15%, na unatoa kwenda pesa ya simu au benki." },
           { icon: "shield", title: "Sheria zilizo wazi", body: "Kila kifurushi kinaeleza kilichomo, kila chapisho la kulipia linaonyeshwa kuwa tangazo, na wafanyakazi wa 2kTunes wanatatua mgogoro wowote." },
           { icon: "users", title: "Hadhira ya ukubwa wowote", body: "Watengeneza maudhui wadogo wenye wafuasi wa karibu mara nyingi ndio hasa msanii anachohitaji." },
-          { icon: "timer", title: "Malipo baada ya kuidhinishwa", body: "Msanii akiidhinisha chapisho lako — au muda wa ukaguzi ukipita bila jibu — malipo yanaingia kwenye pochi yako." },
+          { icon: "timer", title: "Malipo baada ya kuidhinishwa", body: "Msanii akiidhinisha chapisho lako (au muda wa ukaguzi ukipita bila jibu), malipo yanaingia kwenye pochi yako." },
         ],
       },
       {
@@ -122,7 +122,7 @@ export const CREATORS: Localized<PageCopy> = {
         link: { label: "Sera ya Matumizi Yanayokubalika", to: "/legal/acceptable-use" },
       },
     ],
-    cta: { title: "Fungua akaunti kama Mtengeneza maudhui au Msanii.", lede: "Chagua aina ya akaunti unapojisajili — unaweza kuagiza vifurushi vya watengeneza maudhui au kutoa vyako." },
+    cta: { title: "Fungua akaunti kama Mtengeneza maudhui au Msanii.", lede: "Chagua aina ya akaunti unapojisajili. Unaweza kuagiza vifurushi vya watengeneza maudhui au kutoa vyako." },
   },
   FR: {
     meta: {
@@ -132,7 +132,7 @@ export const CREATORS: Localized<PageCopy> = {
     hero: {
       eyebrow: "Campagnes de créateurs",
       title: "Là où les nouveaux titres rencontrent ceux qui les font buzzer.",
-      lede: "Les créateurs de contenu proposent leurs propres offres et fixent leurs prix. Les artistes parcourent les profils et commandent une offre ; le créateur publie, puis est payé dans son portefeuille 2kTunes — et retire vers le mobile money ou sa banque.",
+      lede: "Les créateurs de contenu proposent leurs propres offres et fixent leurs prix. Les artistes parcourent les profils et commandent une offre ; le créateur publie, puis est payé dans son portefeuille 2kTunes, puis retire vers le mobile money ou sa banque.",
       secondary: { label: "Comment marche la promotion", to: "/promotion" },
       visual: "campaign",
     },
@@ -145,7 +145,7 @@ export const CREATORS: Localized<PageCopy> = {
         steps: [
           { title: "Parcourez les créateurs", body: "Comparez les créateurs de contenu selon leur plateforme, leur audience et leurs offres. Les chiffres d’audience sont indiqués comme déclarés tant que 2kTunes ne les a pas vérifiés." },
           { title: "Commandez une offre", body: "Choisissez une offre au prix fixé par le créateur et payez depuis votre portefeuille. 2kTunes conserve le paiement pendant que le créateur accepte ou refuse votre commande." },
-          { title: "Validez la publication", body: "Le créateur envoie le lien de sa publication. Validez-la ou demandez une modification — sans réponse de votre part dans le délai de vérification, elle est validée automatiquement." },
+          { title: "Validez la publication", body: "Le créateur envoie le lien de sa publication. Validez-la ou demandez une modification. Sans réponse de votre part dans le délai de vérification, elle est validée automatiquement." },
           { title: "Suivez les résultats", body: "Chaque publication livrée est liée à votre commande, pour que vous puissiez suivre ses performances." },
         ],
       },
@@ -160,7 +160,7 @@ export const CREATORS: Localized<PageCopy> = {
           { icon: "wallet", title: "Payé localement", body: "Vos revenus arrivent dans votre portefeuille 2kTunes dans la devise de l’offre, moins 15 % de frais de plateforme, et se retirent vers le mobile money ou votre banque." },
           { icon: "shield", title: "Des règles claires", body: "Chaque offre précise ce qu’elle inclut, chaque publication payée est signalée comme promotion, et l’équipe 2kTunes règle tout litige." },
           { icon: "users", title: "Toutes tailles d’audience", body: "Les micro-créateurs avec une communauté locale engagée sont souvent exactement ce dont un artiste a besoin." },
-          { icon: "timer", title: "Payé après validation", body: "Dès que l’artiste valide votre publication — ou que le délai de vérification expire sans réponse — le paiement est versé dans votre portefeuille." },
+          { icon: "timer", title: "Payé après validation", body: "Dès que l’artiste valide votre publication (ou que le délai de vérification expire sans réponse), le paiement est versé dans votre portefeuille." },
         ],
       },
       {
@@ -183,6 +183,6 @@ export const CREATORS: Localized<PageCopy> = {
         link: { label: "Politique d’utilisation acceptable", to: "/legal/acceptable-use" },
       },
     ],
-    cta: { title: "Créez votre compte Créateur ou Artiste.", lede: "Choisissez votre type de compte à l’inscription — vous pourrez commander des offres de créateurs ou proposer les vôtres." },
+    cta: { title: "Créez votre compte Créateur ou Artiste.", lede: "Choisissez votre type de compte à l’inscription. Vous pourrez commander des offres de créateurs ou proposer les vôtres." },
   },
 };

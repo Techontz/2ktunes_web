@@ -92,25 +92,29 @@ export default function CampaignDetailPage() {
               columns={3}
               items={[
                 { label: c.type, value: labels.campaignType(x.type) },
-                { label: c.objective, value: x.objective ? labels.objective(x.objective) : "—" },
+                { label: c.objective, value: x.objective ? labels.objective(x.objective) : "-" },
                 {
                   label: c.release,
-                  value: x.release ? `${x.release.release_title} — ${x.release.artist_name}` : "—",
+                  value: x.release ? `${x.release.release_title} · ${x.release.artist_name}` : "-",
                 },
-                { label: c.track, value: x.track?.title ?? "—", hidden: !x.track },
+                { label: c.track, value: x.track?.title ?? "-", hidden: !x.track },
                 {
                   label: c.budget,
-                  value: x.budget_minor != null && x.currency ? <Money minor={x.budget_minor} currency={x.currency} /> : "—",
+                  value: x.budget_minor != null && x.currency ? <Money minor={x.budget_minor} currency={x.currency} /> : "-",
                 },
                 {
                   label: c.countries,
-                  value: x.target_countries?.length ? x.target_countries.map((cc) => countryName(cc, locale)).join(", ") : "—",
+                  value: x.target_countries?.length ? x.target_countries.map((cc) => countryName(cc, locale)).join(", ") : "-",
                 },
-                { label: c.audience, value: x.target_audience || "—" },
+                { label: c.audience, value: x.target_audience || "-" },
                 {
                   label: c.dates,
                   value:
-                    x.starts_on || x.ends_on ? c.datesValue(formatDate(x.starts_on, locale), formatDate(x.ends_on, locale)) : "—",
+                    x.starts_on && x.ends_on
+                      ? c.datesValue(formatDate(x.starts_on, locale), formatDate(x.ends_on, locale))
+                      : x.starts_on || x.ends_on
+                        ? formatDate(x.starts_on || x.ends_on, locale)
+                        : "-",
                 },
                 { label: c.createdAt, value: formatDate(x.created_at, locale) },
               ]}
@@ -162,7 +166,7 @@ export default function CampaignDetailPage() {
                       {o.title}
                     </Link>
                     <p className="text-caption text-text-subtle">
-                      {o.reference} · {o.creator?.display_name ?? (o.service ? c.serviceBy2k : "—")}
+                      {o.reference} · {o.creator?.display_name ?? (o.service ? c.serviceBy2k : "-")}
                     </p>
                   </div>
                   <div className="flex flex-wrap items-center gap-3">

@@ -43,7 +43,7 @@ describe("ReleaseDetailPage state machine", () => {
     return api;
   };
 
-  it("draft: edit, submit and delete — no takedown", async () => {
+  it("draft: edit, submit and delete, no takedown", async () => {
     render({ status: "draft", is_editable: true });
     expect(await screen.findByRole("link", { name: "Continue editing" })).toHaveAttribute("href", "/dashboard/music/7/edit");
     expect(screen.getByRole("button", { name: "Submit for review" })).toBeInTheDocument();

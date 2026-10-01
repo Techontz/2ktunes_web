@@ -18,7 +18,7 @@ const fr: Record<MessageKey, string> = {
   "common.error_title": "Une erreur s'est produite",
   "common.error_body": "Impossible de charger ce contenu. Vérifiez votre connexion et réessayez.",
   "common.optional": "Facultatif",
-  "common.sample": "Illustration — données d'exemple",
+  "common.sample": "Illustration avec données d'exemple",
   "common.dismiss": "Masquer la notification",
   "common.completed": "terminé",
   "common.notifications": "Notifications",
@@ -123,7 +123,7 @@ const fr: Record<MessageKey, string> = {
   "contact.direct": "Vous préférez votre propre messagerie ? Écrivez à",
 
   /* ── Legal ── */
-  "legal.draft": "Brouillon — en cours de relecture juridique",
+  "legal.draft": "Brouillon, en cours de relecture juridique",
   "legal.draft_body":
     "Ce document est un brouillon publié par souci de transparence. Il n'est pas définitif et sera relu par un conseil juridique avant d'entrer en vigueur.",
   "legal.updated": "Dernière mise à jour : {date}",
@@ -338,7 +338,7 @@ const fr: Record<MessageKey, string> = {
 
   /* ── Environment badges ── */
   "badge.sandbox": "Test",
-  "badge.sandbox_hint": "Environnement de test — aucune livraison ni aucun mouvement d'argent réels",
+  "badge.sandbox_hint": "Environnement de test : aucune livraison ni aucun mouvement d'argent réels",
   "badge.demo": "Démo",
 
   /* ── Creator metrics provenance ── */

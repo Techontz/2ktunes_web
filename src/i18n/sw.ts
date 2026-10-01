@@ -18,7 +18,7 @@ const sw: Record<MessageKey, string> = {
   "common.error_title": "Kuna tatizo limetokea",
   "common.error_body": "Hatukuweza kupakia hiki. Angalia mtandao wako kisha ujaribu tena.",
   "common.optional": "Si lazima",
-  "common.sample": "Mfano — takwimu za kuonyesha tu",
+  "common.sample": "Mfano: takwimu za kuonyesha tu",
   "common.dismiss": "Ondoa taarifa",
   "common.completed": "imekamilika",
   "common.notifications": "Taarifa",
@@ -123,7 +123,7 @@ const sw: Record<MessageKey, string> = {
   "contact.direct": "Unapendelea barua pepe yako mwenyewe? Tuandikie",
 
   /* ── Legal ── */
-  "legal.draft": "Rasimu — itapitiwa na mwanasheria",
+  "legal.draft": "Rasimu, itapitiwa na mwanasheria",
   "legal.draft_body":
     "Hati hii ni rasimu inayochapishwa kwa uwazi. Si ya mwisho na itapitiwa na mwanasheria kabla ya kuanza kutumika.",
   "legal.updated": "Ilisasishwa {date}",
@@ -338,7 +338,7 @@ const sw: Record<MessageKey, string> = {
 
   /* ── Environment badges ── */
   "badge.sandbox": "Majaribio",
-  "badge.sandbox_hint": "Mazingira ya majaribio — hakuna usambazaji halisi wala fedha zilizohamishwa",
+  "badge.sandbox_hint": "Mazingira ya majaribio: hakuna usambazaji halisi wala fedha zilizohamishwa",
   "badge.demo": "Onyesho",
 
   /* ── Creator metrics provenance ── */

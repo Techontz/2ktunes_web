@@ -146,10 +146,22 @@ export function fetchSubscription({ signal }: S = {}) {
   return request<SubscriptionInfo>("/subscription", { signal });
 }
 
+/** Every currency a plan can be paid in, main price first (older APIs send only `price`). */
+export function planPrices(plan: Plan): { currency: string; amount: string }[] {
+  if (plan.prices?.length) return plan.prices.map((p) => ({ currency: p.currency.toUpperCase(), amount: String(p.amount) }));
+  const main = (plan.currency || "TZS").toUpperCase();
+  return [
+    { currency: main, amount: plan.price },
+    ...(main !== "USD" && plan.price_usd != null ? [{ currency: "USD", amount: plan.price_usd }] : []),
+  ];
+}
+
 export function subscribe(payload: {
   plan_id: number;
   payment_method?: PaymentMethodCode;
   payment_reference?: string;
+  /** The currency the artist chose to pay in; omitted means the plan's main one. */
+  currency?: string;
 }) {
   return request<{
     message: string;

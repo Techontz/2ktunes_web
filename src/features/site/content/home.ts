@@ -36,7 +36,7 @@ export const HOME: Localized<HomeCopy> = {
       eyebrow: "Music distribution · Built in Tanzania",
       lines: ["Distribute worldwide.", "Grow your audience.", "Get paid locally."],
       lede:
-        "2kTunes delivers your music to the stores and platforms where people listen, helps you reach new fans through creators and campaigns, and pays your royalties out to mobile money or your bank — converted to shillings when you withdraw.",
+        "2kTunes delivers your music to the stores and platforms where people listen, helps you reach new fans through creators and campaigns, and pays your royalties out to mobile money or your bank, converted to shillings when you withdraw.",
       secondary: "How it works",
       trust: ["You keep 100% of your rights", "Withdraw to M-Pesa, Airtel Money, Mixx & banks", "Support in English & Kiswahili"],
     },
@@ -74,7 +74,7 @@ export const HOME: Localized<HomeCopy> = {
     promotion: {
       eyebrow: "Promotion",
       title: "Distribution gets you listed. Promotion gets you heard.",
-      lede: "Four different routes to new listeners — and we're clear about which is which, which are available today, what it costs and what it can and can't do.",
+      lede: "Four different routes to new listeners, and we're clear about which is which, which are available today, what it costs and what it can and can't do.",
       kinds: [
         {
           tag: "Free with your release",
@@ -97,7 +97,7 @@ export const HOME: Localized<HomeCopy> = {
           body: "Run ads that point listeners to your release on the platforms you choose, with a budget and audience you set.",
         },
       ],
-      note: "No one can honestly guarantee streams, playlist placements or editorial features — and we never will.",
+      note: "No one can honestly guarantee streams, playlist placements or editorial features, and we never will.",
       link: "Explore promotion",
     },
     royalties: {
@@ -120,7 +120,7 @@ export const HOME: Localized<HomeCopy> = {
     analytics: {
       eyebrow: "Analytics",
       title: "See where your music is moving.",
-      lede: "Know which songs are growing, which countries are listening and which platforms carry them — so your next release is a decision, not a guess.",
+      lede: "Know which songs are growing, which countries are listening and which platforms carry them, so your next release is a decision, not a guess.",
       points: ["Streams and earnings by release", "Top territories and platforms", "Trends as store reports arrive"],
     },
     africa: {
@@ -145,7 +145,7 @@ export const HOME: Localized<HomeCopy> = {
       items: [
         {
           q: "How long until my music is live?",
-          a: "Our review usually takes a few business days, then each store publishes on its own timeline. Submit at least two to three weeks before your release date — four or more if you want to pitch for editorial consideration.",
+          a: "Our review usually takes a few business days, then each store publishes on its own timeline. Submit at least two to three weeks before your release date, or four or more if you want to pitch for editorial consideration.",
         },
         {
           q: "Do I keep the rights to my music?",
@@ -157,7 +157,7 @@ export const HOME: Localized<HomeCopy> = {
         },
         {
           q: "Can you guarantee streams or playlist placements?",
-          a: "No, and be careful of anyone who does. Editorial teams and independent curators make their own choices. We help you pitch well, reach creators and plan your release — results depend on the music and the audience.",
+          a: "No, and be careful of anyone who does. Editorial teams and independent curators make their own choices. We help you pitch well, reach creators and plan your release, but results depend on the music and the audience.",
         },
         {
           q: "Can I split royalties with collaborators?",
@@ -180,7 +180,7 @@ export const HOME: Localized<HomeCopy> = {
       eyebrow: "Usambazaji wa muziki · Imejengwa Tanzania",
       lines: ["Sambaza duniani.", "Kuza hadhira yako.", "Lipwa nyumbani."],
       lede:
-        "2kTunes inasambaza muziki wako kwenye maduka na majukwaa ambayo watu husikiliza, inakusaidia kufikia mashabiki wapya kupitia watengeneza maudhui na kampeni, na inakulipa mirabaha yako kwenda pesa ya simu au benki yako — ikibadilishwa kuwa shilingi unapotoa.",
+        "2kTunes inasambaza muziki wako kwenye maduka na majukwaa ambayo watu husikiliza, inakusaidia kufikia mashabiki wapya kupitia watengeneza maudhui na kampeni, na inakulipa mirabaha yako kwenda pesa ya simu au benki yako, ikibadilishwa kuwa shilingi unapotoa.",
       secondary: "Jinsi inavyofanya kazi",
       trust: ["Unabaki na haki zako 100%", "Toa kwenda M-Pesa, Airtel Money, Mixx na benki", "Msaada kwa Kiingereza na Kiswahili"],
     },
@@ -218,7 +218,7 @@ export const HOME: Localized<HomeCopy> = {
     promotion: {
       eyebrow: "Utangazaji",
       title: "Usambazaji unakuweka dukani. Utangazaji unakufanya usikike.",
-      lede: "Njia nne tofauti za kufikia wasikilizaji wapya — na tuko wazi kuhusu kila moja, ipi inapatikana sasa, gharama yake na kile inachoweza na isichoweza kufanya.",
+      lede: "Njia nne tofauti za kufikia wasikilizaji wapya, na tuko wazi kuhusu kila moja, ipi inapatikana sasa, gharama yake na kile inachoweza na isichoweza kufanya.",
       kinds: [
         {
           tag: "Bure na toleo lako",
@@ -241,7 +241,7 @@ export const HOME: Localized<HomeCopy> = {
           body: "Endesha matangazo yanayowaelekeza wasikilizaji kwenye toleo lako kwenye majukwaa unayochagua, kwa bajeti na hadhira unayoweka.",
         },
       ],
-      note: "Hakuna anayeweza kwa uaminifu kuhakikisha idadi ya usikilizaji, kuwekwa kwenye orodha au kuchaguliwa na wahariri — na sisi hatutafanya hivyo.",
+      note: "Hakuna anayeweza kwa uaminifu kuhakikisha idadi ya usikilizaji, kuwekwa kwenye orodha au kuchaguliwa na wahariri, na sisi hatutafanya hivyo.",
       link: "Angalia utangazaji",
     },
     royalties: {
@@ -264,7 +264,7 @@ export const HOME: Localized<HomeCopy> = {
     analytics: {
       eyebrow: "Takwimu",
       title: "Ona muziki wako unasikilizwa wapi.",
-      lede: "Jua nyimbo zipi zinakua, nchi zipi zinasikiliza na majukwaa yapi yanazibeba — ili toleo lako lijalo liwe uamuzi, si kubahatisha.",
+      lede: "Jua nyimbo zipi zinakua, nchi zipi zinasikiliza na majukwaa yapi yanazibeba, ili toleo lako lijalo liwe uamuzi, si kubahatisha.",
       points: ["Usikilizaji na mapato kwa kila toleo", "Nchi na majukwaa yanayoongoza", "Mwenendo kadiri ripoti za maduka zinavyofika"],
     },
     africa: {
@@ -289,7 +289,7 @@ export const HOME: Localized<HomeCopy> = {
       items: [
         {
           q: "Inachukua muda gani muziki wangu kuwa hewani?",
-          a: "Ukaguzi wetu kwa kawaida huchukua siku chache za kazi, kisha kila duka huchapisha kwa ratiba yake. Wasilisha angalau wiki mbili hadi tatu kabla ya tarehe ya kutoa — wiki nne au zaidi kama unataka kuwasilisha kwa wahariri.",
+          a: "Ukaguzi wetu kwa kawaida huchukua siku chache za kazi, kisha kila duka huchapisha kwa ratiba yake. Wasilisha angalau wiki mbili hadi tatu kabla ya tarehe ya kutoa, au wiki nne au zaidi kama unataka kuwasilisha kwa wahariri.",
         },
         {
           q: "Je, nabaki na haki za muziki wangu?",
@@ -301,7 +301,7 @@ export const HOME: Localized<HomeCopy> = {
         },
         {
           q: "Mnaweza kuhakikisha usikilizaji au kuwekwa kwenye orodha?",
-          a: "Hapana, na kuwa makini na yeyote anayeahidi hivyo. Wahariri na wachaguzi huru hufanya maamuzi yao. Tunakusaidia kuwasilisha vizuri, kufikia watengeneza maudhui na kupanga toleo lako — matokeo hutegemea muziki na hadhira.",
+          a: "Hapana, na kuwa makini na yeyote anayeahidi hivyo. Wahariri na wachaguzi huru hufanya maamuzi yao. Tunakusaidia kuwasilisha vizuri, kufikia watengeneza maudhui na kupanga toleo lako, lakini matokeo hutegemea muziki na hadhira.",
         },
         {
           q: "Naweza kugawana mirabaha na washirika?",
@@ -324,7 +324,7 @@ export const HOME: Localized<HomeCopy> = {
       eyebrow: "Distribution musicale · Conçu en Tanzanie",
       lines: ["Diffusez partout.", "Élargissez votre public.", "Soyez payé chez vous."],
       lede:
-        "2kTunes distribue votre musique sur les plateformes où le public écoute, vous aide à toucher de nouveaux fans grâce aux créateurs et aux campagnes, et vous verse vos royalties sur mobile money ou sur votre compte bancaire — converties en shillings au moment du retrait.",
+        "2kTunes distribue votre musique sur les plateformes où le public écoute, vous aide à toucher de nouveaux fans grâce aux créateurs et aux campagnes, et vous verse vos royalties sur mobile money ou sur votre compte bancaire, converties en shillings au moment du retrait.",
       secondary: "Comment ça marche",
       trust: ["Vous conservez 100 % de vos droits", "Retraits vers M-Pesa, Airtel Money, Mixx et banques", "Assistance en anglais et en kiswahili"],
     },
@@ -362,7 +362,7 @@ export const HOME: Localized<HomeCopy> = {
     promotion: {
       eyebrow: "Promotion",
       title: "La distribution vous rend visible. La promotion vous fait entendre.",
-      lede: "Quatre façons différentes de toucher de nouveaux auditeurs — et nous sommes clairs sur chacune : ce qui est disponible aujourd’hui, ce que cela coûte, ce que cela peut et ne peut pas faire.",
+      lede: "Quatre façons différentes de toucher de nouveaux auditeurs, et nous sommes clairs sur chacune : ce qui est disponible aujourd’hui, ce que cela coûte, ce que cela peut et ne peut pas faire.",
       kinds: [
         {
           tag: "Inclus avec votre sortie",
@@ -385,7 +385,7 @@ export const HOME: Localized<HomeCopy> = {
           body: "Lancez des publicités qui dirigent les auditeurs vers votre sortie sur les plateformes de votre choix, avec le budget et l’audience que vous définissez.",
         },
       ],
-      note: "Personne ne peut honnêtement garantir des écoutes, des placements en playlist ou une mise en avant éditoriale — et nous ne le ferons jamais.",
+      note: "Personne ne peut honnêtement garantir des écoutes, des placements en playlist ou une mise en avant éditoriale, et nous ne le ferons jamais.",
       link: "Découvrir la promotion",
     },
     royalties: {
@@ -408,12 +408,12 @@ export const HOME: Localized<HomeCopy> = {
     analytics: {
       eyebrow: "Statistiques",
       title: "Voyez où votre musique progresse.",
-      lede: "Sachez quels titres décollent, quels pays écoutent et quelles plateformes les diffusent — pour que votre prochaine sortie soit une décision, pas un pari.",
+      lede: "Sachez quels titres décollent, quels pays écoutent et quelles plateformes les diffusent, pour que votre prochaine sortie soit une décision, pas un pari.",
       points: ["Écoutes et revenus par sortie", "Principaux territoires et plateformes", "Tendances au fil des rapports des plateformes"],
     },
     africa: {
       eyebrow: "L’Afrique d’abord",
-      title: "Conçu ici, pour les artistes d’ici — entendu partout.",
+      title: "Conçu ici, pour les artistes d’ici, entendu partout.",
       lede: "La plupart des distributeurs ont été pensés pour d’autres marchés, l’Afrique ajoutée après coup. 2kTunes part de la façon dont les artistes d’Afrique de l’Est sortent leur musique, se font connaître et sont payés.",
       points: [
         { title: "Plateformes africaines incluses", body: "Boomplay et Audiomack figurent aux côtés des plateformes mondiales, pas en option de dernière minute." },
@@ -433,7 +433,7 @@ export const HOME: Localized<HomeCopy> = {
       items: [
         {
           q: "Combien de temps avant que ma musique soit en ligne ?",
-          a: "Notre vérification prend généralement quelques jours ouvrés, puis chaque plateforme publie selon son propre calendrier. Soumettez votre sortie au moins deux à trois semaines avant la date prévue — quatre ou plus si vous souhaitez une proposition éditoriale.",
+          a: "Notre vérification prend généralement quelques jours ouvrés, puis chaque plateforme publie selon son propre calendrier. Soumettez votre sortie au moins deux à trois semaines avant la date prévue, ou quatre ou plus si vous souhaitez une proposition éditoriale.",
         },
         {
           q: "Est-ce que je conserve les droits sur ma musique ?",
@@ -445,7 +445,7 @@ export const HOME: Localized<HomeCopy> = {
         },
         {
           q: "Pouvez-vous garantir des écoutes ou des placements en playlist ?",
-          a: "Non, et méfiez-vous de quiconque le promet. Les équipes éditoriales et les curateurs indépendants font leurs propres choix. Nous vous aidons à bien présenter votre titre, à toucher des créateurs et à planifier votre sortie — les résultats dépendent de la musique et du public.",
+          a: "Non, et méfiez-vous de quiconque le promet. Les équipes éditoriales et les curateurs indépendants font leurs propres choix. Nous vous aidons à bien présenter votre titre, à toucher des créateurs et à planifier votre sortie, mais les résultats dépendent de la musique et du public.",
         },
         {
           q: "Puis-je partager les royalties avec mes collaborateurs ?",

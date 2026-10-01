@@ -98,7 +98,7 @@ export function WithdrawDialog({
   const provider = method ? methodProvider(method, providers) : null;
   const quotedMethod = quoted ? (methods.find((m) => m.id === quoted.methodId) ?? null) : null;
   const quotedProvider = quotedMethod ? methodProvider(quotedMethod, providers) : null;
-  const quotedDest = quotedMethod ? quotedMethod.display : "—";
+  const quotedDest = quotedMethod ? quotedMethod.display : "-";
 
   const close = () => {
     resetAttempt();
@@ -299,7 +299,7 @@ export function WithdrawDialog({
               <Select value={currency} onChange={(e) => setCurrency(e.target.value)}>
                 {withdrawable.map((b) => (
                   <option key={b.currency} value={b.currency}>
-                    {b.currency} — {formatMinor(b.available_minor, b.currency, locale)}
+                    {b.currency}: {formatMinor(b.available_minor, b.currency, locale)}
                   </option>
                 ))}
               </Select>
@@ -472,7 +472,7 @@ export function WithdrawDialog({
               { label: c.colStatus, value: <StatusPill status={done.status} /> },
               { label: c.colAmount, value: <Money minor={done.gross_minor} currency={done.currency} /> },
               { label: c.colReceive, value: <Money minor={done.payout_amount_minor} currency={done.payout_currency} /> },
-              { label: c.colDestination, value: done.destination ?? "—" },
+              { label: c.colDestination, value: done.destination ?? "-" },
             ]}
           />
           {done.is_sandbox && (

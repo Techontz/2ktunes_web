@@ -12,7 +12,7 @@ export type Currency = (typeof CURRENCIES)[number];
 export function currencyLabel(code: string, locale: string): string {
   try {
     const name = new Intl.DisplayNames([locale, "en"], { type: "currency" }).of(code);
-    if (name && name !== code) return `${code} — ${name.charAt(0).toLocaleUpperCase(locale)}${name.slice(1)}`;
+    if (name && name !== code) return `${code} (${name.charAt(0).toLocaleUpperCase(locale)}${name.slice(1)})`;
   } catch {
     /* fall through */
   }

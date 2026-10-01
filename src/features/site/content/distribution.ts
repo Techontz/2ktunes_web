@@ -10,7 +10,7 @@ export const DISTRIBUTION: Localized<PageCopy> = {
     hero: {
       eyebrow: "Distribution",
       title: "One upload. Every place people listen.",
-      lede: "Send singles, EPs and albums to global streaming services, short-video apps and African platforms. We handle formats, metadata and delivery — you choose the stores and the date.",
+      lede: "Send singles, EPs and albums to global streaming services, short-video apps and African platforms. We handle formats, metadata and delivery, and you choose the stores and the date.",
       secondary: { label: "See pricing", to: "/pricing" },
       visual: "release",
     },
@@ -31,7 +31,7 @@ export const DISTRIBUTION: Localized<PageCopy> = {
         steps: [
           { title: "Add your music", body: "Upload WAV or FLAC audio and square artwork of at least 3000 × 3000 px." },
           { title: "Tell the stores who made it", body: "Artists, featured artists, songwriters, producers, genre, language and explicit flag." },
-          { title: "Choose stores & date", body: "Select destinations and a release date — earlier dates leave room for pitching." },
+          { title: "Choose stores & date", body: "Select destinations and a release date. Earlier dates leave room for pitching." },
           { title: "We review", body: "We check audio, artwork and metadata against store rules and flag anything that would be rejected." },
           { title: "Delivered & live", body: "Your release goes out to each store, and you can track its status per destination." },
         ],
@@ -53,7 +53,7 @@ export const DISTRIBUTION: Localized<PageCopy> = {
       {
         type: "notice",
         tone: "raised",
-        title: "What we can promise — and what we can't",
+        title: "What we can promise, and what we can't",
         body: "We promise accurate delivery, clear status and honest reporting. We can't promise streams, playlist placements or editorial features, and each store makes its own decisions about what it accepts and features.",
       },
       {
@@ -80,7 +80,7 @@ export const DISTRIBUTION: Localized<PageCopy> = {
     hero: {
       eyebrow: "Usambazaji",
       title: "Upakiaji mmoja. Kila mahali watu wanaposikiliza.",
-      lede: "Tuma nyimbo, EP na albamu kwenye huduma za kimataifa, programu za video fupi na majukwaa ya Afrika. Tunashughulikia mifumo, taarifa na uwasilishaji — wewe unachagua maduka na tarehe.",
+      lede: "Tuma nyimbo, EP na albamu kwenye huduma za kimataifa, programu za video fupi na majukwaa ya Afrika. Tunashughulikia mifumo, taarifa na uwasilishaji, na wewe unachagua maduka na tarehe.",
       secondary: { label: "Angalia bei", to: "/pricing" },
       visual: "release",
     },
@@ -101,7 +101,7 @@ export const DISTRIBUTION: Localized<PageCopy> = {
         steps: [
           { title: "Weka muziki wako", body: "Pakia sauti ya WAV au FLAC na picha ya mraba ya angalau pikseli 3000 × 3000." },
           { title: "Eleza waliohusika", body: "Wasanii, walioshirikishwa, watunzi, watayarishaji, aina ya muziki, lugha na kama una maneno makali." },
-          { title: "Chagua maduka na tarehe", body: "Chagua maeneo na tarehe ya kutoa — tarehe za mbali zinatoa nafasi ya kuwasilisha kwa wahariri." },
+          { title: "Chagua maduka na tarehe", body: "Chagua maeneo na tarehe ya kutoa. Tarehe za mbali zinatoa nafasi ya kuwasilisha kwa wahariri." },
           { title: "Tunakagua", body: "Tunakagua sauti, picha na taarifa kulingana na masharti ya maduka na kukuonyesha kitakachokataliwa." },
           { title: "Imesambazwa na iko hewani", body: "Toleo lako linakwenda kila duka, na unafuatilia hali yake kwa kila eneo." },
         ],
@@ -123,7 +123,7 @@ export const DISTRIBUTION: Localized<PageCopy> = {
       {
         type: "notice",
         tone: "raised",
-        title: "Tunachoweza kuahidi — na tusichoweza",
+        title: "Tunachoweza kuahidi, na tusichoweza",
         body: "Tunaahidi uwasilishaji sahihi, hali inayoonekana na ripoti za kweli. Hatuwezi kuahidi usikilizaji, kuwekwa kwenye orodha au kuchaguliwa na wahariri, na kila duka hufanya maamuzi yake kuhusu kinachokubaliwa.",
       },
       {
@@ -150,7 +150,7 @@ export const DISTRIBUTION: Localized<PageCopy> = {
     hero: {
       eyebrow: "Distribution",
       title: "Une mise en ligne. Partout où l’on écoute.",
-      lede: "Envoyez singles, EP et albums vers les services de streaming mondiaux, les applis de vidéo courte et les plateformes africaines. Nous gérons formats, métadonnées et livraison — vous choisissez les plateformes et la date.",
+      lede: "Envoyez singles, EP et albums vers les services de streaming mondiaux, les applis de vidéo courte et les plateformes africaines. Nous gérons formats, métadonnées et livraison, et vous choisissez les plateformes et la date.",
       secondary: { label: "Voir les tarifs", to: "/pricing" },
       visual: "release",
     },
@@ -171,7 +171,7 @@ export const DISTRIBUTION: Localized<PageCopy> = {
         steps: [
           { title: "Ajoutez votre musique", body: "Importez un audio WAV ou FLAC et une pochette carrée d’au moins 3000 × 3000 px." },
           { title: "Indiquez qui l’a créée", body: "Artistes, artistes invités, auteurs-compositeurs, producteurs, genre, langue et mention explicite." },
-          { title: "Plateformes et date", body: "Sélectionnez les destinations et une date de sortie — une date plus lointaine laisse le temps de pitcher." },
+          { title: "Plateformes et date", body: "Sélectionnez les destinations et une date de sortie. Une date plus lointaine laisse le temps de pitcher." },
           { title: "Nous vérifions", body: "Nous contrôlons l’audio, la pochette et les métadonnées selon les règles des plateformes et signalons tout ce qui serait rejeté." },
           { title: "Livrée et en ligne", body: "Votre sortie part vers chaque plateforme, et vous suivez son statut par destination." },
         ],
@@ -193,7 +193,7 @@ export const DISTRIBUTION: Localized<PageCopy> = {
       {
         type: "notice",
         tone: "raised",
-        title: "Ce que nous pouvons promettre — et ce que nous ne pouvons pas",
+        title: "Ce que nous pouvons promettre, et ce que nous ne pouvons pas",
         body: "Nous promettons une livraison exacte, un statut clair et des rapports honnêtes. Nous ne pouvons pas promettre de streams, de placements en playlist ni de mises en avant éditoriales : chaque plateforme décide elle-même de ce qu’elle accepte et met en avant.",
       },
       {

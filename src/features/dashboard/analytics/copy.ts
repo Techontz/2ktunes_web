@@ -12,11 +12,11 @@ const EN = {
   rangeInvalid: "The start date must be on or before the end date.",
   release: "Release",
   allReleases: "All releases",
-  showing: (from: string, to: string) => `Showing ${from} – ${to}`,
+  showing: (from: string, to: string) => `Showing ${from} to ${to}`,
 
   emptyTitle: "No store data for this period yet",
   emptyBody:
-    "Streams, downloads and earnings appear here when store statements are imported and posted by 2kTunes finance — usually 1–3 months after the plays happen.",
+    "Streams, downloads and earnings appear here when store statements are imported and posted by 2kTunes finance, usually 1 to 3 months after the plays happen.",
 
   totalsTitle: "Totals",
   revenue: (cur: string) => `Revenue (${cur})`,
@@ -81,11 +81,11 @@ const SW: typeof EN = {
   rangeInvalid: "Tarehe ya kuanzia lazima iwe kabla au sawa na tarehe ya mwisho.",
   release: "Toleo",
   allReleases: "Matoleo yote",
-  showing: (from: string, to: string) => `Inaonyesha ${from} – ${to}`,
+  showing: (from: string, to: string) => `Inaonyesha ${from} hadi ${to}`,
 
   emptyTitle: "Bado hakuna takwimu za maduka kwa kipindi hiki",
   emptyBody:
-    "Usikilizaji, upakuaji na mapato huonekana hapa ripoti za maduka zikishaingizwa na kuthibitishwa na idara ya fedha ya 2kTunes — kwa kawaida miezi 1–3 baada ya nyimbo kusikilizwa.",
+    "Usikilizaji, upakuaji na mapato huonekana hapa ripoti za maduka zikishaingizwa na kuthibitishwa na idara ya fedha ya 2kTunes, kwa kawaida miezi 1 hadi 3 baada ya nyimbo kusikilizwa.",
 
   totalsTitle: "Jumla",
   revenue: (cur: string) => `Mapato (${cur})`,
@@ -154,7 +154,7 @@ const FR: typeof EN = {
 
   emptyTitle: "Aucune donnée des plateformes sur cette période",
   emptyBody:
-    "Les écoutes, téléchargements et revenus apparaissent ici une fois les relevés des plateformes importés et publiés par le service financier de 2kTunes — généralement 1 à 3 mois après les écoutes.",
+    "Les écoutes, téléchargements et revenus apparaissent ici une fois les relevés des plateformes importés et publiés par le service financier de 2kTunes, généralement 1 à 3 mois après les écoutes.",
 
   totalsTitle: "Totaux",
   revenue: (cur: string) => `Revenus (${cur})`,

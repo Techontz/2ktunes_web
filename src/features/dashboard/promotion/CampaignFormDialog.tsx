@@ -181,7 +181,7 @@ function CampaignForm({
             <option value="">{c.fReleaseNone}</option>
             {releases.map((r) => (
               <option key={r.id} value={String(r.id)}>
-                {r.release_title} — {r.artist_name}
+                {r.release_title} · {r.artist_name}
               </option>
             ))}
           </Select>
@@ -243,7 +243,7 @@ function CampaignForm({
             </Field>
             <Field label={c.fPitchGenre} error={err("pitch.genre")} {...opt}>
               <Select value={f.pitch.genre} onChange={(e) => set({ pitch: { ...f.pitch, genre: e.target.value } })}>
-                <option value="">—</option>
+                <option value="">-</option>
                 {genreOptions.map((g) => (
                   <option key={g} value={g}>
                     {g}

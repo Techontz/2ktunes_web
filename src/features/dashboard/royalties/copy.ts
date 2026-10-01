@@ -19,7 +19,7 @@ const EN = {
   currency: "Currency",
   allCurrencies: "All currencies",
   rangeInvalid: "The start date must be on or before the end date.",
-  showing: (from: string, to: string) => `Showing ${from} – ${to}`,
+  showing: (from: string, to: string) => `Showing ${from} to ${to}`,
   breakdownTitle: "Breakdown",
   breakdownCaption: (by: string) => `Royalties by ${by.toLowerCase()}`,
   colAmount: "Earnings",
@@ -28,7 +28,7 @@ const EN = {
   totalFor: (cur: string) => `Total (${cur})`,
   emptyTitle: "No royalties in this period",
   emptyBody:
-    "Royalties appear here after store statements are imported and posted by 2kTunes finance. Stores usually report 1–3 months after the plays happen.",
+    "Royalties appear here after store statements are imported and posted by 2kTunes finance. Stores usually report 1 to 3 months after the plays happen.",
   unknown: "Unknown",
   usage: {
     stream: "Streams",
@@ -44,7 +44,7 @@ const EN = {
   colSource: "Source",
   colPeriod: "Period",
   colPosted: "Posted",
-  period: (from: string, to: string) => `${from} – ${to}`,
+  period: (from: string, to: string) => `${from} to ${to}`,
   statementsEmptyTitle: "No statements yet",
   statementsEmptyBody:
     "Once 2kTunes finance imports and posts a store statement that includes your music, it will be listed here and credited to your wallet.",
@@ -69,7 +69,7 @@ const SW: typeof EN = {
   currency: "Sarafu",
   allCurrencies: "Sarafu zote",
   rangeInvalid: "Tarehe ya kuanzia lazima iwe kabla au sawa na tarehe ya mwisho.",
-  showing: (from: string, to: string) => `Inaonyesha ${from} – ${to}`,
+  showing: (from: string, to: string) => `Inaonyesha ${from} hadi ${to}`,
   breakdownTitle: "Mgawanyo",
   breakdownCaption: (by: string) => `Mirabaha kwa ${by.toLowerCase()}`,
   colAmount: "Mapato",
@@ -78,7 +78,7 @@ const SW: typeof EN = {
   totalFor: (cur: string) => `Jumla (${cur})`,
   emptyTitle: "Hakuna mirabaha katika kipindi hiki",
   emptyBody:
-    "Mirabaha huonekana hapa baada ya ripoti za maduka kuingizwa na kuthibitishwa na idara ya fedha ya 2kTunes. Kwa kawaida maduka huripoti miezi 1–3 baada ya nyimbo kusikilizwa.",
+    "Mirabaha huonekana hapa baada ya ripoti za maduka kuingizwa na kuthibitishwa na idara ya fedha ya 2kTunes. Kwa kawaida maduka huripoti miezi 1 hadi 3 baada ya nyimbo kusikilizwa.",
   unknown: "Haijulikani",
   usage: {
     stream: "Usikilizaji",
@@ -94,7 +94,7 @@ const SW: typeof EN = {
   colSource: "Chanzo",
   colPeriod: "Kipindi",
   colPosted: "Imethibitishwa",
-  period: (from: string, to: string) => `${from} – ${to}`,
+  period: (from: string, to: string) => `${from} hadi ${to}`,
   statementsEmptyTitle: "Bado hakuna ripoti",
   statementsEmptyBody:
     "Idara ya fedha ya 2kTunes ikishaingiza na kuthibitisha ripoti ya duka yenye muziki wako, itaorodheshwa hapa na pesa kuwekwa kwenye pochi yako.",
@@ -144,7 +144,7 @@ const FR: typeof EN = {
   colSource: "Source",
   colPeriod: "Période",
   colPosted: "Publié le",
-  period: (from: string, to: string) => `${from} – ${to}`,
+  period: (from: string, to: string) => `du ${from} au ${to}`,
   statementsEmptyTitle: "Aucun relevé pour l'instant",
   statementsEmptyBody:
     "Dès que le service financier de 2kTunes aura importé et publié un relevé de plateforme incluant votre musique, il apparaîtra ici et sera crédité sur votre portefeuille.",

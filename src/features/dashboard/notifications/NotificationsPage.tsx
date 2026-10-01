@@ -275,7 +275,7 @@ function Preferences() {
                         label={
                           <>
                             {c.inApp}
-                            <span className="sr-only"> — {label}</span>
+                            <span className="sr-only">, {label}</span>
                           </>
                         }
                         checked={ch.database}
@@ -287,7 +287,7 @@ function Preferences() {
                         label={
                           <>
                             {c.email}
-                            <span className="sr-only"> — {label}</span>
+                            <span className="sr-only">, {label}</span>
                           </>
                         }
                         checked={ch.mail}

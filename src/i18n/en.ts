@@ -22,7 +22,7 @@ const en = {
   "common.error_title": "Something went wrong",
   "common.error_body": "We couldn't load this. Check your connection and try again.",
   "common.optional": "Optional",
-  "common.sample": "Illustration — sample data",
+  "common.sample": "Illustration with sample data",
   "common.dismiss": "Dismiss notification",
   "common.completed": "completed",
   "common.notifications": "Notifications",
@@ -127,7 +127,7 @@ const en = {
   "contact.direct": "Prefer your own email? Write to",
 
   /* ── Legal ── */
-  "legal.draft": "Draft — to be reviewed by counsel",
+  "legal.draft": "Draft, to be reviewed by counsel",
   "legal.draft_body":
     "This document is a working draft published for transparency. It is not final and will be reviewed by legal counsel before it takes effect.",
   "legal.updated": "Last updated {date}",
@@ -342,7 +342,7 @@ const en = {
 
   /* ── Environment badges ── */
   "badge.sandbox": "Sandbox",
-  "badge.sandbox_hint": "Test environment — no real delivery or money movement",
+  "badge.sandbox_hint": "Test environment: no real delivery or money movement",
   "badge.demo": "Demo",
 
   /* ── Creator metrics provenance ── */

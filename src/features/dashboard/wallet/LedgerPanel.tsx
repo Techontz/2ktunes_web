@@ -32,7 +32,7 @@ export function LedgerPanel({ currencies, refreshKey }: { currencies: string[]; 
     {
       key: "description",
       header: c.colDescription,
-      cell: (e) => <span className="break-words text-text-muted">{e.description || "—"}</span>,
+      cell: (e) => <span className="break-words text-text-muted">{e.description || "-"}</span>,
     },
     {
       key: "amount",

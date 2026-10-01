@@ -239,7 +239,7 @@ export function InfoStep() {
           </Field>
           <Field label={c.secondaryGenre} optional optionalLabel={t("common.optional")} error={err("secondary_genre")}>
             <Select value={form.secondary_genre} onChange={(e) => set("secondary_genre", e.target.value)}>
-              <option value="">—</option>
+              <option value="">-</option>
               {config.genres
                 .filter((g) => g !== form.primary_genre)
                 .map((g) => (

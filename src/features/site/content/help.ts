@@ -38,7 +38,7 @@ export const HELP: Localized<HelpCopy> = {
         q: "Which account type should I choose?",
         a: [
           "Choose Artist if you release your own music. Choose Label / Team if you manage several artists or a catalogue. Choose Creator / Influencer if you want to list paid promotion packages that artists can order to feature their music in your content.",
-          "Not sure? Pick the closest one — contact support if you need to change it later.",
+          "Not sure? Pick the closest one, and contact support if you need to change it later.",
         ],
         keywords: "artist label creator influencer register sign up",
       },
@@ -88,7 +88,7 @@ export const HELP: Localized<HelpCopy> = {
         q: "Why was my release sent back?",
         a: [
           "Common reasons are artwork that doesn't match the metadata, missing songwriter credits, audio quality issues or content you don't have rights to.",
-          "Your dashboard shows the exact reason. Fix it and resubmit — you don't need to start again.",
+          "Your dashboard shows the exact reason. Fix it and resubmit. You don't need to start again.",
         ],
         keywords: "rejected declined changes requested error",
       },
@@ -127,7 +127,7 @@ export const HELP: Localized<HelpCopy> = {
         category: "promotion",
         q: "What promotion options are there?",
         a: [
-          "Four: editorial pitching to stores, independent curator services, creator campaigns, and advertising. Editorial pitching and creator campaigns are available today; independent curator services and advertising are not available yet. They work differently — see the Promotion page for who decides and what you pay for.",
+          "Four: editorial pitching to stores, independent curator services, creator campaigns, and advertising. Editorial pitching and creator campaigns are available today; independent curator services and advertising are not available yet. They work differently, so see the Promotion page for who decides and what you pay for.",
           "No option guarantees streams, playlist placements or editorial features.",
         ],
         keywords: "playlist pitch marketing campaign ads",
@@ -155,7 +155,7 @@ export const HELP: Localized<HelpCopy> = {
         category: "royalties",
         q: "How do I withdraw my earnings?",
         a: [
-          "Open your wallet, choose Withdraw and pick a payout method — M-Pesa, Airtel Money, Mixx by Yas or bank transfer, where available in your country. The minimum amount, any fee and the exchange rate are shown before you confirm. The 2kTunes finance team then processes the withdrawal, and your wallet shows each step and its status.",
+          "Open your wallet, choose Withdraw and pick a payout method: M-Pesa, Airtel Money, Mixx by Yas or bank transfer, where available in your country. The minimum amount, any fee and the exchange rate are shown before you confirm. The 2kTunes finance team then processes the withdrawal, and your wallet shows each step and its status.",
         ],
         keywords: "mpesa m-pesa airtel mixx yas bank cash out payout",
       },
@@ -225,7 +225,7 @@ export const HELP: Localized<HelpCopy> = {
         q: "Nichague aina gani ya akaunti?",
         a: [
           "Chagua Msanii kama unatoa muziki wako mwenyewe. Chagua Lebo / Timu kama unasimamia wasanii kadhaa au kazi nyingi. Chagua Mtengeneza maudhui kama unataka kuorodhesha vifurushi vya utangazaji wa kulipia ambavyo wasanii wanaweza kuagiza ili muziki wao utumike kwenye maudhui yako.",
-          "Huna uhakika? Chagua iliyo karibu zaidi — wasiliana na msaada ukihitaji kubadilisha baadaye.",
+          "Huna uhakika? Chagua iliyo karibu zaidi, kisha wasiliana na msaada ukihitaji kubadilisha baadaye.",
         ],
         keywords: "msanii lebo mtengeneza maudhui kujisajili",
       },
@@ -275,7 +275,7 @@ export const HELP: Localized<HelpCopy> = {
         q: "Kwa nini toleo langu limerudishwa?",
         a: [
           "Sababu za kawaida ni picha isiyolingana na taarifa, kukosa majina ya watunzi, matatizo ya ubora wa sauti au maudhui ambayo huna haki nayo.",
-          "Dashibodi yako inaonyesha sababu kamili. Rekebisha na uwasilishe tena — huhitaji kuanza upya.",
+          "Dashibodi yako inaonyesha sababu kamili. Rekebisha na uwasilishe tena. Huhitaji kuanza upya.",
         ],
         keywords: "limekataliwa marekebisho hitilafu",
       },
@@ -314,7 +314,7 @@ export const HELP: Localized<HelpCopy> = {
         category: "promotion",
         q: "Kuna njia gani za utangazaji?",
         a: [
-          "Nne: kuwasilisha kwa wahariri wa maduka, huduma za wachaguzi huru, kampeni za watengeneza maudhui, na matangazo. Kuwasilisha kwa wahariri na kampeni za watengeneza maudhui vinapatikana sasa; huduma za wachaguzi huru na matangazo bado hazipatikani. Zinafanya kazi tofauti — angalia ukurasa wa Utangazaji kujua nani anaamua na unalipia nini.",
+          "Nne: kuwasilisha kwa wahariri wa maduka, huduma za wachaguzi huru, kampeni za watengeneza maudhui, na matangazo. Kuwasilisha kwa wahariri na kampeni za watengeneza maudhui vinapatikana sasa; huduma za wachaguzi huru na matangazo bado hazipatikani. Zinafanya kazi tofauti, kwa hiyo angalia ukurasa wa Utangazaji kujua nani anaamua na unalipia nini.",
           "Hakuna njia inayohakikisha usikilizaji, nafasi kwenye orodha au kuchaguliwa na wahariri.",
         ],
         keywords: "orodha playlist kampeni matangazo",
@@ -342,7 +342,7 @@ export const HELP: Localized<HelpCopy> = {
         category: "royalties",
         q: "Natoaje mapato yangu?",
         a: [
-          "Fungua pochi yako, chagua Toa pesa na uchague njia ya malipo — M-Pesa, Airtel Money, Mixx by Yas au benki, pale zinapopatikana nchini kwako. Kiwango cha chini, ada yoyote na kiwango cha ubadilishaji vinaonyeshwa kabla ya kuthibitisha. Kisha timu ya fedha ya 2kTunes inashughulikia utoaji huo, na pochi yako inaonyesha kila hatua na hali yake.",
+          "Fungua pochi yako, chagua Toa pesa na uchague njia ya malipo: M-Pesa, Airtel Money, Mixx by Yas au benki, pale zinapopatikana nchini kwako. Kiwango cha chini, ada yoyote na kiwango cha ubadilishaji vinaonyeshwa kabla ya kuthibitisha. Kisha timu ya fedha ya 2kTunes inashughulikia utoaji huo, na pochi yako inaonyesha kila hatua na hali yake.",
         ],
         keywords: "mpesa m-pesa airtel mixx yas benki kutoa",
       },
@@ -412,7 +412,7 @@ export const HELP: Localized<HelpCopy> = {
         q: "Quel type de compte choisir ?",
         a: [
           "Choisissez Artiste si vous sortez votre propre musique. Choisissez Label / Équipe si vous gérez plusieurs artistes ou un catalogue. Choisissez Créateur / Influenceur si vous souhaitez proposer des offres de promotion payantes que les artistes peuvent commander pour mettre leur musique en avant dans vos contenus.",
-          "Vous hésitez ? Choisissez le plus proche — contactez l’assistance si vous devez le modifier plus tard.",
+          "Vous hésitez ? Choisissez le plus proche, puis contactez l’assistance si vous devez le modifier plus tard.",
         ],
         keywords: "artiste label créateur influenceur inscription s’inscrire",
       },
@@ -462,7 +462,7 @@ export const HELP: Localized<HelpCopy> = {
         q: "Pourquoi ma sortie m’a-t-elle été renvoyée ?",
         a: [
           "Les raisons les plus courantes : une pochette qui ne correspond pas aux métadonnées, des crédits d’auteurs-compositeurs manquants, des problèmes de qualité audio ou un contenu sur lequel vous ne détenez pas les droits.",
-          "Votre tableau de bord indique la raison exacte. Corrigez-la et soumettez à nouveau — inutile de tout recommencer.",
+          "Votre tableau de bord indique la raison exacte. Corrigez-la et soumettez à nouveau. Inutile de tout recommencer.",
         ],
         keywords: "refusée rejetée modifications demandées erreur",
       },
@@ -501,7 +501,7 @@ export const HELP: Localized<HelpCopy> = {
         category: "promotion",
         q: "Quelles options de promotion existent ?",
         a: [
-          "Quatre : la proposition éditoriale aux plateformes, les services de curateurs indépendants, les campagnes de créateurs et la publicité. La proposition éditoriale et les campagnes de créateurs sont disponibles dès aujourd’hui ; les services de curateurs indépendants et la publicité ne le sont pas encore. Elles fonctionnent différemment — consultez la page Promotion pour savoir qui décide et ce que vous payez.",
+          "Quatre : la proposition éditoriale aux plateformes, les services de curateurs indépendants, les campagnes de créateurs et la publicité. La proposition éditoriale et les campagnes de créateurs sont disponibles dès aujourd’hui ; les services de curateurs indépendants et la publicité ne le sont pas encore. Elles fonctionnent différemment : consultez la page Promotion pour savoir qui décide et ce que vous payez.",
           "Aucune option ne garantit des écoutes, des placements en playlist ou une mise en avant éditoriale.",
         ],
         keywords: "playlist proposition marketing campagne publicité",
@@ -529,7 +529,7 @@ export const HELP: Localized<HelpCopy> = {
         category: "royalties",
         q: "Comment retirer mes revenus ?",
         a: [
-          "Ouvrez votre portefeuille, choisissez Retirer et sélectionnez un moyen de paiement — M-Pesa, Airtel Money, Mixx by Yas ou virement bancaire, selon la disponibilité dans votre pays. Le montant minimum, les éventuels frais et le taux de change sont affichés avant confirmation. L’équipe financière de 2kTunes traite ensuite le retrait, et votre portefeuille affiche chaque étape et son statut.",
+          "Ouvrez votre portefeuille, choisissez Retirer et sélectionnez un moyen de paiement : M-Pesa, Airtel Money, Mixx by Yas ou virement bancaire, selon la disponibilité dans votre pays. Le montant minimum, les éventuels frais et le taux de change sont affichés avant confirmation. L’équipe financière de 2kTunes traite ensuite le retrait, et votre portefeuille affiche chaque étape et son statut.",
         ],
         keywords: "mpesa m-pesa airtel mixx yas banque retrait paiement",
       },

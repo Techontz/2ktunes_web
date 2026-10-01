@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { mockApi } from "@/test/api";
@@ -79,12 +79,50 @@ describe("PlanPage", () => {
     expect(await screen.findByText("Payment awaiting confirmation")).toBeInTheDocument();
     expect(api.calls("POST /subscribe")[0].body).toEqual({
       plan_id: 2,
+      currency: "TZS",
       payment_method: "mpesa_tz",
       payment_reference: "QK12AB34CD",
     });
     expect(screen.getByText("QK12AB34CD")).toBeInTheDocument();
     // Price on the plan card + amount on the pending payment.
     expect(screen.getAllByText("TZS 50,000.00")).toHaveLength(2);
+  });
+
+  it("lets the artist pay in USD by bank when the admin set a USD price", async () => {
+    const user = userEvent.setup();
+    const both = { ...PLANS[1], price_usd: "20.00", prices: [{ currency: "TZS", amount: "50000.00" }, { currency: "USD", amount: "20.00" }] };
+    const api = mockApi({
+      "GET /plans": { plans: [both] },
+      "GET /subscription": subscription({
+        payment_instructions: {
+          methods: ["mpesa_tz", "airtel_tz", "mixx_tz", "bank"],
+          methods_by_currency: { TZS: ["mpesa_tz", "airtel_tz", "mixx_tz", "bank"], USD: ["bank"] },
+          note: "",
+          details: { bank_account: "0150-123" },
+        },
+      }),
+      "POST /subscribe": { status: 202, body: { status: true, message: "ok", subscription_status: "pending_payment", payment: null, user: {} } },
+    });
+    renderPage(<PlanPage />, { route: "/dashboard/plan" });
+
+    expect(await screen.findByText("or USD 20.00")).toBeInTheDocument();
+    expect(screen.getByText("per year")).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "Choose the Pro plan" }));
+    const d = within(await screen.findByRole("dialog"));
+    await user.click(d.getByRole("radio", { name: /USD 20\.00/ }));
+    // Mobile money is TZS only, so bank is the one (pre-selected) option.
+    expect(d.queryByRole("option", { name: "M-Pesa" })).not.toBeInTheDocument();
+    expect(d.getByLabelText(/Payment method/)).toHaveValue("bank");
+    await user.type(d.getByLabelText(/Payment reference/), "FT26100201");
+    await user.click(d.getByRole("button", { name: "Submit payment" }));
+
+    await vi.waitFor(() => expect(api.calls("POST /subscribe")).toHaveLength(1));
+    expect(api.calls("POST /subscribe")[0].body).toEqual({
+      plan_id: 2,
+      currency: "USD",
+      payment_method: "bank",
+      payment_reference: "FT26100201",
+    });
   });
 
   it("maps payment_reference_required to the reference field", async () => {

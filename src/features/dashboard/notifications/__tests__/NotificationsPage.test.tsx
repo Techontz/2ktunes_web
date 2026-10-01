@@ -72,7 +72,7 @@ describe("NotificationsPage", () => {
     });
     const user = userEvent.setup();
     renderPage(<NotificationsPage />);
-    await user.click(await screen.findByLabelText(/Email — Royalties/, {}, { timeout: 3000 }));
+    await user.click(await screen.findByLabelText(/Email, Royalties/, {}, { timeout: 3000 }));
     await user.click(screen.getByRole("button", { name: "Save preferences" }));
     await waitFor(() => expect(api.calls("PUT /notification-preferences")).toHaveLength(1));
     expect(api.calls("PUT /notification-preferences")[0].body).toMatchObject({

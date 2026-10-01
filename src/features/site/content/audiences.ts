@@ -3,7 +3,7 @@ import type { PageCopy } from "../MarketingPage";
 
 export const ARTISTS: Localized<PageCopy> = {
   EN: {
-    meta: { title: "For artists", description: "Release, promote and get paid as an independent artist — with support that understands East African music." },
+    meta: { title: "For artists", description: "Release, promote and get paid as an independent artist, with support that understands East African music." },
     hero: {
       eyebrow: "For independent artists",
       title: "Run your career like the professional you are.",
@@ -20,7 +20,7 @@ export const ARTISTS: Localized<PageCopy> = {
         items: [
           { icon: "globe", title: "Global & African stores", body: "Your music on the platforms fans use, from Spotify to Boomplay." },
           { icon: "shield", title: "Your rights, always", body: "No exclusivity, no hidden ownership clauses. Leave whenever you want." },
-          { icon: "megaphone", title: "Promotion that's honest", body: "Editorial pitching and creator campaigns today; curators and ads not available yet — all clearly explained." },
+          { icon: "megaphone", title: "Promotion that's honest", body: "Editorial pitching and creator campaigns today; curators and ads not available yet. All clearly explained." },
           { icon: "wallet", title: "Withdraw locally", body: "Withdraw to M-Pesa, Airtel Money, Mixx by Yas or your bank, converted to TZS at a rate shown before you confirm." },
           { icon: "pie", title: "Split with your team", body: "Producers and writers get their share automatically." },
           { icon: "chart", title: "Know your audience", body: "See which songs, countries and platforms are moving." },
@@ -40,7 +40,7 @@ export const ARTISTS: Localized<PageCopy> = {
         tone: "dark",
         eyebrow: "Getting paid",
         title: "From streams to your phone.",
-        lede: "Royalties from every store collect in one wallet, in the currency each store paid. Withdraw to mobile money or your bank once you pass the minimum — converted to shillings at the rate shown before you confirm.",
+        lede: "Royalties from every store collect in one wallet, in the currency each store paid. Withdraw to mobile money or your bank once you pass the minimum, converted to shillings at the rate shown before you confirm.",
         visual: "wallet",
         reverse: true,
         link: { label: "How royalties work", to: "/royalties" },
@@ -49,7 +49,7 @@ export const ARTISTS: Localized<PageCopy> = {
     cta: { title: "Your music. Your rights. Your money.", lede: "Create your artist account in a minute." },
   },
   SW: {
-    meta: { title: "Kwa wasanii", description: "Toa muziki, jitangaze na lipwa kama msanii huru — kwa msaada unaoelewa muziki wa Afrika Mashariki." },
+    meta: { title: "Kwa wasanii", description: "Toa muziki, jitangaze na lipwa kama msanii huru, kwa msaada unaoelewa muziki wa Afrika Mashariki." },
     hero: {
       eyebrow: "Kwa wasanii huru",
       title: "Endesha kazi yako kama mtaalamu ulivyo.",
@@ -66,7 +66,7 @@ export const ARTISTS: Localized<PageCopy> = {
         items: [
           { icon: "globe", title: "Maduka ya kimataifa na Afrika", body: "Muziki wako kwenye majukwaa ambayo mashabiki wanatumia, kutoka Spotify hadi Boomplay." },
           { icon: "shield", title: "Haki zako, daima", body: "Hakuna upekee wa lazima, hakuna vipengele vya umiliki vilivyofichwa. Ondoka wakati wowote." },
-          { icon: "megaphone", title: "Utangazaji wa uaminifu", body: "Kuwasilisha kwa wahariri na kampeni za watengeneza maudhui sasa; wachaguzi na matangazo bado hayapatikani — yote yameelezwa wazi." },
+          { icon: "megaphone", title: "Utangazaji wa uaminifu", body: "Kuwasilisha kwa wahariri na kampeni za watengeneza maudhui sasa; wachaguzi na matangazo bado hayapatikani. Yote yameelezwa wazi." },
           { icon: "wallet", title: "Toa pesa nyumbani", body: "Toa kwenda M-Pesa, Airtel Money, Mixx by Yas au benki yako, ikibadilishwa kuwa TZS kwa kiwango kinachoonyeshwa kabla ya kuthibitisha." },
           { icon: "pie", title: "Gawana na timu yako", body: "Watayarishaji na watunzi wanapata sehemu yao moja kwa moja." },
           { icon: "chart", title: "Ijue hadhira yako", body: "Ona nyimbo, nchi na majukwaa yanayofanya vizuri." },
@@ -86,7 +86,7 @@ export const ARTISTS: Localized<PageCopy> = {
         tone: "dark",
         eyebrow: "Kulipwa",
         title: "Kutoka usikilizaji hadi simu yako.",
-        lede: "Mirabaha kutoka kila duka inakusanyika kwenye pochi moja, kwa sarafu ambayo kila duka lililipa. Toa kwenda pesa ya simu au benki ukipita kiwango cha chini — ikibadilishwa kuwa shilingi kwa kiwango kinachoonyeshwa kabla ya kuthibitisha.",
+        lede: "Mirabaha kutoka kila duka inakusanyika kwenye pochi moja, kwa sarafu ambayo kila duka lililipa. Toa kwenda pesa ya simu au benki ukipita kiwango cha chini, ikibadilishwa kuwa shilingi kwa kiwango kinachoonyeshwa kabla ya kuthibitisha.",
         visual: "wallet",
         reverse: true,
         link: { label: "Jinsi mirabaha inavyofanya kazi", to: "/royalties" },
@@ -95,7 +95,7 @@ export const ARTISTS: Localized<PageCopy> = {
     cta: { title: "Muziki wako. Haki zako. Pesa yako.", lede: "Fungua akaunti ya msanii kwa dakika moja." },
   },
   FR: {
-    meta: { title: "Pour les artistes", description: "Sortez votre musique, faites-vous connaître et soyez payé en tant qu’artiste indépendant — avec une équipe qui comprend la musique africaine." },
+    meta: { title: "Pour les artistes", description: "Sortez votre musique, faites-vous connaître et soyez payé en tant qu’artiste indépendant, avec une équipe qui comprend la musique africaine." },
     hero: {
       eyebrow: "Pour les artistes indépendants",
       title: "Gérez votre carrière en vrai professionnel.",
@@ -112,7 +112,7 @@ export const ARTISTS: Localized<PageCopy> = {
         items: [
           { icon: "globe", title: "Plateformes mondiales et africaines", body: "Votre musique sur les plateformes que vos fans utilisent, de Spotify à Boomplay." },
           { icon: "shield", title: "Vos droits, toujours", body: "Aucune exclusivité, aucune clause de propriété cachée. Partez quand vous voulez." },
-          { icon: "megaphone", title: "Une promotion honnête", body: "Pitch éditorial et campagnes de créateurs de contenu dès aujourd’hui ; curateurs et publicités pas encore disponibles — le tout clairement expliqué." },
+          { icon: "megaphone", title: "Une promotion honnête", body: "Pitch éditorial et campagnes de créateurs de contenu dès aujourd’hui ; curateurs et publicités pas encore disponibles. Le tout clairement expliqué." },
           { icon: "wallet", title: "Retirez localement", body: "Retirez vers M-Pesa, Airtel Money, Mixx by Yas ou votre banque, converti en TZS à un taux affiché avant votre confirmation." },
           { icon: "pie", title: "Partagez avec votre équipe", body: "Producteurs et auteurs reçoivent automatiquement leur part." },
           { icon: "chart", title: "Connaissez votre public", body: "Voyez quels titres, pays et plateformes décollent." },
@@ -132,7 +132,7 @@ export const ARTISTS: Localized<PageCopy> = {
         tone: "dark",
         eyebrow: "Être payé",
         title: "Des streams à votre téléphone.",
-        lede: "Les royalties de toutes les plateformes arrivent dans un seul portefeuille, dans la devise versée par chaque plateforme. Retirez vers le mobile money ou votre banque dès que vous dépassez le minimum — converti en shillings au taux affiché avant votre confirmation.",
+        lede: "Les royalties de toutes les plateformes arrivent dans un seul portefeuille, dans la devise versée par chaque plateforme. Retirez vers le mobile money ou votre banque dès que vous dépassez le minimum, converti en shillings au taux affiché avant votre confirmation.",
         visual: "wallet",
         reverse: true,
         link: { label: "Comment fonctionnent les royalties", to: "/royalties" },
@@ -144,7 +144,7 @@ export const ARTISTS: Localized<PageCopy> = {
 
 export const LABELS: Localized<PageCopy> = {
   EN: {
-    meta: { title: "For labels", description: "Manage a roster, catalogue and royalty splits across artists — with local payouts for everyone." },
+    meta: { title: "For labels", description: "Manage a roster, catalogue and royalty splits across artists, with local payouts for everyone." },
     hero: {
       eyebrow: "For labels & teams",
       title: "One dashboard for your whole roster.",
@@ -186,7 +186,7 @@ export const LABELS: Localized<PageCopy> = {
     cta: { title: "Bring your roster to 2kTunes.", lede: "Create a Label / Team account, or talk to us about a larger catalogue.", secondary: { label: "Contact us", to: "/contact" } },
   },
   SW: {
-    meta: { title: "Kwa lebo", description: "Simamia wasanii, kazi zao na mgawanyo wa mirabaha — pamoja na malipo ya ndani kwa kila mmoja." },
+    meta: { title: "Kwa lebo", description: "Simamia wasanii, kazi zao na mgawanyo wa mirabaha, pamoja na malipo ya ndani kwa kila mmoja." },
     hero: {
       eyebrow: "Kwa lebo na timu",
       title: "Dashibodi moja kwa wasanii wako wote.",
@@ -228,7 +228,7 @@ export const LABELS: Localized<PageCopy> = {
     cta: { title: "Leta wasanii wako 2kTunes.", lede: "Fungua akaunti ya Lebo / Timu, au zungumza nasi kuhusu kazi nyingi zaidi.", secondary: { label: "Wasiliana nasi", to: "/contact" } },
   },
   FR: {
-    meta: { title: "Pour les labels", description: "Gérez vos artistes, votre catalogue et les partages de royalties — avec des paiements locaux pour chacun." },
+    meta: { title: "Pour les labels", description: "Gérez vos artistes, votre catalogue et les partages de royalties, avec des paiements locaux pour chacun." },
     hero: {
       eyebrow: "Pour les labels et équipes",
       title: "Un seul tableau de bord pour tous vos artistes.",
@@ -277,7 +277,7 @@ export const ABOUT: Localized<PageCopy> = {
     hero: {
       eyebrow: "About 2kTunes",
       title: "Built in Tanzania, for artists who want the world.",
-      lede: "We started 2kTunes because East African artists deserve the same global reach as anyone else — without losing their rights or waiting months for money they can't easily withdraw.",
+      lede: "We started 2kTunes because East African artists deserve the same global reach as anyone else, without losing their rights or waiting months for money they can't easily withdraw.",
       secondary: { label: "Contact us", to: "/contact" },
     },
     sections: [
@@ -287,7 +287,7 @@ export const ABOUT: Localized<PageCopy> = {
         eyebrow: "Why we exist",
         title: "Global distribution was never built with us in mind.",
         paragraphs: [
-          "For years, artists here have had two options: sign away rights to someone with access, or use a distributor built for another market — English-only dashboards, bank-only payouts and support in a different time zone.",
+          "For years, artists here have had two options: sign away rights to someone with access, or use a distributor built for another market, with English-only dashboards, bank-only payouts and support in a different time zone.",
           "2kTunes is the third option. We deliver to the same global stores, add the African platforms your fans actually use, and pay out through the mobile money and bank accounts you already have, converted to the currency you spend when you withdraw.",
           "We're also honest about the hard part. No one can guarantee streams or playlist spots, and anyone who promises them is selling something risky. What we can do is give you clean delivery, transparent money and real routes to an audience.",
         ],
@@ -316,7 +316,7 @@ export const ABOUT: Localized<PageCopy> = {
     hero: {
       eyebrow: "Kuhusu 2kTunes",
       title: "Imejengwa Tanzania, kwa wasanii wanaotaka dunia.",
-      lede: "Tulianzisha 2kTunes kwa sababu wasanii wa Afrika Mashariki wanastahili kufika duniani kama mtu mwingine yeyote — bila kupoteza haki zao wala kusubiri miezi kwa pesa wasiyoweza kutoa kwa urahisi.",
+      lede: "Tulianzisha 2kTunes kwa sababu wasanii wa Afrika Mashariki wanastahili kufika duniani kama mtu mwingine yeyote, bila kupoteza haki zao wala kusubiri miezi kwa pesa wasiyoweza kutoa kwa urahisi.",
       secondary: { label: "Wasiliana nasi", to: "/contact" },
     },
     sections: [
@@ -326,7 +326,7 @@ export const ABOUT: Localized<PageCopy> = {
         eyebrow: "Kwa nini tupo",
         title: "Usambazaji wa kimataifa haukujengwa ukitufikiria sisi.",
         paragraphs: [
-          "Kwa miaka mingi, wasanii wa hapa wamekuwa na njia mbili: kuachia haki zao kwa mtu mwenye uwezo wa kufika, au kutumia msambazaji aliyejengwa kwa soko jingine — dashibodi za Kiingereza tu, malipo ya benki tu na msaada kutoka saa za eneo jingine.",
+          "Kwa miaka mingi, wasanii wa hapa wamekuwa na njia mbili: kuachia haki zao kwa mtu mwenye uwezo wa kufika, au kutumia msambazaji aliyejengwa kwa soko jingine, wenye dashibodi za Kiingereza tu, malipo ya benki tu na msaada kutoka saa za eneo jingine.",
           "2kTunes ni njia ya tatu. Tunasambaza kwenye maduka yaleyale ya kimataifa, tunaongeza majukwaa ya Afrika ambayo mashabiki wako wanatumia, na tunalipa kupitia pesa ya simu na akaunti za benki ulizonazo tayari, ikibadilishwa kuwa sarafu unayotumia unapotoa.",
           "Pia tuko wazi kuhusu sehemu ngumu. Hakuna anayeweza kuhakikisha usikilizaji au nafasi kwenye orodha, na anayeahidi hivyo anauza kitu cha hatari. Tunachoweza ni kukupa usambazaji safi, pesa zilizo wazi na njia halisi za kufikia hadhira.",
         ],
@@ -355,7 +355,7 @@ export const ABOUT: Localized<PageCopy> = {
     hero: {
       eyebrow: "À propos de 2kTunes",
       title: "Né en Tanzanie, pour les artistes qui visent le monde.",
-      lede: "Nous avons créé 2kTunes parce que les artistes africains méritent la même portée mondiale que n’importe qui — sans perdre leurs droits ni attendre des mois un argent difficile à retirer.",
+      lede: "Nous avons créé 2kTunes parce que les artistes africains méritent la même portée mondiale que n’importe qui, sans perdre leurs droits ni attendre des mois un argent difficile à retirer.",
       secondary: { label: "Nous contacter", to: "/contact" },
     },
     sections: [
@@ -365,7 +365,7 @@ export const ABOUT: Localized<PageCopy> = {
         eyebrow: "Pourquoi nous existons",
         title: "La distribution mondiale n’a jamais été pensée pour nous.",
         paragraphs: [
-          "Pendant des années, les artistes d’ici n’avaient que deux options : céder leurs droits à quelqu’un qui avait les bons accès, ou passer par un distributeur conçu pour un autre marché — tableaux de bord uniquement en anglais, paiements uniquement par virement bancaire et support dans un autre fuseau horaire.",
+          "Pendant des années, les artistes d’ici n’avaient que deux options : céder leurs droits à quelqu’un qui avait les bons accès, ou passer par un distributeur conçu pour un autre marché, avec des tableaux de bord uniquement en anglais, paiements uniquement par virement bancaire et support dans un autre fuseau horaire.",
           "2kTunes est la troisième voie. Nous livrons sur les mêmes plateformes mondiales, ajoutons les plateformes africaines que vos fans utilisent vraiment, et payons via le mobile money et les comptes bancaires que vous avez déjà, convertis dans votre devise au moment du retrait.",
           "Nous sommes aussi honnêtes sur la partie difficile. Personne ne peut garantir des streams ou des places en playlist, et ceux qui le promettent vendent quelque chose de risqué. Ce que nous pouvons faire, c’est vous offrir une livraison propre, des revenus transparents et de vraies voies vers un public.",
         ],

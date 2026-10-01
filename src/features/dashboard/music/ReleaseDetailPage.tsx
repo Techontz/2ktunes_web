@@ -162,12 +162,12 @@ export default function ReleaseDetailPage() {
         back={{ to: "/dashboard/music", label: c.backToCatalog }}
         title={
           <>
-            {r.release_title || "—"}
+            {r.release_title || "-"}
             {r.version && <span className="font-normal text-text-subtle"> ({r.version})</span>}
           </>
         }
         meta={<StatusPill status={r.status} size="md" />}
-        description={`${r.release_type} · ${c.by(r.artist_name || "—")}`}
+        description={`${r.release_type} · ${c.by(r.artist_name || "-")}`}
         actions={actions.length ? actions : undefined}
       />
 

@@ -87,7 +87,7 @@ const EN = {
   deleteTitle: "Delete your account?",
   deleteBody: "This can't be undone. Enter your password to confirm.",
   deleteReason: "Why are you leaving?",
-  deleteReasonHint: "Optional — it helps us improve.",
+  deleteReasonHint: "Optional, but it helps us improve.",
   deleteConfirm: "Delete account",
   deleted: "Your account has been deleted",
   balanceRemaining:
@@ -182,7 +182,7 @@ const SW: typeof EN = {
   deleteTitle: "Ufute akaunti yako?",
   deleteBody: "Hili haliwezi kutenduliwa. Weka nenosiri lako kuthibitisha.",
   deleteReason: "Kwa nini unaondoka?",
-  deleteReasonHint: "Si lazima — inatusaidia kuboresha huduma.",
+  deleteReasonHint: "Si lazima, ila inatusaidia kuboresha huduma.",
   deleteConfirm: "Futa akaunti",
   deleted: "Akaunti yako imefutwa",
   balanceRemaining:
@@ -277,7 +277,7 @@ const FR: typeof EN = {
   deleteTitle: "Supprimer votre compte ?",
   deleteBody: "Cette action est irréversible. Saisissez votre mot de passe pour confirmer.",
   deleteReason: "Pourquoi partez-vous ?",
-  deleteReasonHint: "Facultatif — cela nous aide à nous améliorer.",
+  deleteReasonHint: "Facultatif, mais cela nous aide à nous améliorer.",
   deleteConfirm: "Supprimer le compte",
   deleted: "Votre compte a été supprimé",
   balanceRemaining:

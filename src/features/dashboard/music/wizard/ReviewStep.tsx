@@ -97,7 +97,7 @@ export function ReviewStep({ stepLabel }: { stepLabel: (s: WizardStep) => string
               {release.version && <span className="font-normal text-text-subtle"> ({release.version})</span>}
             </h3>
             <p className="text-body-sm text-text-muted">
-              {release.release_type} · {c.by(release.artist_name || "—")}
+              {release.release_type} · {c.by(release.artist_name || "-")}
             </p>
             <DefinitionList
               className="mt-4"
@@ -126,7 +126,7 @@ export function ReviewStep({ stepLabel }: { stepLabel: (s: WizardStep) => string
             ) : ready ? (
               <p className="flex items-center gap-2 text-body-sm font-semibold text-success">
                 <CheckCircle2 className="h-5 w-5" aria-hidden />
-                {c.readyTitle} — <span className="font-normal text-text-muted">{c.readyBody}</span>
+                {c.readyTitle}. <span className="font-normal text-text-muted">{c.readyBody}</span>
               </p>
             ) : (
               <div className="space-y-4">

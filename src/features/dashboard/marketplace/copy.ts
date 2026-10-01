@@ -89,7 +89,7 @@ const EN = {
   useExisting: "Add to an existing campaign",
   createNew: "Create a new campaign",
   chooseCampaign: "Choose a campaign",
-  noOpenCampaigns: "You have no open campaigns yet — create one below.",
+  noOpenCampaigns: "You have no open campaigns yet. Create one below.",
   campaignTitle: "Campaign title",
   campaignTitleRequired: "Give the campaign a title.",
   campaignType: "Campaign type",
@@ -102,7 +102,7 @@ const EN = {
   orderCreatedBody: "Review it and pay from your wallet to send it.",
   campaignRequired: "Choose a campaign.",
   payNext: "You'll pay on the next screen. Nothing is charged yet.",
-  campaignKept: "The campaign was created. Fix the problem and try again — it will be reused.",
+  campaignKept: "The campaign was created. Fix the problem and try again, and it will be reused.",
 
   /* Orders list */
   ordersTitle: "Orders",
@@ -178,8 +178,8 @@ const EN = {
   walletNone: (currency: string) => `You have no ${currency} balance.`,
   insufficient: "Your wallet balance is lower than the order price, so this payment will fail.",
   topUpHint: "Go to wallet",
-  paidToast: "Paid — the creator has been notified",
-  paidServiceToast: "Paid — the 2kTunes team will start work",
+  paidToast: "Paid. The creator has been notified",
+  paidServiceToast: "Paid. The 2kTunes team will start work",
 
   cancel: "Cancel order",
   cancelTitle: "Cancel this order?",
@@ -190,7 +190,7 @@ const EN = {
   complete: "Accept delivery",
   completeTitle: "Accept this delivery?",
   completeBody: "The payment is released to the creator. You can't undo this.",
-  completedToast: "Delivery accepted — the creator has been paid",
+  completedToast: "Delivery accepted and the creator has been paid",
 
   revision: "Request a revision",
   revisionTitle: "Request a revision",
@@ -317,7 +317,7 @@ const SW: typeof EN = {
   useExisting: "Ongeza kwenye kampeni iliyopo",
   createNew: "Anzisha kampeni mpya",
   chooseCampaign: "Chagua kampeni",
-  noOpenCampaigns: "Bado huna kampeni inayoendelea — anzisha moja hapa chini.",
+  noOpenCampaigns: "Bado huna kampeni inayoendelea. Anzisha moja hapa chini.",
   campaignTitle: "Jina la kampeni",
   campaignTitleRequired: "Ipe kampeni jina.",
   campaignType: "Aina ya kampeni",
@@ -331,7 +331,7 @@ const SW: typeof EN = {
   orderCreatedBody: "Ipitie kisha ulipe kutoka pochi yako ili iwasilishwe.",
   campaignRequired: "Chagua kampeni.",
   payNext: "Utalipa kwenye ukurasa unaofuata. Hakuna kinachotozwa bado.",
-  campaignKept: "Kampeni imetengenezwa. Rekebisha tatizo kisha ujaribu tena — itatumika hiyo hiyo.",
+  campaignKept: "Kampeni imetengenezwa. Rekebisha tatizo kisha ujaribu tena, na itatumika hiyo hiyo.",
 
   ordersTitle: "Oda",
   ordersIntro:
@@ -406,8 +406,8 @@ const SW: typeof EN = {
   walletNone: (currency) => `Huna salio la ${currency}.`,
   insufficient: "Salio la pochi yako ni dogo kuliko bei ya oda, kwa hiyo malipo haya hayatafanikiwa.",
   topUpHint: "Nenda kwenye pochi",
-  paidToast: "Imelipwa — mtengeneza maudhui amejulishwa",
-  paidServiceToast: "Imelipwa — timu ya 2kTunes itaanza kazi",
+  paidToast: "Imelipwa. Mtengeneza maudhui amejulishwa",
+  paidServiceToast: "Imelipwa. Timu ya 2kTunes itaanza kazi",
 
   cancel: "Ghairi oda",
   cancelTitle: "Ughairi oda hii?",
@@ -418,7 +418,7 @@ const SW: typeof EN = {
   complete: "Kubali kazi",
   completeTitle: "Ukubali kazi hii?",
   completeBody: "Malipo yatatolewa kwa mtengeneza maudhui. Huwezi kutengua hatua hii.",
-  completedToast: "Kazi imekubaliwa — mtengeneza maudhui amelipwa",
+  completedToast: "Kazi imekubaliwa na mtengeneza maudhui amelipwa",
 
   revision: "Omba marekebisho",
   revisionTitle: "Omba marekebisho",
@@ -550,7 +550,7 @@ const FR: typeof EN = {
   useExisting: "Ajouter à une campagne existante",
   createNew: "Créer une campagne",
   chooseCampaign: "Choisir une campagne",
-  noOpenCampaigns: "Vous n'avez aucune campagne en cours — créez-en une ci-dessous.",
+  noOpenCampaigns: "Vous n'avez aucune campagne en cours. Créez-en une ci-dessous.",
   campaignTitle: "Titre de la campagne",
   campaignTitleRequired: "Donnez un titre à la campagne.",
   campaignType: "Type de campagne",
@@ -564,7 +564,7 @@ const FR: typeof EN = {
   orderCreatedBody: "Vérifiez-la puis payez depuis votre portefeuille pour l'envoyer.",
   campaignRequired: "Choisissez une campagne.",
   payNext: "Le paiement se fait à l'écran suivant. Rien n'est encore débité.",
-  campaignKept: "La campagne a été créée. Corrigez le problème et réessayez — elle sera réutilisée.",
+  campaignKept: "La campagne a été créée. Corrigez le problème et réessayez : elle sera réutilisée.",
 
   /* Orders list */
   ordersTitle: "Commandes",
@@ -642,8 +642,8 @@ const FR: typeof EN = {
   walletNone: (currency: string) => `Vous n'avez aucun solde en ${currency}.`,
   insufficient: "Le solde de votre portefeuille est inférieur au prix de la commande : ce paiement échouera.",
   topUpHint: "Aller au portefeuille",
-  paidToast: "Payé — le créateur a été prévenu",
-  paidServiceToast: "Payé — l'équipe 2kTunes va commencer",
+  paidToast: "Payé. Le créateur a été prévenu",
+  paidServiceToast: "Payé. L'équipe 2kTunes va commencer",
 
   cancel: "Annuler la commande",
   cancelTitle: "Annuler cette commande ?",
@@ -654,7 +654,7 @@ const FR: typeof EN = {
   complete: "Accepter la livraison",
   completeTitle: "Accepter cette livraison ?",
   completeBody: "Le paiement sera versé au créateur. Cette action est irréversible.",
-  completedToast: "Livraison acceptée — le créateur a été payé",
+  completedToast: "Livraison acceptée et le créateur a été payé",
 
   revision: "Demander une révision",
   revisionTitle: "Demander une révision",

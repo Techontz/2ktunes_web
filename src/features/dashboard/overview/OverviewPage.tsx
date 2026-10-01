@@ -192,7 +192,7 @@ function Content({ data, locale }: { data: DashboardOverview; locale: string }) 
                       >
                         <ReleaseCover src={r.cover_image} title={r.release_title} size="sm" />
                         <span className="min-w-0 flex-1">
-                          <span className="block truncate font-semibold text-text">{r.release_title || "—"}</span>
+                          <span className="block truncate font-semibold text-text">{r.release_title || "-"}</span>
                           <span className="block truncate text-caption text-text-subtle">
                             {r.artist_name} · {c.updated(relativeTime(r.updated_at, locale))}
                           </span>

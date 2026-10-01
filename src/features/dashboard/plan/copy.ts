@@ -20,7 +20,7 @@ const EN = {
   pendingSubmitted: "Submitted",
 
   plansTitle: "Plans",
-  plansDesc: "Prices are set by 2kTunes and charged per period.",
+  plansDesc: "Prices are set by 2kTunes and charged per year. Pay in TZS or, where offered, in USD.",
   plansEmptyTitle: "No plans available right now",
   plansEmptyBody: "Plans are being updated. Please check back soon or contact support.",
   free: "Free",
@@ -68,7 +68,12 @@ const EN = {
   referenceRequired: "Enter the payment reference from your receipt.",
   methodRequired: "Choose how you paid.",
   submit: "Submit payment",
-  submitted: "Payment submitted — we'll activate your plan once it's confirmed",
+  submitted: "Payment submitted. We'll activate your plan once it's confirmed",
+  perYear: "per year",
+  orPrice: (price: string) => `or ${price}`,
+  currency: "Currency to pay in",
+  currencyMobileMoney: "M-Pesa, Airtel Money, Mixx or bank",
+  currencyBankOnly: "Bank transfer",
 };
 
 const SW: typeof EN = {
@@ -139,7 +144,12 @@ const SW: typeof EN = {
   referenceRequired: "Weka kumbukumbu ya malipo kutoka kwenye risiti yako.",
   methodRequired: "Chagua njia uliyotumia kulipa.",
   submit: "Tuma malipo",
-  submitted: "Malipo yametumwa — tutawasha kifurushi chako yakishathibitishwa",
+  submitted: "Malipo yametumwa. Tutawasha kifurushi chako yakishathibitishwa",
+  perYear: "kwa mwaka",
+  orPrice: (price: string) => `au ${price}`,
+  currency: "Sarafu ya kulipia",
+  currencyMobileMoney: "M-Pesa, Airtel Money, Mixx au benki",
+  currencyBankOnly: "Uhamisho wa benki",
 };
 
 const FR: typeof EN = {
@@ -210,7 +220,12 @@ const FR: typeof EN = {
   referenceRequired: "Saisissez la référence de paiement figurant sur votre reçu.",
   methodRequired: "Choisissez votre moyen de paiement.",
   submit: "Envoyer le paiement",
-  submitted: "Paiement envoyé — nous activerons votre formule dès sa confirmation",
+  submitted: "Paiement envoyé. Nous activerons votre formule dès sa confirmation",
+  perYear: "par an",
+  orPrice: (price: string) => `ou ${price}`,
+  currency: "Devise de paiement",
+  currencyMobileMoney: "M-Pesa, Airtel Money, Mixx ou virement bancaire",
+  currencyBankOnly: "Virement bancaire",
 };
 
 export const COPY = { EN, SW, FR };
