@@ -14,6 +14,10 @@ export const ONBOARDING_PATH = "/onboarding";
 /** Only same-origin paths are accepted as a redirect target. */
 export function safeNext(next: string | null): string | null {
   if (!next) return null;
+  // Browsers strip tabs/newlines from URLs, so `/\t/evil.com` would become
+  // `//evil.com`. No legitimate path contains control characters or spaces.
+  // eslint-disable-next-line no-control-regex
+  if (/[\u0000-\u001f\u007f\s]/.test(next)) return null;
   // `//evil.com` is protocol-relative and would leave the site.
   if (!next.startsWith("/") || next.startsWith("//")) return null;
   // `/\evil.com` is normalised to `//evil.com` by browsers.

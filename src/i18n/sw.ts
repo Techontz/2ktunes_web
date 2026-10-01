@@ -130,6 +130,12 @@ const sw: Record<MessageKey, string> = {
   "nf.title": "Ukurasa huu haupo",
   "nf.body": "Kiungo kinaweza kuwa kimevunjika, au ukurasa umehamishwa. Jaribu mojawapo ya hivi.",
 
+  /* ── Crash (top-level error boundary) ── */
+  "crash.eyebrow": "Hitilafu 500",
+  "crash.title": "Kuna kitu kimeharibika",
+  "crash.body": "Ukurasa huu umekumbana na tatizo lisilotarajiwa. Kupakia upya kwa kawaida hutatua. Likiendelea, wasiliana na msaada.",
+  "crash.reload": "Pakia upya",
+
   /* ── Auth ── */
   "auth.tabs_label": "Ingia au fungua akaunti",
   "auth.tab_login": "Ingia",

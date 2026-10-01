@@ -18,6 +18,14 @@ describe("safeNext", () => {
     expect(safeNext("dashboard")).toBeNull();
   });
 
+  it("rejects control characters and whitespace browsers would strip", () => {
+    expect(safeNext("/\t/evil.com")).toBeNull();
+    expect(safeNext("/\n/evil.com")).toBeNull();
+    expect(safeNext("/\r\n/evil.com")).toBeNull();
+    expect(safeNext("/ /evil.com")).toBeNull();
+    expect(safeNext("/\u0000/evil.com")).toBeNull();
+  });
+
   it("never redirects back into the auth screens", () => {
     expect(safeNext("/auth")).toBeNull();
     expect(safeNext("/auth?mode=register")).toBeNull();

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Public marketing and legal routes. Assumed production domain: https://2ktunes.com -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://2ktunes.com/</loc></url>
+  <url><loc>https://2ktunes.com/distribution</loc></url>
+  <url><loc>https://2ktunes.com/promotion</loc></url>
+  <url><loc>https://2ktunes.com/creators</loc></url>
+  <url><loc>https://2ktunes.com/royalties</loc></url>
+  <url><loc>https://2ktunes.com/pricing</loc></url>
+  <url><loc>https://2ktunes.com/artists</loc></url>
+  <url><loc>https://2ktunes.com/labels</loc></url>
+  <url><loc>https://2ktunes.com/about</loc></url>
+  <url><loc>https://2ktunes.com/help</loc></url>
+  <url><loc>https://2ktunes.com/contact</loc></url>
+  <url><loc>https://2ktunes.com/legal/terms</loc></url>
+  <url><loc>https://2ktunes.com/legal/privacy</loc></url>
+  <url><loc>https://2ktunes.com/legal/distribution-agreement</loc></url>
+  <url><loc>https://2ktunes.com/legal/acceptable-use</loc></url>
+</urlset>

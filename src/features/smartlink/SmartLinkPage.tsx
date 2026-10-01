@@ -34,7 +34,6 @@ export default function SmartLinkPage() {
   const res = useResource((signal) => fetchPublicRelease(slug, { signal }), [slug]);
   const release = res.data;
 
-  usePageMeta(release ? `${release.title} — ${release.artist}` : null, release ? c.by(release.artist) : undefined);
 
   const viewLogged = useRef<string | null>(null);
   useEffect(() => {
@@ -46,6 +45,11 @@ export default function SmartLinkPage() {
   }, [release, slug]);
 
   const notFound = res.errorObj instanceof ApiError && res.errorObj.status === 404;
+  usePageMeta(
+    release ? `${release.title} — ${release.artist}` : null,
+    release ? c.by(release.artist) : undefined,
+    { noindex: notFound },
+  );
 
   return (
     <div className="relative flex min-h-svh flex-col overflow-hidden bg-surface text-text">

@@ -6,6 +6,7 @@ import {
   getUploadSession,
   putUploadChunk,
 } from "@/lib/api/uploads";
+import { RESUME_KEY_PREFIX } from "./resumeKeys";
 import { Sha256 } from "./sha256";
 
 /**
@@ -118,7 +119,7 @@ export function missingChunks(totalChunks: number, received: number[]): number[]
 }
 
 export function resumeKey(kind: UploadKind, sha256: string, size: number): string {
-  return `2ktunes.upload.${kind}.${sha256}.${size}`;
+  return `${RESUME_KEY_PREFIX}${kind}.${sha256}.${size}`;
 }
 
 function aborted(signal?: AbortSignal) {

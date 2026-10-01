@@ -234,6 +234,14 @@ export default function DashboardLayout() {
     main.current?.focus({ preventScroll: true });
   }, [pathname]);
 
+  /* Tab title per section (the marketing title otherwise lingers). The most
+     specific matching nav entry wins, e.g. /dashboard/music/7 → "Music". */
+  useEffect(() => {
+    const items = NAV.flatMap((g) => g.items).filter((i) => isNavActive(i, pathname));
+    const best = items.sort((a, b) => b.to.length - a.to.length)[0];
+    document.title = `${best ? t(best.label) : "Dashboard"} · 2kTunes`;
+  }, [pathname, t]);
+
   return (
     <UnreadProvider>
       <div className="min-h-svh bg-surface text-text">

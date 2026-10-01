@@ -134,6 +134,12 @@ const en = {
   "nf.title": "This page isn't here",
   "nf.body": "The link may be broken, or the page may have moved. Try one of these instead.",
 
+  /* ── Crash (top-level error boundary) ── */
+  "crash.eyebrow": "Error 500",
+  "crash.title": "Something went wrong",
+  "crash.body": "This page hit an unexpected problem. Reloading usually fixes it. If it keeps happening, contact support.",
+  "crash.reload": "Reload page",
+
   /* ── Auth ── */
   "auth.tabs_label": "Log in or create an account",
   "auth.tab_login": "Log in",

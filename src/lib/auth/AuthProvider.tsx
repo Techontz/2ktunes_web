@@ -16,6 +16,7 @@ import {
   setUnauthenticatedHandler,
 } from "@/lib/api/client";
 import * as authApi from "@/lib/api/auth";
+import { clearResumeKeys } from "@/lib/upload/resumeKeys";
 import type { AccountType, AuthUser } from "@/lib/api/auth";
 
 /**
@@ -25,12 +26,14 @@ import type { AccountType, AuthUser } from "@/lib/api/auth";
  * There was no auth state in this app before, so this is the only store — no
  * competing context, no duplicated user object.
  *
- * The backend issues Sanctum personal access tokens with `'expiration' => null`
- * (config/sanctum.php), so a token stays valid until it is deleted server-side
- * by `POST /api/logout`. That is what makes a browser refresh keep you signed
- * in: on boot we re-read the stored token and re-fetch the user from
- * `GET /api/profile`, which is the authority. We never trust a cached user
- * object as proof of a session.
+ * The backend issues Sanctum personal access tokens that expire after
+ * `SANCTUM_TOKEN_DAYS` (default 30, set per token at issue time) or when they
+ * are deleted server-side (`POST /api/logout`, password reset). A stored token
+ * is what makes a browser refresh keep you signed in: on boot we re-read it and
+ * re-fetch the user from `GET /api/profile`, which is the authority. We never
+ * trust a cached user object as proof of a session. An expired or revoked
+ * token comes back 401 on any call; the client's unauthenticated hook clears
+ * the session and the route guard sends the user to /auth?next=<where they were>.
  *
  * Statuses: "loading" while we verify a stored token, then "authenticated" or
  * "unauthenticated". Route guards read this rather than poking at localStorage.
@@ -192,6 +195,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } catch {
       /* Already invalid, or offline. Either way we still clear locally. */
     } finally {
+      // An explicit sign-out also forgets resumable upload sessions, so the
+      // next person on a shared device can't see or resume them.
+      clearResumeKeys();
       clearSession();
     }
   }, [clearSession]);

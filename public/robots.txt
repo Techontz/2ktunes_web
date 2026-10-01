@@ -1,0 +1,16 @@
+# 2kTunes web app. Assumed production domain: https://2ktunes.com
+# (update the Sitemap line if the site is served from another domain).
+#
+# Private, signed-in or one-time token pages are disallowed. Smart links
+# (/r/<slug>) stay crawlable on purpose: they are public release pages the
+# artist wants found and shared, and unknown slugs are marked noindex.
+User-agent: *
+Disallow: /dashboard
+Disallow: /onboarding
+Disallow: /account
+Disallow: /auth
+Disallow: /forgot-password
+Disallow: /reset-password
+Disallow: /email-verified
+
+Sitemap: https://2ktunes.com/sitemap.xml

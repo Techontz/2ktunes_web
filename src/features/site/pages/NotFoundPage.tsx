@@ -13,7 +13,7 @@ const LINKS = [
 
 export default function NotFoundPage() {
   const { t } = useLanguage();
-  usePageMeta(t("nf.title"));
+  usePageMeta(t("nf.title"), t("nf.body"), { noindex: true });
   return (
     <section className="flex min-h-[80svh] items-center bg-surface pb-20 pt-28">
       <div className="shell-narrow">
