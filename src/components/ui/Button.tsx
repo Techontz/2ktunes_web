@@ -112,7 +112,7 @@ function buttonClasses({
 }: Pick<CommonProps, "variant" | "size" | "shape" | "fullWidth" | "className">) {
   return cn(
     "inline-flex shrink-0 select-none items-center justify-center whitespace-nowrap font-semibold tracking-[-0.01em]",
-    "transition-[background-color,border-color,color,opacity,transform,box-shadow] duration-200 ease-out hover:-translate-y-px active:translate-y-0",
+    "transition-[background-color,border-color,color,opacity,transform,box-shadow] duration-200 ease-out hover:-translate-y-px active:translate-y-0 active:scale-[0.98]",
     "disabled:pointer-events-none disabled:opacity-55 aria-disabled:pointer-events-none aria-disabled:opacity-55",
     "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-text",
     shape === "pill" ? "rounded-full" : "rounded-control",

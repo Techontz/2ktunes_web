@@ -27,7 +27,7 @@ import type { AuthUser } from "@/lib/api/auth";
  * shown only to accounts that are creators or already have a creator profile.
  */
 
-type NavItem = {
+export type NavItem = {
   to: string;
   label: MessageKey;
   icon: LucideIcon;

@@ -140,7 +140,7 @@ export function ToastProvider({
   return (
     <ToastContext.Provider value={value}>
       {children}
-      <section aria-label={regionLabel} className="pointer-events-none fixed inset-x-0 bottom-0 z-[90] flex justify-center p-4 sm:justify-end">
+      <section data-toast-region aria-label={regionLabel} className="pointer-events-none fixed inset-x-0 bottom-0 z-[90] flex justify-center p-4 sm:justify-end">
         <ol className="flex w-full max-w-sm flex-col gap-2">
           {items.map((item) => (
             <ToastView

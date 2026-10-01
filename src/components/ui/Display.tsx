@@ -51,12 +51,12 @@ export function Stat({
   return (
     <div
       className={cn(
-        "min-w-0 rounded-card border border-border-subtle bg-surface-raised p-5 shadow-raised",
+        "min-w-0 rounded-card border border-border-subtle bg-surface-raised p-4 shadow-raised sm:p-5",
         className,
       )}
     >
       <div className="flex items-center justify-between gap-3">
-        <p className="truncate text-body-sm font-medium text-text-subtle">{label}</p>
+        <p className="truncate text-[0.8125rem] font-medium text-text-subtle sm:text-body-sm">{label}</p>
         {icon && (
           <span
             aria-hidden
@@ -69,7 +69,7 @@ export function Stat({
       {loading ? (
         <Skeleton className="mt-3 h-7 w-32" />
       ) : (
-        <p className="mt-2 truncate text-[1.625rem] font-bold leading-tight tracking-[-0.025em] tabular-nums text-text">
+        <p className="mt-1.5 truncate text-[1.375rem] font-bold leading-tight tracking-[-0.025em] tabular-nums text-text sm:mt-2 sm:text-[1.625rem]">
           {value}
         </p>
       )}

@@ -1,6 +1,6 @@
 import { Suspense, useEffect, useRef, useState } from "react";
 import { Link, Outlet, useLocation } from "react-router-dom";
-import { ArrowUpRight, Bell, ExternalLink, LogOut, Menu, Settings } from "lucide-react";
+import { ArrowUpRight, Bell, Disc3, ExternalLink, LayoutDashboard, LayoutGrid, LogOut, Megaphone, Settings, Wallet } from "lucide-react";
 import { Wordmark } from "@/components/brand/Wordmark";
 import { Avatar, Button, Sheet, useToast } from "@/components/ui";
 import { LanguageSwitch } from "@/features/site/layout/LanguageSwitch";
@@ -10,16 +10,18 @@ import { useAuth } from "@/lib/auth/AuthProvider";
 import { useLanguage } from "@/lib/LanguageContext";
 import { cn } from "@/lib/utils";
 import { PageLoading } from "../components";
-import { NAV, isNavActive } from "./nav";
+import { NAV, isNavActive, type NavItem } from "./nav";
 import { UnreadProvider, useUnread } from "./UnreadContext";
 
 /**
  * THE AUTHENTICATED SHELL
  *
- * Desktop (lg+): fixed sidebar + sticky top bar. Below lg: the sidebar moves
- * into a left Sheet opened from the top bar. The top bar always carries the
- * language switch, the notification bell (unread count from the API) and the
- * user menu. Focus moves to <main> on navigation so screen-reader users land
+ * Desktop (lg+): fixed sidebar + sticky top bar. Below lg the app behaves
+ * like a native app: a compact top bar (logo, section name, bell, account)
+ * and a bottom tab bar with the four key sections plus "More", which opens a
+ * bottom sheet holding every other section and the language switch. The
+ * top bar carries the notification bell (unread count from the API) and the
+ * user menu at every size. Focus moves to <main> on navigation so screen-reader users land
  * on the new page, not on the link they pressed.
  */
 
@@ -83,10 +85,10 @@ function TopBarTitle() {
   if (!best) return <div className="hidden lg:block" />;
   const Icon = best.icon;
   return (
-    <p className="hidden min-w-0 items-center gap-2.5 text-body-sm font-semibold text-text-muted lg:flex">
+    <p className="flex min-w-0 items-center gap-2.5 text-[0.9375rem] font-bold text-text lg:text-body-sm lg:font-semibold lg:text-text-muted">
       <span
         aria-hidden
-        className="flex h-8 w-8 items-center justify-center rounded-[9px] bg-accent-soft text-accent-text"
+        className="hidden h-8 w-8 items-center justify-center rounded-[9px] bg-accent-soft text-accent-text lg:flex"
       >
         <Icon className="h-4 w-4" />
       </span>
@@ -237,6 +239,136 @@ function UserMenu() {
   );
 }
 
+/* ── Phone/tablet navigation ─────────────────────────────────────────── */
+
+const TABS: NavItem[] = [
+  { to: "/dashboard", label: "dash.nav_home", icon: LayoutDashboard, end: true },
+  { to: "/dashboard/music", label: "dash.nav_music", icon: Disc3 },
+  { to: "/dashboard/promotion", label: "dash.nav_promotion", icon: Megaphone },
+  { to: "/dashboard/wallet", label: "dash.nav_wallet", icon: Wallet },
+];
+
+/**
+ * Bottom tab bar below lg: four key sections and "More". Fixed, translucent,
+ * safe-area aware. `data-tabbar` lets global CSS lift toasts above it.
+ */
+function TabBar({ moreOpen, onMore }: { moreOpen: boolean; onMore: () => void }) {
+  const { t } = useLanguage();
+  const { pathname } = useLocation();
+  // The release wizard belongs to the catalog tab.
+  const path = pathname.startsWith("/dashboard/new-release") ? "/dashboard/music" : pathname;
+  const activeTab = TABS.find((tab) => isNavActive(tab, path));
+  const item =
+    "tap relative flex min-w-0 flex-1 flex-col items-center justify-center gap-1 rounded-[12px] pb-1 pt-1.5 text-[0.6875rem] font-semibold leading-none tracking-[0.01em] focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-accent-text";
+  return (
+    <nav
+      data-tabbar
+      aria-label={t("dash.tabbar_label")}
+      className="fixed inset-x-0 bottom-0 z-30 border-t border-border-subtle bg-white/90 pb-safe shadow-[0_-10px_30px_-22px_rgb(42_8_70/0.45)] backdrop-blur-xl lg:hidden"
+    >
+      <ul className="mx-auto flex h-16 max-w-xl items-stretch gap-1 px-2">
+        {TABS.map((tab) => {
+          const active = tab === activeTab && !moreOpen;
+          return (
+            <li key={tab.to} className="flex min-w-0 flex-1">
+              <Link
+                to={tab.to}
+                aria-current={active ? "page" : undefined}
+                className={cn(item, active ? "text-accent-text" : "text-text-subtle hover:text-text")}
+              >
+                <span
+                  aria-hidden
+                  className={cn(
+                    "flex h-7 w-12 items-center justify-center rounded-full transition-colors",
+                    active && "bg-accent-soft",
+                  )}
+                >
+                  <tab.icon className="h-[1.2rem] w-[1.2rem]" strokeWidth={active ? 2.4 : 2} />
+                </span>
+                <span className="max-w-full truncate px-0.5">{t(tab.label)}</span>
+              </Link>
+            </li>
+          );
+        })}
+        <li className="flex min-w-0 flex-1">
+          <button
+            type="button"
+            onClick={onMore}
+            aria-haspopup="dialog"
+            aria-expanded={moreOpen}
+            className={cn(item, moreOpen || !activeTab ? "text-accent-text" : "text-text-subtle hover:text-text")}
+          >
+            <span
+              aria-hidden
+              className={cn(
+                "flex h-7 w-12 items-center justify-center rounded-full transition-colors",
+                (moreOpen || !activeTab) && "bg-accent-soft",
+              )}
+            >
+              <LayoutGrid className="h-[1.2rem] w-[1.2rem]" />
+            </span>
+            <span className="max-w-full truncate px-0.5">{t("dash.nav_more")}</span>
+          </button>
+        </li>
+      </ul>
+    </nav>
+  );
+}
+
+/** Every section as a grid of large tiles, grouped like the sidebar (inside the "More" sheet). */
+function MoreGrid({ onNavigate }: { onNavigate: () => void }) {
+  const { t } = useLanguage();
+  const { user } = useAuth();
+  const { pathname } = useLocation();
+  return (
+    <nav aria-label={t("dash.nav_label")} className="space-y-5 px-4 pb-5 pt-1">
+      {NAV.map((group) => {
+        const items = group.items.filter((i) => !i.visible || i.visible(user));
+        if (!items.length) return null;
+        return (
+          <div key={group.label}>
+            <p className="mb-2 px-1 text-[0.6875rem] font-bold uppercase tracking-[0.14em] text-text-subtle">
+              {t(group.label)}
+            </p>
+            <ul className="grid grid-cols-2 gap-2 min-[480px]:grid-cols-3">
+              {items.map((item) => {
+                const active = isNavActive(item, pathname);
+                return (
+                  <li key={item.to} className="min-w-0">
+                    <Link
+                      to={item.to}
+                      onClick={onNavigate}
+                      aria-current={active ? "page" : undefined}
+                      className={cn(
+                        "tap flex min-h-[3.25rem] items-center gap-2.5 rounded-[14px] border px-3 py-2.5 text-[0.875rem] font-semibold leading-tight",
+                        "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-text",
+                        active
+                          ? "border-accent/30 bg-accent-soft text-text"
+                          : "border-border-subtle bg-surface-raised text-text hover:border-border-strong active:bg-surface-hover",
+                      )}
+                    >
+                      <span
+                        aria-hidden
+                        className={cn(
+                          "flex h-8 w-8 shrink-0 items-center justify-center rounded-[10px]",
+                          active ? "bg-accent text-white" : "bg-accent-soft text-accent-text",
+                        )}
+                      >
+                        <item.icon className="h-4 w-4" />
+                      </span>
+                      <span className="min-w-0 break-words">{t(item.label)}</span>
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        );
+      })}
+    </nav>
+  );
+}
+
 function VerifyEmailBanner() {
   const { t } = useLanguage();
   const { user } = useAuth();
@@ -324,41 +456,40 @@ export default function DashboardLayout() {
           <SidebarRelease />
         </aside>
 
-        {/* Mobile navigation */}
+        {/* Phone/tablet navigation: bottom tabs + the "More" sheet. */}
+        <TabBar moreOpen={open} onMore={() => setOpen(true)} />
         <Sheet
           open={open}
           onClose={() => setOpen(false)}
-          side="left"
-          width="min(18rem, 86vw)"
-          title={t("dash.nav_label")}
+          side="bottom"
+          title={t("dash.nav_more")}
           closeLabel={t("common.menu_close")}
+          className="bg-surface pb-safe"
         >
-          <div className="px-3 py-4">
-            <NavList onNavigate={() => setOpen(false)} />
+          <div className="mx-4 mb-4 mt-4 flex items-center justify-between gap-3 border-b border-border-subtle pb-4">
+            <span className="text-body-sm text-text-subtle">{t("common.language")}</span>
+            <LanguageSwitch />
           </div>
+          <MoreGrid onNavigate={() => setOpen(false)} />
         </Sheet>
 
         <div className="lg:pl-64">
-          <header className="sticky top-0 z-20 border-b border-border-subtle bg-white/85 shadow-[0_1px_0_rgb(42_8_70/0.02),0_8px_24px_-20px_rgb(42_8_70/0.35)] backdrop-blur-md">
-            <div className="flex h-16 items-center justify-between gap-2 px-3 sm:px-6 lg:px-8">
-              <div className="flex min-w-0 items-center gap-1.5 lg:hidden">
-                <button
-                  type="button"
-                  onClick={() => setOpen(true)}
-                  aria-label={t("common.menu_open")}
-                  aria-expanded={open}
-                  className="flex h-10 w-10 items-center justify-center rounded-control text-text-muted hover:bg-tint/[0.06] hover:text-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-text"
+          <header className="sticky top-0 z-20 border-b border-border-subtle bg-white/85 pt-[env(safe-area-inset-top)] shadow-[0_1px_0_rgb(42_8_70/0.02),0_8px_24px_-20px_rgb(42_8_70/0.35)] backdrop-blur-md">
+            <div className="flex h-14 items-center justify-between gap-2 px-4 sm:h-16 sm:px-6 lg:px-8">
+              <div className="flex min-w-0 items-center gap-3 lg:contents">
+                <Link
+                  to="/dashboard"
+                  className="flex h-10 shrink-0 items-center rounded-sm text-[1.05rem] leading-none lg:hidden"
+                  aria-label={t("nav.home")}
                 >
-                  <Menu className="h-5 w-5" aria-hidden />
-                </button>
-                <Link to="/dashboard" className="rounded-sm text-[1.1rem] leading-none" aria-label={t("nav.home")}>
                   <Wordmark tone="light" variant="mark" className="sm:hidden" />
                   <Wordmark tone="light" className="hidden sm:inline-flex" />
                 </Link>
+                <span aria-hidden className="h-5 w-px shrink-0 bg-border lg:hidden" />
+                <TopBarTitle />
               </div>
-              <TopBarTitle />
-              <div className="flex items-center gap-1 sm:gap-2">
-                <LanguageSwitch />
+              <div className="flex shrink-0 items-center gap-1 sm:gap-2">
+                <LanguageSwitch className="hidden sm:inline-flex" />
                 <NotificationBell />
                 <UserMenu />
               </div>
@@ -369,7 +500,7 @@ export default function DashboardLayout() {
             id="dash-main"
             ref={main}
             tabIndex={-1}
-            className="w-full max-w-[80rem] px-4 pb-16 pt-6 focus:outline-none sm:px-6 sm:pt-7 lg:px-8"
+            className="w-full max-w-[80rem] px-4 pb-[calc(6rem+env(safe-area-inset-bottom))] pt-5 focus:outline-none sm:px-6 sm:pt-7 lg:px-8 lg:pb-16"
           >
             <Suspense fallback={<PageLoading />}>
               <Outlet />

@@ -74,7 +74,7 @@ export function Dialog({
           aria-describedby={description ? descId : undefined}
           tabIndex={-1}
           className={cn(
-            "relative flex max-h-[92svh] w-full animate-slide-up flex-col overflow-hidden",
+            "relative flex max-h-[92svh] w-full animate-slide-up flex-col overflow-hidden max-sm:max-h-[94svh]",
             "rounded-t-panel border border-border bg-surface-overlay text-text shadow-overlay sm:rounded-panel",
             size === "sm" && "sm:max-w-sm",
             size === "md" && "sm:max-w-lg",
@@ -82,9 +82,11 @@ export function Dialog({
             "focus-visible:outline-none",
           )}
         >
-          <div className="flex items-start justify-between gap-4 px-5 pb-2 pt-5 sm:px-6 sm:pt-6">
+          {/* Grab handle: on phones the dialog is a bottom sheet. */}
+          <span aria-hidden className="mx-auto mt-2 block h-1 w-10 shrink-0 rounded-full bg-tint/[0.18] sm:hidden" />
+          <div className="flex items-start justify-between gap-4 px-5 pb-2 pt-3 sm:px-6 sm:pt-6">
             <div className="min-w-0">
-              <h2 id={titleId} className="text-h3 font-bold tracking-[-0.02em]">
+              <h2 id={titleId} className="text-[1.25rem] font-bold leading-tight tracking-[-0.02em] sm:text-h3">
                 {title}
               </h2>
               {description && (
@@ -110,7 +112,7 @@ export function Dialog({
             </div>
           )}
           {footer && (
-            <div className="flex flex-col-reverse gap-2 border-t border-border-subtle px-5 py-4 sm:flex-row sm:justify-end sm:px-6">
+            <div className="flex flex-col-reverse gap-2 border-t border-border-subtle px-5 py-4 pb-[max(1rem,env(safe-area-inset-bottom))] sm:flex-row sm:justify-end sm:px-6 sm:pb-4 [&>*]:max-sm:h-12 [&>*]:max-sm:w-full">
               {footer}
             </div>
           )}

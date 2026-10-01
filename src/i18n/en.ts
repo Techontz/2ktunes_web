@@ -36,6 +36,8 @@ const en = {
   "cta.how_it_works": "How it works",
   "cta.dashboard": "Go to dashboard",
   "cta.read_faq": "Read the FAQ",
+  "cta.get_started": "Get started",
+  "home.lede_short": "Release to global stores, grow with creators, and withdraw to mobile money or your bank.",
 
   /* ── Navigation ── */
   "nav.main": "Main",
@@ -251,6 +253,9 @@ const en = {
   "dash.nav_help": "Help articles",
   "dash.nav_plan": "Plan",
   "dash.nav_settings": "Settings",
+  "dash.nav_home": "Home",
+  "dash.nav_more": "More",
+  "dash.tabbar_label": "Main sections",
   "dash.user_menu": "Account menu",
   "dash.sign_out": "Sign out",
   "dash.signing_out": "Signing out…",

@@ -31,7 +31,7 @@ export function PageHeader({
   className?: string;
 }) {
   return (
-    <header className={cn("mb-6 sm:mb-8", className)}>
+    <header className={cn("mb-5 sm:mb-8", className)}>
       {back && (
         <Link
           to={back.to}
@@ -44,16 +44,16 @@ export function PageHeader({
       <div className="flex flex-wrap items-start justify-between gap-x-6 gap-y-4">
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
-            <h1 className="min-w-0 break-words text-h2 font-bold tracking-[-0.03em] text-text sm:text-h1">
+            <h1 className="min-w-0 break-words text-[1.5rem] font-bold leading-tight tracking-[-0.03em] text-text text-balance sm:text-h1">
               {title}
             </h1>
             {meta}
           </div>
           {description && (
-            <p className="mt-2 max-w-[60ch] text-body-sm text-text-muted sm:text-body">{description}</p>
+            <p className="mt-2 hidden max-w-[60ch] text-body-sm text-text-muted sm:block sm:text-body">{description}</p>
           )}
         </div>
-        {actions && <div className="flex w-full flex-wrap items-center gap-2 sm:w-auto">{actions}</div>}
+        {actions && <div className="flex w-full flex-wrap items-center gap-2 sm:w-auto max-sm:[&>a]:flex-1 max-sm:[&>button]:flex-1">{actions}</div>}
       </div>
     </header>
   );

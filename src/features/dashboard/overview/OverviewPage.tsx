@@ -21,6 +21,7 @@ import { relativeTime } from "@/lib/dates";
 import { useLanguage } from "@/lib/LanguageContext";
 import { formatCount, formatMinor } from "@/lib/money";
 import { useCopy } from "@/lib/useCopy";
+import { cn } from "@/lib/utils";
 import { LoadError, Money, PageHeader, PageLoading, Section, StatusPill } from "../components";
 import { ReleaseCover } from "../music/shared";
 import { COPY } from "./copy";
@@ -87,7 +88,7 @@ function Content({ data, locale }: { data: DashboardOverview; locale: string }) 
   const totalReleases = Object.values(counts).reduce((n, v) => n + Number(v || 0), 0);
 
   return (
-    <div className="space-y-10">
+    <div className="space-y-8 sm:space-y-10">
       <Section title={c.nextActions} id="ov-actions">
         {data.action_items.length === 0 ? (
           <p className="text-body-sm text-text-subtle">{c.noActions}</p>
@@ -123,9 +124,10 @@ function Content({ data, locale }: { data: DashboardOverview; locale: string }) 
         {data.balances.length === 0 ? (
           <EmptyState compact icon={<Wallet />} title={c.noBalanceTitle} description={c.noBalanceBody} />
         ) : (
-          <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+          <div data-rail className={cn("grid gap-3 sm:grid-cols-2 xl:grid-cols-3", data.balances.length > 1 && "max-sm:rail")}>
             {data.balances.map((b) => (
               <Stat
+                className={data.balances.length > 1 ? "max-sm:w-[84%]" : undefined}
                 key={b.currency}
                 label={`${c.available} · ${b.currency}`}
                 value={<Money minor={b.available_minor} currency={b.currency} />}
@@ -165,12 +167,12 @@ function Content({ data, locale }: { data: DashboardOverview; locale: string }) 
           />
         ) : (
           <div className="space-y-5">
-            <ul className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-5">
+            <ul className="max-sm:rail max-sm:!gap-2 sm:grid sm:grid-cols-3 sm:gap-2 lg:grid-cols-5">
               {(Object.keys(GROUPS) as (keyof typeof GROUPS)[]).map((g) => (
-                <li key={g}>
+                <li key={g} className="max-sm:w-[7.25rem]">
                   <Link
                     to={`/dashboard/music?status=${g}`}
-                    className="block rounded-card border border-border-subtle bg-surface-raised px-4 py-3 transition-colors hover:border-border-strong focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-text"
+                    className="tap block rounded-card border border-border-subtle bg-surface-raised px-4 py-3 transition-colors hover:border-border-strong focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-text"
                   >
                     <span className="block text-caption text-text-subtle">{c.groups[g]}</span>
                     <span className="mt-1 block text-h3 font-bold tabular-nums">{formatCount(group(g), locale)}</span>
@@ -218,7 +220,7 @@ function Content({ data, locale }: { data: DashboardOverview; locale: string }) 
         {!data.analytics?.has_data ? (
           <EmptyState compact icon={<BarChart3 />} title={c.noAnalyticsTitle} description={c.noAnalyticsBody} />
         ) : (
-          <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+          <div className="grid grid-cols-2 gap-2.5 sm:gap-3 xl:grid-cols-3 max-xl:[&>*:last-child:nth-child(odd)]:col-span-2">
             <Stat label={c.streams} value={formatCount(data.analytics.streams, locale)} />
             <Stat label={c.videoUses} value={formatCount(data.analytics.video_uses, locale)} />
             {data.analytics.top_store?.label && <Stat label={c.topStore} value={data.analytics.top_store.label} />}

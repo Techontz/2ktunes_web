@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
-import { Menu } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { Button, Sheet } from "@/components/ui";
 import { Wordmark } from "@/components/brand/Wordmark";
 import { useAuth } from "@/lib/auth/AuthProvider";
@@ -126,6 +126,25 @@ export default function SiteNav() {
         titleHidden
         side="right"
         width="min(26rem, 100vw)"
+        className="theme-dark bg-[linear-gradient(180deg,#1a0b2e,#13071f)]"
+        header={
+          <div className="flex h-16 shrink-0 items-center justify-between gap-3 border-b border-white/10 px-4 pt-[env(safe-area-inset-top)] sm:px-6">
+            <Link to="/" aria-label={t("nav.home")} className="inline-flex h-11 items-center rounded-sm text-[1.2rem] leading-none">
+              <Wordmark tone="dark" />
+            </Link>
+            <div className="flex items-center gap-2">
+              <LanguageSwitch />
+              <button
+                type="button"
+                onClick={() => setOpen(false)}
+                aria-label={t("common.menu_close")}
+                className="-mr-2 flex h-11 w-11 items-center justify-center rounded-control text-text transition-colors hover:bg-tint/[0.06]"
+              >
+                <X className="h-5 w-5" aria-hidden />
+              </button>
+            </div>
+          </div>
+        }
         closeLabel={t("common.menu_close")}
         footer={
           <div className="flex flex-col gap-2">
@@ -146,7 +165,7 @@ export default function SiteNav() {
           </div>
         }
       >
-        <nav aria-label={t("nav.main")} className="px-3 py-4">
+        <nav aria-label={t("nav.main")} className="px-3 py-3">
           <ul>
             {PRIMARY_NAV.map((item) => (
               <li key={item.to}>
@@ -154,8 +173,8 @@ export default function SiteNav() {
                   to={item.to}
                   className={({ isActive }) =>
                     cn(
-                      "flex h-12 items-center rounded-control px-3 text-[1.125rem] font-semibold",
-                      isActive ? "bg-tint/[0.06] text-text" : "text-text hover:bg-tint/[0.04]",
+                      "tap flex h-14 items-center justify-between rounded-control px-3 text-[1.1875rem] font-bold tracking-[-0.015em]",
+                      isActive ? "bg-accent-soft text-accent-text" : "text-text hover:bg-tint/[0.04] active:bg-tint/[0.06]",
                     )
                   }
                 >
@@ -169,17 +188,13 @@ export default function SiteNav() {
               <li key={item.to}>
                 <NavLink
                   to={item.to}
-                  className="flex h-11 items-center rounded-control px-3 text-[1rem] font-medium text-text-muted hover:bg-tint/[0.04] hover:text-text"
+                  className="tap flex h-12 items-center rounded-control px-3 text-[1rem] font-medium text-text-muted hover:bg-tint/[0.04] hover:text-text active:bg-tint/[0.06]"
                 >
                   {t(item.key)}
                 </NavLink>
               </li>
             ))}
           </ul>
-          <div className="mt-4 flex items-center justify-between border-t border-border-subtle px-3 pt-4">
-            <span className="text-body-sm text-text-subtle">{t("common.language")}</span>
-            <LanguageSwitch />
-          </div>
         </nav>
       </Sheet>
     </header>

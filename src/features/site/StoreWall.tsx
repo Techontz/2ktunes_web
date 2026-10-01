@@ -36,26 +36,26 @@ export function StoreWall({ limit, className }: { limit?: number; className?: st
   const dark = isDarkTone(tone);
   return (
     <div className={className}>
-      <ul className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 sm:gap-3 lg:grid-cols-5">
+      <ul className="flex flex-wrap gap-2 sm:grid sm:grid-cols-3 sm:gap-3 lg:grid-cols-5">
         {list.map((s, i) => (
           <Reveal
             as="li"
             key={s.name}
             delay={(i % 5) * 50}
             className={cn(
-              "group flex min-h-[4.25rem] items-center justify-center gap-2.5 rounded-card border px-3 text-center text-[0.9375rem] font-bold tracking-[-0.01em] transition-[transform,box-shadow,border-color,color] duration-300 hover:-translate-y-1 sm:min-h-[5rem] sm:text-[1.0625rem]",
+              "group flex h-10 items-center justify-center gap-2 rounded-full border px-3.5 text-center text-[0.875rem] font-bold tracking-[-0.01em] transition-[transform,box-shadow,border-color,color] duration-300 hover:-translate-y-1 sm:h-auto sm:min-h-[5rem] sm:gap-2.5 sm:rounded-card sm:px-3 sm:text-[1.0625rem]",
               dark
                 ? "border-white/12 bg-tint/[0.06] text-text hover:border-accent-text/50"
                 : "border-border-subtle bg-surface-raised text-text shadow-card-light hover:border-accent/30 hover:text-accent-text hover:shadow-card-hover",
             )}
           >
-            <span aria-hidden className={cn("h-2 w-2 shrink-0 rounded-full transition-transform group-hover:scale-125", KIND_DOT[s.kind])} />
+            <span aria-hidden className={cn("h-1.5 w-1.5 shrink-0 sm:h-2 sm:w-2 rounded-full transition-transform group-hover:scale-125", KIND_DOT[s.kind])} />
             <span className="min-w-0">{s.name}</span>
           </Reveal>
         ))}
       </ul>
-      <p className={cn("mt-6 max-w-[60ch] text-[0.875rem] leading-relaxed", subtle)}>{t("stores.note")}</p>
-      <p className={cn("mt-2 text-[0.8125rem]", subtle)}>{t("stores.disclaimer")}</p>
+      <p className={cn("mt-6 hidden max-w-[60ch] text-[0.875rem] leading-relaxed sm:block", subtle)}>{t("stores.note")}</p>
+      <p className={cn("mt-4 text-[0.75rem] sm:mt-2 sm:text-[0.8125rem]", subtle)}>{t("stores.disclaimer")}</p>
     </div>
   );
 }

@@ -32,6 +32,8 @@ const fr: Record<MessageKey, string> = {
   "cta.how_it_works": "Comment ça marche",
   "cta.dashboard": "Tableau de bord",
   "cta.read_faq": "Lire la FAQ",
+  "cta.get_started": "Commencer",
+  "home.lede_short": "Diffusez sur les plateformes du monde entier, grandissez avec des créateurs et retirez vers le mobile money ou votre banque.",
 
   /* ── Navigation ── */
   "nav.main": "Principal",
@@ -247,6 +249,9 @@ const fr: Record<MessageKey, string> = {
   "dash.nav_help": "Articles d'aide",
   "dash.nav_plan": "Offre",
   "dash.nav_settings": "Paramètres",
+  "dash.nav_home": "Accueil",
+  "dash.nav_more": "Plus",
+  "dash.tabbar_label": "Sections principales",
   "dash.user_menu": "Menu du compte",
   "dash.sign_out": "Se déconnecter",
   "dash.signing_out": "Déconnexion…",

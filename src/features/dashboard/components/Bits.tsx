@@ -238,5 +238,5 @@ export function ChipGroup<V extends string>({
 /* ── Stat grid helper ──────────────────────────────────────────────── */
 
 export function StatGrid({ children, className }: { children: ReactNode; className?: string }) {
-  return <div className={cn("grid gap-3 sm:grid-cols-2 xl:grid-cols-4", className)}>{children}</div>;
+  return <div className={cn("grid grid-cols-2 gap-2.5 sm:gap-3 xl:grid-cols-4", className)}>{children}</div>;
 }

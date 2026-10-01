@@ -32,6 +32,8 @@ const sw: Record<MessageKey, string> = {
   "cta.how_it_works": "Jinsi inavyofanya kazi",
   "cta.dashboard": "Nenda kwenye dashibodi",
   "cta.read_faq": "Soma maswali ya mara kwa mara",
+  "cta.get_started": "Anza sasa",
+  "home.lede_short": "Sambaza kwenye maduka ya dunia, kua kupitia watengeneza maudhui, na toa pesa kwenda pesa ya simu au benki.",
 
   /* ── Navigation ── */
   "nav.main": "Kuu",
@@ -247,6 +249,9 @@ const sw: Record<MessageKey, string> = {
   "dash.nav_help": "Makala za msaada",
   "dash.nav_plan": "Mpango",
   "dash.nav_settings": "Mipangilio",
+  "dash.nav_home": "Nyumbani",
+  "dash.nav_more": "Zaidi",
+  "dash.tabbar_label": "Sehemu kuu",
   "dash.user_menu": "Menyu ya akaunti",
   "dash.sign_out": "Toka",
   "dash.signing_out": "Inatoka…",

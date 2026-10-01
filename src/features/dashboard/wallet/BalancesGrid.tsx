@@ -3,6 +3,7 @@ import { Card, EmptyState } from "@/components/ui";
 import { Money } from "@/features/dashboard/components";
 import type { Balance } from "@/lib/api/types";
 import { useCopy } from "@/lib/useCopy";
+import { cn } from "@/lib/utils";
 import { COPY } from "./copy";
 
 export function BalancesGrid({ balances }: { balances: Balance[] }) {
@@ -14,9 +15,9 @@ export function BalancesGrid({ balances }: { balances: Balance[] }) {
 
   return (
     <>
-      <ul className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+      <ul data-rail className={cn("grid gap-3 md:grid-cols-2 xl:grid-cols-3", balances.length > 1 && "max-sm:rail")}>
         {balances.map((b) => (
-          <Card as="li" key={b.currency} padding="md">
+          <Card as="li" key={b.currency} padding="md" className={balances.length > 1 ? "max-sm:w-[86%]" : undefined}>
             <h3 className="text-caption font-semibold uppercase tracking-[0.08em] text-text-subtle">
               {c.balanceIn(b.currency)}
             </h3>

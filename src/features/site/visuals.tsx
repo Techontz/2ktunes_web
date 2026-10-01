@@ -115,7 +115,7 @@ export function WalletMock({ className }: { className?: string }) {
       </div>
       <div className="border-t border-border-subtle bg-tint/[0.02] p-5 sm:p-6">
         <p className="text-caption font-semibold text-text-subtle">{m.withdrawTo}</p>
-        <ul className="mt-3 grid gap-2 sm:grid-cols-2">
+        <ul className="mt-3 grid grid-cols-2 gap-2">
           {m.methods.map((name, i) => (
             <li
               key={name}
@@ -278,8 +278,8 @@ export function AnalyticsMock({ className }: { className?: string }) {
       <div className="border-t border-border-subtle p-5 sm:p-6">
         <p className="text-caption font-semibold text-text-subtle">{m.analytics.territories}</p>
         <ul className="mt-3 space-y-3">
-          {TERRITORIES.map((t) => (
-            <li key={t.code}>
+          {TERRITORIES.map((t, i) => (
+            <li key={t.code} className={i > 1 ? "max-sm:hidden" : undefined}>
               <div className="flex justify-between text-body-sm">
                 <span className="text-text">{regionName(t.code)}</span>
                 <span className="tabular-nums text-text-muted">{t.share}%</span>

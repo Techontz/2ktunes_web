@@ -76,7 +76,7 @@ export function Sheet({
               {header}
             </>
           ) : (
-            <div className="flex items-center justify-between gap-4 border-b border-border-subtle px-5 py-3">
+            <div className="flex items-center justify-between gap-4 border-b border-border-subtle px-5 py-3 pt-[max(0.75rem,env(safe-area-inset-top))]">
               <h2 id={titleId} className={cn("text-h4 font-bold", titleHidden && "sr-only")}>
                 {title}
               </h2>
@@ -91,7 +91,9 @@ export function Sheet({
             </div>
           )}
           <div className="min-h-0 flex-1 overflow-y-auto">{children}</div>
-          {footer && <div className="border-t border-border-subtle p-4">{footer}</div>}
+          {footer && (
+            <div className="border-t border-border-subtle p-4 pb-[max(1rem,env(safe-area-inset-bottom))]">{footer}</div>
+          )}
         </div>
       </div>
     </Portal>

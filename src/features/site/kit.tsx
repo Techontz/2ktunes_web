@@ -204,6 +204,33 @@ export function ArtistPhoto({
   );
 }
 
+/* ── Mobile copy ───────────────────────────────────────────────────── */
+
+/**
+ * The first sentence of a string (or the node unchanged). Phones show this
+ * short form of ledes and card bodies; `sm` and up show the full text.
+ */
+export function firstSentence(text: ReactNode): ReactNode {
+  if (typeof text !== "string") return text;
+  const m = /^(.+?[.!?])(\s|$)/.exec(text.trim());
+  return m ? m[1] : text;
+}
+
+/**
+ * Full text from `sm` up, the short form (default: first sentence) on phones.
+ * Only one copy is ever displayed, so assistive tech reads it once.
+ */
+export function Short({ children, short }: { children: ReactNode; short?: ReactNode }) {
+  const brief = short ?? firstSentence(children);
+  if (brief === children) return <>{children}</>;
+  return (
+    <>
+      <span className="sm:hidden">{brief}</span>
+      <span className="hidden sm:inline">{children}</span>
+    </>
+  );
+}
+
 /* ── Layout blocks ─────────────────────────────────────────────────── */
 
 export function Band({
@@ -213,6 +240,7 @@ export function Band({
   children,
   labelledBy,
   decor = true,
+  dataCta,
 }: {
   tone?: Tone;
   id?: string;
@@ -221,12 +249,15 @@ export function Band({
   labelledBy?: string;
   /** Orbs on dark bands (default on). */
   decor?: boolean;
+  /** Marks the closing CTA band; the phone's sticky CTA bar hides while it is on screen. */
+  dataCta?: boolean;
 }) {
   return (
     <ToneContext.Provider value={tone}>
       <section
         id={id}
         aria-labelledby={labelledBy}
+        data-cta-band={dataCta || undefined}
         className={cn("relative scroll-mt-20 overflow-hidden section-y", TONE_CLASS[tone], className)}
       >
         {decor && tone === "dark" && <Orbs variant="band" className="opacity-70" />}
@@ -258,6 +289,7 @@ export function SectionHeader({
   id,
   className,
   size = "display",
+  mobileLede = false,
 }: {
   eyebrow?: ReactNode;
   title: ReactNode;
@@ -267,6 +299,8 @@ export function SectionHeader({
   id?: string;
   className?: string;
   size?: "display" | "title";
+  /** Phones hide section ledes (title + content carry the section); set to keep a short form. */
+  mobileLede?: boolean;
 }) {
   const { muted } = useMuted();
   return (
@@ -276,11 +310,15 @@ export function SectionHeader({
         className,
       )}
     >
-      {eyebrow && <Eyebrow className="mb-4">{eyebrow}</Eyebrow>}
+      {eyebrow && <Eyebrow className="mb-3 sm:mb-4">{eyebrow}</Eyebrow>}
       <H id={id} className={size === "display" ? "t-display" : "t-title"}>
         {title}
       </H>
-      {lede && <p className={cn("t-lead mt-5", muted)}>{lede}</p>}
+      {lede && (
+        <p className={cn("t-lead mt-3 sm:mt-5", muted, !mobileLede && "hidden sm:block")}>
+          {mobileLede ? <Short>{lede}</Short> : lede}
+        </p>
+      )}
     </Reveal>
   );
 }
@@ -310,7 +348,7 @@ export function PageHero({
     <ToneContext.Provider value={tone}>
       <section
         className={cn(
-          "relative overflow-hidden pb-16 pt-28 md:pb-24 md:pt-36",
+          "relative overflow-hidden pb-12 pt-24 sm:pb-16 sm:pt-28 md:pb-24 md:pt-36",
           dark ? "theme-dark bg-hero text-text" : TONE_CLASS[tone],
         )}
       >
@@ -332,13 +370,13 @@ export function PageHero({
         )}
         <div
           className={cn(
-            "shell relative grid items-center gap-12",
+            "shell relative grid items-center gap-10 sm:gap-12",
             aside && "lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)] lg:gap-16",
           )}
         >
           <div className="min-w-0 animate-slide-up">
             <HeroText eyebrow={eyebrow} title={title} lede={lede} />
-            {actions && <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">{actions}</div>}
+            {actions && <div className="mt-7 flex flex-col gap-2.5 sm:mt-8 sm:flex-row sm:flex-wrap sm:gap-3">{actions}</div>}
           </div>
           {aside && <div className="min-w-0 animate-fade-in">{aside}</div>}
         </div>
@@ -353,9 +391,11 @@ function HeroText({ eyebrow, title, lede }: { eyebrow: ReactNode; title: ReactNo
   const { muted } = useMuted();
   return (
     <>
-      <Eyebrow className="mb-5">{eyebrow}</Eyebrow>
+      <Eyebrow className="mb-4 sm:mb-5">{eyebrow}</Eyebrow>
       <h1 className="t-hero max-w-[16ch]">{title}</h1>
-      <p className={cn("t-lead mt-6 max-w-[38rem]", muted)}>{lede}</p>
+      <p className={cn("t-lead mt-4 max-w-[38rem] sm:mt-6", muted)}>
+        <Short>{lede}</Short>
+      </p>
     </>
   );
 }
@@ -375,8 +415,9 @@ export function FeatureGrid({
   const tone = useTone();
   return (
     <ul
+      data-rail
       className={cn(
-        "grid gap-4 sm:grid-cols-2",
+        "max-sm:rail sm:grid sm:grid-cols-2 sm:gap-4",
         columns === 3 && "lg:grid-cols-3",
         columns === 4 && "lg:grid-cols-4",
         className,
@@ -388,18 +429,18 @@ export function FeatureGrid({
           key={i}
           delay={(i % 4) * 80}
           className={cn(
-            "group flex min-w-0 flex-col rounded-card p-6",
+            "group flex min-w-0 flex-col rounded-card p-5 max-sm:w-[78%] max-sm:max-w-[19rem] sm:p-6",
             card,
             isDarkTone(tone) ? "transition-colors duration-300 hover:bg-tint/[0.1]" : "lift hover:border-accent/25",
           )}
         >
           {(f.icon || f.tag) && (
-            <div className="mb-5 flex items-start justify-between gap-3">
+            <div className="mb-4 flex items-start justify-between gap-3 sm:mb-5">
               {f.icon && (
                 <span
                   aria-hidden
                   className={cn(
-                    "flex h-11 w-11 items-center justify-center rounded-[12px] transition-transform duration-300 group-hover:-rotate-6 group-hover:scale-105 [&>svg]:h-5 [&>svg]:w-5",
+                    "flex h-10 w-10 items-center justify-center rounded-[12px] sm:h-11 sm:w-11 transition-transform duration-300 group-hover:-rotate-6 group-hover:scale-105 [&>svg]:h-5 [&>svg]:w-5",
                     isDarkTone(tone)
                       ? "bg-accent-soft text-accent-text"
                       : "bg-[linear-gradient(135deg,#9e4fe0,#6e16a8)] text-white shadow-[0_8px_18px_-8px_rgb(132_29_198/0.7)]",
@@ -412,7 +453,9 @@ export function FeatureGrid({
             </div>
           )}
           <h3 className="t-card">{f.title}</h3>
-          <p className={cn("t-body mt-2.5", muted)}>{f.body}</p>
+          <p className={cn("t-body mt-1.5 sm:mt-2.5", muted)}>
+            <Short>{f.body}</Short>
+          </p>
         </Reveal>
       ))}
     </ul>
@@ -423,7 +466,7 @@ export function Checklist({ items, className }: { items: ReactNode[]; className?
   const { muted } = useMuted();
   const tone = useTone();
   return (
-    <ul className={cn("space-y-3", className)}>
+    <ul className={cn("space-y-2.5 sm:space-y-3", className)}>
       {items.map((item, i) => (
         <Reveal as="li" key={i} delay={i * 60} className={cn("flex gap-3 t-body", muted)}>
           <span
@@ -446,7 +489,10 @@ type FaqItem = { q: string; a: ReactNode };
 
 /** Disclosure list: real buttons with aria-expanded/aria-controls. */
 export function Faq({ items, className }: { items: FaqItem[]; className?: string }) {
-  const [open, setOpen] = useState<number | null>(0);
+  // Desktop opens the first answer as a preview; phones start collapsed (a list of questions).
+  const [open, setOpen] = useState<number | null>(() =>
+    typeof window !== "undefined" && window.matchMedia?.("(max-width: 639.98px)").matches ? null : 0,
+  );
   const base = useId().replace(/:/g, "");
   const { muted, line } = useMuted();
   return (
@@ -462,7 +508,7 @@ export function Faq({ items, className }: { items: FaqItem[]; className?: string
                 aria-controls={`${base}-${i}`}
                 id={`${base}-${i}-btn`}
                 onClick={() => setOpen(expanded ? null : i)}
-                className="group flex w-full items-start justify-between gap-6 py-5 text-left text-[1.0625rem] font-semibold leading-snug tracking-[-0.01em] transition-colors hover:text-accent-text"
+                className="group flex w-full items-start justify-between gap-4 py-4 text-left text-[0.9875rem] font-semibold sm:gap-6 sm:py-5 sm:text-[1.0625rem] leading-snug tracking-[-0.01em] transition-colors hover:text-accent-text"
               >
                 <span className="min-w-0">{item.q}</span>
                 <span
@@ -483,7 +529,7 @@ export function Faq({ items, className }: { items: FaqItem[]; className?: string
               role="region"
               aria-labelledby={`${base}-${i}-btn`}
               hidden={!expanded}
-              className={cn("t-body max-w-[62ch] animate-fade-in pb-6 pr-10", muted)}
+              className={cn("t-body max-w-[62ch] animate-fade-in pb-5 pr-2 sm:pb-6 sm:pr-10", muted)}
             >
               {item.a}
             </div>
@@ -523,13 +569,17 @@ export function CtaBand({
 }) {
   const { t } = useLanguage();
   return (
-    <Band tone="accent" className="!py-0">
-      <div className="shell grid items-center gap-10 py-16 md:grid-cols-[minmax(0,1fr)_auto] md:py-20 lg:grid-cols-[minmax(0,1fr)_minmax(0,22rem)]">
+    <Band tone="accent" className="!py-0" dataCta>
+      <div className="shell grid items-center gap-10 py-12 sm:py-16 md:grid-cols-[minmax(0,1fr)_auto] md:py-20 lg:grid-cols-[minmax(0,1fr)_minmax(0,22rem)]">
         <Reveal className="max-w-[38rem]">
-          <EqBars className="mb-6 h-7 text-white/80" />
+          <EqBars className="mb-4 h-6 text-white/80 sm:mb-6 sm:h-7" />
           <h2 className="t-display">{title}</h2>
-          {lede && <p className="t-lead mt-4 text-white/90">{lede}</p>}
-          <div className="mt-8 flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
+          {lede && (
+            <p className="t-lead mt-3 text-white/90 sm:mt-4">
+              <Short>{lede}</Short>
+            </p>
+          )}
+          <div className="mt-7 flex w-full flex-col gap-2.5 sm:mt-8 sm:w-auto sm:flex-row sm:gap-3">
             <Button to="/auth?mode=register" variant="inverse" size="lg" shape="pill">
               {t("cta.release")}
             </Button>
@@ -566,7 +616,7 @@ export function Split({
   className?: string;
 }) {
   return (
-    <div className={cn("shell grid items-center gap-12 lg:grid-cols-2 lg:gap-20", className)}>
+    <div className={cn("shell grid items-center gap-10 sm:gap-12 lg:grid-cols-2 lg:gap-20", className)}>
       <div className={cn("min-w-0", reverse && "lg:order-2")}>{children}</div>
       <Reveal delay={120} className={cn("min-w-0", reverse && "lg:order-1")}>
         {visual}

@@ -17,6 +17,7 @@ import {
   Orbs,
   Reveal,
   SectionHeader,
+  Short,
   Split,
   TextLink,
   useMuted,
@@ -34,11 +35,11 @@ function Hero() {
   const c = pick(HOME).hero;
   const m = pick(MOCKS);
   return (
-    <section className="theme-dark bg-hero relative overflow-hidden pt-24 text-text md:pt-32">
+    <section className="theme-dark bg-hero relative overflow-hidden pt-[5.5rem] text-text sm:pt-24 md:pt-32">
       <Orbs />
-      <div className="shell relative grid items-center gap-10 pb-14 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:gap-12 lg:pb-20">
+      <div className="shell relative grid items-center gap-8 pb-10 sm:gap-10 sm:pb-14 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:gap-12 lg:pb-20">
         <div className="min-w-0 animate-slide-up">
-          <p className="mb-6 inline-flex max-w-full items-center gap-2.5 rounded-full border border-white/15 bg-tint/[0.06] py-1.5 pl-2 pr-4 text-[0.8125rem] font-semibold text-text-muted backdrop-blur">
+          <p className="mb-5 inline-flex max-w-full items-center gap-2.5 rounded-full border border-white/15 bg-tint/[0.06] py-1.5 pl-2 pr-4 text-[0.75rem] font-semibold sm:mb-6 sm:text-[0.8125rem] text-text-muted backdrop-blur">
             <span aria-hidden className="h-2 w-2 shrink-0 animate-pulse-ring rounded-full bg-lime" />
             <span className="min-w-0 truncate">{c.eyebrow}</span>
           </p>
@@ -49,8 +50,10 @@ function Hero() {
               </span>
             ))}
           </h1>
-          <p className="t-lead mt-6 max-w-[36rem] text-text-muted">{c.lede}</p>
-          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+          <p className="t-lead mt-4 max-w-[36rem] text-text-muted sm:mt-6">
+            <Short short={t("home.lede_short")}>{c.lede}</Short>
+          </p>
+          <div className="mt-7 flex flex-col gap-2.5 sm:mt-8 sm:flex-row sm:gap-3">
             <Button to="/auth?mode=register" size="lg" shape="pill" rightIcon={<ArrowRight />}>
               {t("cta.release")}
             </Button>
@@ -58,7 +61,7 @@ function Hero() {
               {c.secondary}
             </Button>
           </div>
-          <ul className="mt-8 flex flex-col gap-2.5 sm:flex-row sm:flex-wrap sm:gap-x-6">
+          <ul className="mt-8 hidden flex-col gap-2.5 sm:flex sm:flex-row sm:flex-wrap sm:gap-x-6">
             {c.trust.map((item) => (
               <li key={item} className="flex items-center gap-2 text-body-sm text-text-muted">
                 <span aria-hidden className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-accent-soft text-accent-text">
@@ -71,7 +74,7 @@ function Hero() {
         </div>
 
         {/* Artist collage — the owner's own photography; decorative. */}
-        <div aria-hidden className="relative mx-auto h-[23rem] w-full max-w-[34rem] sm:h-[30rem] lg:h-[34rem] lg:max-w-none">
+        <div aria-hidden className="relative mx-auto h-[19.5rem] w-full max-w-[34rem] min-[400px]:h-[21rem] sm:h-[30rem] lg:h-[34rem] lg:max-w-none">
           <div className="absolute left-0 top-[12%] h-[62%] w-[36%] rotate-[-7deg] overflow-hidden rounded-[22px] border border-white/15 shadow-overlay animate-float-slow">
             <ArtistPhoto id={2} eager sizes="(min-width: 1024px) 14rem, 36vw" position="50% 20%" />
           </div>
@@ -90,7 +93,7 @@ function Hero() {
               <EqBars bars={8} className="h-4 text-white" />
             </span>
           </div>
-          <div className="absolute bottom-[4%] left-[2%] flex w-[15.5rem] max-w-[70%] items-center gap-3 rounded-card border border-white/15 bg-[#2a1248]/85 p-2.5 shadow-overlay backdrop-blur-md animate-float [animation-delay:-3s] sm:left-[6%]">
+          <div className="absolute bottom-0 left-0 flex w-[15.5rem] max-w-[72%] items-center gap-3 rounded-card border border-white/15 bg-[#2a1248]/85 p-2.5 sm:bottom-[4%] sm:left-[2%] shadow-overlay backdrop-blur-md animate-float [animation-delay:-3s] sm:left-[6%]">
             <span className="h-11 w-11 shrink-0 overflow-hidden rounded-[10px]">
               <ReleaseCover size="thumb" alt="" eager />
             </span>
@@ -103,7 +106,7 @@ function Hero() {
               {m.release.statusLive}
             </span>
           </div>
-          <div className="absolute bottom-[14%] right-[1%] hidden items-center gap-2 rounded-full border border-white/15 bg-[#2a1248]/85 py-2 pl-2 pr-3.5 shadow-overlay backdrop-blur-md animate-float [animation-delay:-6s] sm:flex">
+          <div className="absolute right-0 top-[50%] flex items-center gap-2 rounded-full border border-white/15 bg-[#2a1248]/85 py-1.5 pl-1.5 pr-3 shadow-overlay backdrop-blur-md animate-float [animation-delay:-6s] sm:bottom-[14%] sm:right-[1%] sm:top-auto sm:py-2 sm:pl-2 sm:pr-3.5">
             <span className="flex h-7 w-7 items-center justify-center rounded-full bg-orange text-night">
               <Wallet className="h-3.5 w-3.5" />
             </span>
@@ -112,7 +115,7 @@ function Hero() {
         </div>
       </div>
 
-      <div className="relative border-t border-white/10 bg-night/40 py-5 backdrop-blur-sm">
+      <div className="relative border-t border-white/10 bg-night/40 py-4 backdrop-blur-sm sm:py-5">
         <StoreMarquee />
       </div>
     </section>
@@ -123,24 +126,26 @@ function Promises() {
   const { pick } = useLanguage();
   const promises = pick(HOME).promises;
   return (
-    <section className="relative bg-white py-14 md:py-20">
-      <ul className="shell grid gap-4 md:grid-cols-3">
+    <section className="relative overflow-hidden bg-white py-10 sm:py-14 md:py-20">
+      <ul data-rail className="shell max-sm:!mx-0 max-sm:rail max-sm:!px-4 sm:grid sm:gap-4 md:grid-cols-3">
         {promises.map((p, i) => (
           <Reveal
             as="li"
             key={p.title}
             delay={i * 90}
-            className="group lift relative overflow-hidden rounded-card border border-border-subtle bg-surface-raised p-6 shadow-card-light md:p-7"
+            className="group lift relative overflow-hidden rounded-card border border-border-subtle bg-surface-raised p-5 shadow-card-light max-sm:w-[80%] max-sm:max-w-[19rem] sm:p-6 md:p-7"
           >
             <span aria-hidden className="absolute -right-10 -top-10 h-32 w-32 rounded-full bg-accent-soft transition-transform duration-500 group-hover:scale-150" />
             <span
               aria-hidden
-              className="relative flex h-12 w-12 items-center justify-center rounded-[14px] bg-[linear-gradient(135deg,#9e4fe0,#6e16a8)] text-white shadow-[0_10px_22px_-10px_rgb(132_29_198/0.8)] [&>svg]:h-5 [&>svg]:w-5"
+              className="relative flex h-11 w-11 items-center justify-center rounded-[14px] sm:h-12 sm:w-12 bg-[linear-gradient(135deg,#9e4fe0,#6e16a8)] text-white shadow-[0_10px_22px_-10px_rgb(132_29_198/0.8)] [&>svg]:h-5 [&>svg]:w-5"
             >
               {PROMISE_ICONS[i]}
             </span>
-            <h2 className="relative mt-5 t-card">{p.title}</h2>
-            <p className="t-body relative mt-2 text-text-muted">{p.body}</p>
+            <h2 className="relative mt-4 t-card sm:mt-5">{p.title}</h2>
+            <p className="t-body relative mt-1.5 text-text-muted sm:mt-2">
+              <Short>{p.body}</Short>
+            </p>
           </Reveal>
         ))}
       </ul>
@@ -165,20 +170,20 @@ function Workflow() {
 function WorkflowSteps({ steps }: { steps: { title: string; body: string }[] }) {
   const { muted, card } = useMuted();
   return (
-    <ol className="relative mt-12 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+    <ol data-rail className="relative mt-8 max-sm:rail sm:mt-12 sm:grid sm:grid-cols-2 sm:gap-3 lg:grid-cols-5">
       <span aria-hidden className="absolute left-8 right-8 top-[2.6rem] hidden h-px bg-[linear-gradient(90deg,transparent,rgb(132_29_198/0.35),transparent)] lg:block" />
       {steps.map((s, i) => (
         <Reveal
           as="li"
           key={s.title}
           delay={i * 90}
-          className={cn("lift relative flex min-w-0 gap-4 rounded-card p-5 sm:flex-col sm:gap-0", card)}
+          className={cn("lift relative flex min-w-0 flex-col rounded-card p-5 max-sm:w-[68%] max-sm:max-w-[16rem]", card)}
         >
           <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[linear-gradient(135deg,#9e4fe0,#6e16a8)] text-[0.8125rem] font-bold tabular-nums text-white shadow-[0_8px_18px_-8px_rgb(132_29_198/0.8)]">
             {String(i + 1).padStart(2, "0")}
           </span>
           <div className="min-w-0">
-            <h3 className="text-[1.1875rem] font-bold tracking-[-0.02em] sm:mt-5">{s.title}</h3>
+            <h3 className="mt-4 text-[1.0625rem] font-bold tracking-[-0.02em] sm:mt-5 sm:text-[1.1875rem]">{s.title}</h3>
             <p className={cn("mt-1.5 text-body-sm sm:mt-2", muted)}>{s.body}</p>
           </div>
         </Reveal>
@@ -194,14 +199,14 @@ function Promotion() {
     <Band tone="dark" labelledBy="promo-title">
       <Split visual={<CampaignMock className="mx-auto max-w-[30rem] lg:max-w-none" />}>
         <SectionHeader id="promo-title" eyebrow={c.eyebrow} title={c.title} lede={c.lede} />
-        <p className="mt-6 max-w-[34rem] rounded-r-[10px] border-l-2 border-accent-text bg-tint/[0.05] py-3 pl-4 pr-3 text-body text-text-muted">
+        <p className="mt-6 hidden max-w-[34rem] rounded-r-[10px] border-l-2 border-accent-text bg-tint/[0.05] py-3 pl-4 pr-3 text-body text-text-muted sm:block">
           {c.note}
         </p>
-        <TextLink to="/promotion" className="mt-7">
+        <TextLink to="/promotion" className="mt-5 sm:mt-7">
           {c.link}
         </TextLink>
       </Split>
-      <div className="shell mt-14">
+      <div className="shell mt-10 sm:mt-14">
         <FeatureGrid
           columns={4}
           items={c.kinds.map((k) => ({
@@ -222,15 +227,15 @@ function Royalties() {
     <Band tone="raised" labelledBy="roy-title">
       <Split reverse visual={<WalletMock className="mx-auto max-w-[30rem] lg:max-w-none" />}>
         <SectionHeader id="roy-title" eyebrow={c.eyebrow} title={c.title} lede={c.lede} />
-        <dl className="mt-8 space-y-5">
+        <dl className="mt-6 space-y-3 sm:mt-8 sm:space-y-5">
           {c.points.map((p) => (
-            <div key={p.title} className="border-t border-border-subtle pt-5">
-              <dt className="text-[1.0625rem] font-semibold">{p.title}</dt>
-              <dd className="t-body mt-1 text-text-muted">{p.body}</dd>
+            <div key={p.title} className="border-t border-border-subtle pt-3 sm:pt-5">
+              <dt className="text-[1rem] font-semibold sm:text-[1.0625rem]">{p.title}</dt>
+              <dd className="t-body mt-1 hidden text-text-muted sm:block">{p.body}</dd>
             </div>
           ))}
         </dl>
-        <TextLink to="/royalties" className="mt-8">
+        <TextLink to="/royalties" className="mt-6 sm:mt-8">
           {c.link}
         </TextLink>
       </Split>
@@ -245,7 +250,7 @@ function Splits() {
     <Band tone="light" labelledBy="splits-title">
       <Split visual={<SplitsMock className="mx-auto max-w-[28rem] lg:max-w-none" />}>
         <SectionHeader id="splits-title" eyebrow={c.eyebrow} title={c.title} lede={c.lede} />
-        <Checklist items={c.points} className="mt-8" />
+        <Checklist items={c.points} className="mt-6 sm:mt-8" />
       </Split>
     </Band>
   );
@@ -258,7 +263,7 @@ function Analytics() {
     <Band tone="raised" labelledBy="an-title">
       <Split reverse visual={<AnalyticsMock className="mx-auto max-w-[28rem] lg:max-w-none" />}>
         <SectionHeader id="an-title" eyebrow={c.eyebrow} title={c.title} lede={c.lede} />
-        <Checklist items={c.points} className="mt-8" />
+        <Checklist items={c.points} className="mt-6 sm:mt-8" />
       </Split>
     </Band>
   );
@@ -277,7 +282,7 @@ export default function HomePage() {
       <Band tone="light" labelledBy="stores-title">
         <div className="shell">
           <SectionHeader id="stores-title" eyebrow={c.stores.eyebrow} title={c.stores.title} lede={c.stores.lede} />
-          <StoreWall className="mt-12" />
+          <StoreWall className="mt-8 sm:mt-12" />
         </div>
       </Band>
 
@@ -289,10 +294,10 @@ export default function HomePage() {
 
       <Band tone="dark" labelledBy="africa-title">
         <ArtistStrip />
-        <div className="shell mt-14 md:mt-16">
+        <div className="shell mt-10 sm:mt-14 md:mt-16">
           <SectionHeader id="africa-title" eyebrow={c.africa.eyebrow} title={c.africa.title} lede={c.africa.lede} />
           <FeatureGrid
-            className="mt-12"
+            className="mt-8 sm:mt-12"
             items={c.africa.points.map((p, i) => ({ ...p, icon: AFRICA_ICONS[i] }))}
           />
         </div>
@@ -300,23 +305,23 @@ export default function HomePage() {
 
       <Band tone="light" labelledBy="pricing-title">
         <div className="shell">
-          <div className="flex flex-col justify-between gap-6 md:flex-row md:items-end">
+          <div className="flex flex-col justify-between gap-4 sm:gap-6 md:flex-row md:items-end">
             <SectionHeader id="pricing-title" eyebrow={c.pricing.eyebrow} title={c.pricing.title} lede={c.pricing.lede} />
             <TextLink to="/pricing" className="shrink-0">
               {c.pricing.link}
             </TextLink>
           </div>
-          <div className="mt-12">
+          <div className="mt-8 sm:mt-12">
             <PlanCards />
           </div>
         </div>
       </Band>
 
       <Band tone="raised" labelledBy="faq-title">
-        <div className="shell grid gap-10 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:gap-16">
+        <div className="shell grid gap-6 sm:gap-10 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:gap-16">
           <div>
             <SectionHeader id="faq-title" eyebrow={c.faq.eyebrow} title={c.faq.title} />
-            <TextLink to="/help" className="mt-6">
+            <TextLink to="/help" className="mt-4 sm:mt-6">
               {c.faq.link}
             </TextLink>
           </div>
@@ -334,14 +339,14 @@ function ArtistStrip() {
   const ids = [2, 1, 5, 3, 4] as const;
   return (
     <div aria-hidden className="shell">
-      <div className="grid grid-cols-3 items-end gap-3 sm:grid-cols-5 sm:gap-4">
+      <div className="grid grid-cols-3 items-end gap-2.5 sm:grid-cols-5 sm:gap-4">
         {ids.map((id, i) => (
           <Reveal
             key={id}
             delay={i * 80}
             className={cn(
               "group relative overflow-hidden rounded-[20px] border border-white/10 shadow-overlay",
-              ["h-48 sm:h-64", "h-56 sm:h-80", "h-44 sm:h-60", "hidden h-56 sm:block sm:h-72", "hidden h-48 sm:block sm:h-64"][i],
+              ["h-36 sm:h-64", "h-44 sm:h-80", "h-32 sm:h-60", "hidden h-56 sm:block sm:h-72", "hidden h-48 sm:block sm:h-64"][i],
             )}
           >
             <ArtistPhoto

@@ -4,6 +4,7 @@ import { Spinner } from "@/components/ui";
 import { useLanguage } from "@/lib/LanguageContext";
 import SiteNav from "./SiteNav";
 import SiteFooter from "./SiteFooter";
+import MobileCtaBar from "./MobileCtaBar";
 
 /**
  * Shell for every public page: skip link, fixed nav, <main>, footer.
@@ -33,6 +34,7 @@ export default function SiteLayout() {
         </Suspense>
       </main>
       <SiteFooter />
+      <MobileCtaBar />
     </div>
   );
 }

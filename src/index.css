@@ -189,6 +189,7 @@
 @layer base {
   html {
     scroll-behavior: smooth;
+    -webkit-tap-highlight-color: transparent;
     -webkit-text-size-adjust: 100%;
     text-size-adjust: 100%;
     color-scheme: light;
@@ -298,38 +299,43 @@ span.bg-white.text-ink.rounded-full:not(.theme-dark *) {
 }
 
 /* ── Marketing type scale ──────────────────────────────────────────────
-   Every size clamps so a 360px phone never gets a word that cannot fit. */
+   Every size clamps so a 360px phone never gets a word that cannot fit.
+   Phone targets (360–430px): hero ≈34–36px, section titles ≈24–26px,
+   lead/body 15–16px; they grow smoothly to the desktop sizes. */
 
 @utility t-hero {
-  font-size: clamp(2.375rem, 1.2rem + 3vw, 3.625rem);
-  line-height: 1.02;
+  font-size: clamp(2.125rem, 1.25rem + 3.1vw, 3.625rem);
+  line-height: 1.04;
+  text-wrap: balance;
   letter-spacing: -0.04em;
   font-weight: 800;
 }
 
 @utility t-display {
-  font-size: clamp(1.875rem, 1.35rem + 2.3vw, 3.25rem);
-  line-height: 1.06;
+  font-size: clamp(1.5rem, 0.95rem + 2.6vw, 3.25rem);
+  line-height: 1.1;
+  text-wrap: balance;
   letter-spacing: -0.032em;
   font-weight: 800;
 }
 
 @utility t-title {
-  font-size: clamp(1.375rem, 1.15rem + 0.9vw, 1.875rem);
-  line-height: 1.15;
+  font-size: clamp(1.25rem, 1.05rem + 0.9vw, 1.875rem);
+  line-height: 1.18;
+  text-wrap: balance;
   letter-spacing: -0.024em;
   font-weight: 750;
 }
 
 @utility t-card {
-  font-size: clamp(1.125rem, 1.05rem + 0.35vw, 1.3125rem);
+  font-size: clamp(1.0625rem, 0.98rem + 0.4vw, 1.3125rem);
   line-height: 1.25;
   letter-spacing: -0.018em;
   font-weight: 700;
 }
 
 @utility t-figure {
-  font-size: clamp(2rem, 1.5rem + 2vw, 3.25rem);
+  font-size: clamp(1.75rem, 1.3rem + 2.2vw, 3.25rem);
   line-height: 1;
   letter-spacing: -0.035em;
   font-weight: 800;
@@ -337,7 +343,7 @@ span.bg-white.text-ink.rounded-full:not(.theme-dark *) {
 }
 
 @utility t-eyebrow {
-  font-size: 0.75rem;
+  font-size: clamp(0.6875rem, 0.65rem + 0.15vw, 0.75rem);
   line-height: 1;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -345,7 +351,7 @@ span.bg-white.text-ink.rounded-full:not(.theme-dark *) {
 }
 
 @utility t-lead {
-  font-size: clamp(1.0625rem, 1rem + 0.3vw, 1.25rem);
+  font-size: clamp(1rem, 0.9rem + 0.42vw, 1.25rem);
   line-height: 1.6;
   font-weight: 450;
 }
@@ -424,12 +430,56 @@ span.bg-white.text-ink.rounded-full:not(.theme-dark *) {
 }
 
 @utility section-y {
-  padding-block: 4.5rem;
+  padding-block: 3.5rem;
   @media (min-width: 768px) {
     padding-block: 6rem;
   }
   @media (min-width: 1280px) {
     padding-block: 7rem;
+  }
+}
+
+/*
+ * Horizontal swipe row (CSS scroll-snap, no library). Used below `sm` for
+ * card rows (features, steps, plans) so phones swipe instead of scrolling
+ * through a tall stack: `max-sm:rail` on the list, a width such as
+ * `max-sm:w-[82%]` on each item. The negative margin lets cards bleed to the
+ * screen edge while the first card still lines up with the 1rem gutter; the
+ * block padding keeps card shadows from being clipped by the scroller.
+ */
+@utility rail {
+  display: flex;
+  gap: 0.75rem;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: 1rem;
+  margin-inline: -1rem;
+  padding: 0.25rem 1rem 1.25rem;
+  margin-bottom: -1rem;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  & > * {
+    flex: 0 0 auto;
+    scroll-snap-align: start;
+  }
+}
+
+/* Safe-area helpers for fixed bars on notched phones (viewport-fit=cover). */
+@utility pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* Native-feeling press feedback for tappable cards and rows. */
+@utility tap {
+  -webkit-tap-highlight-color: transparent;
+  transition-property: transform, background-color, border-color, box-shadow, color;
+  transition-duration: 160ms;
+  &:active {
+    transform: scale(0.98);
   }
 }
 
@@ -454,6 +504,21 @@ span.bg-white.text-ink.rounded-full:not(.theme-dark *) {
   &:hover {
     transform: translateY(-3px);
     box-shadow: var(--shadow-card-hover);
+  }
+}
+
+/* Toasts sit above the dashboard's bottom tab bar on phones and tablets. */
+@media (max-width: 1023.98px) {
+  html:has([data-tabbar]) [data-toast-region] {
+    bottom: calc(4rem + env(safe-area-inset-bottom, 0px));
+  }
+}
+
+/* Inside a phone swipe row, cards are revealed by the swipe itself. */
+@media (max-width: 639.98px) {
+  [data-rail] > .reveal {
+    opacity: 1;
+    transform: none;
   }
 }
 

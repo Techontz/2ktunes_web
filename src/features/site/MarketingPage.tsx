@@ -38,6 +38,7 @@ import {
   PageHero,
   Reveal,
   SectionHeader,
+  Short,
   Split,
   TextLink,
   useMuted,
@@ -155,7 +156,7 @@ function Compare({ s }: { s: Extract<Section, { type: "compare" }> }) {
   return (
     <>
       <DataTable
-        className="mt-12"
+        className="mt-8 sm:mt-12"
         caption={s.caption}
         rows={s.rows}
         getRowKey={(r) => r.name}
@@ -166,7 +167,11 @@ function Compare({ s }: { s: Extract<Section, { type: "compare" }> }) {
           { key: "guaranteed", header: s.headers[3], cell: (r) => <span className="font-semibold text-text">{r.guaranteed}</span> },
         ]}
       />
-      {s.note && <p className={cn("mt-5 max-w-[60ch] text-body-sm", muted)}>{s.note}</p>}
+      {s.note && (
+        <p className={cn("mt-5 max-w-[60ch] text-body-sm", muted)}>
+          <Short>{s.note}</Short>
+        </p>
+      )}
     </>
   );
 }
@@ -201,7 +206,7 @@ function Notice({ s }: { s: Extract<Section, { type: "notice" }> }) {
   const { muted, card } = useMuted();
   return (
     <div className="shell">
-      <div className={cn("flex flex-col gap-4 rounded-card p-6 sm:flex-row sm:p-8", card)}>
+      <div className={cn("flex flex-col gap-3 rounded-card p-5 sm:flex-row sm:gap-4 sm:p-8", card)}>
         <ShieldCheck aria-hidden className="h-6 w-6 shrink-0 text-accent-text" />
         <div>
           <h2 className="t-card">{s.title}</h2>
@@ -223,7 +228,7 @@ function SectionView({ s, index }: { s: Section; index: number }) {
           <div className="shell">
             <SectionHeader id={id} eyebrow={s.eyebrow} title={s.title} lede={s.lede} />
             <FeatureGrid
-              className="mt-12"
+              className="mt-8 sm:mt-12"
               columns={s.columns ?? 3}
               items={s.items.map((it) => ({
                 icon: iconNode(it.icon),
@@ -240,10 +245,10 @@ function SectionView({ s, index }: { s: Section; index: number }) {
         <Band tone={tone} labelledBy={id}>
           <Split reverse={s.reverse} visual={renderVisual(s.visual)}>
             <SectionHeader id={id} eyebrow={s.eyebrow} title={s.title} lede={s.lede} />
-            {s.points && <Checklist items={s.points} className="mt-8" />}
+            {s.points && <Checklist items={s.points} className="mt-6 sm:mt-8" />}
             {s.note && <SplitNote>{s.note}</SplitNote>}
             {s.link && (
-              <TextLink to={s.link.to} className="mt-8">
+              <TextLink to={s.link.to} className="mt-6 sm:mt-8">
                 {s.link.label}
               </TextLink>
             )}
@@ -255,7 +260,7 @@ function SectionView({ s, index }: { s: Section; index: number }) {
         <Band tone={tone} labelledBy={id}>
           <div className="shell">
             <SectionHeader id={id} eyebrow={s.eyebrow} title={s.title} lede={s.lede} />
-            <StoreWall className="mt-12" />
+            <StoreWall className="mt-8 sm:mt-12" />
           </div>
         </Band>
       );
@@ -271,11 +276,11 @@ function SectionView({ s, index }: { s: Section; index: number }) {
     case "faq":
       return (
         <Band tone={tone} labelledBy={id}>
-          <div className="shell grid gap-10 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:gap-16">
+          <div className="shell grid gap-6 sm:gap-10 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:gap-16">
             <div>
               <SectionHeader id={id} eyebrow={s.eyebrow} title={s.title} size="title" />
               {s.link && (
-                <TextLink to={s.link.to} className="mt-6">
+                <TextLink to={s.link.to} className="mt-4 sm:mt-6">
                   {s.link.label}
                 </TextLink>
               )}
@@ -298,7 +303,7 @@ function SectionView({ s, index }: { s: Section; index: number }) {
         <Band tone={tone} labelledBy={id}>
           <div className="shell">
             <SectionHeader id={id} eyebrow={s.eyebrow} title={s.title} lede={s.lede} />
-            <div className="mt-12">
+            <div className="mt-8 sm:mt-12">
               <PlanCards />
             </div>
           </div>
@@ -312,7 +317,7 @@ function SectionView({ s, index }: { s: Section; index: number }) {
       );
     case "notice":
       return (
-        <Band tone={tone} className="!py-12 md:!py-16">
+        <Band tone={tone} className="!py-10 sm:!py-12 md:!py-16">
           <Notice s={s} />
         </Band>
       );
@@ -332,8 +337,9 @@ function Steps({ steps }: { steps: { title: string; body: string }[] }) {
   const { muted, card } = useMuted();
   return (
     <ol
+      data-rail
       className={cn(
-        "mt-12 grid gap-3 sm:grid-cols-2",
+        "mt-8 max-sm:rail sm:mt-12 sm:grid sm:grid-cols-2 sm:gap-3",
         steps.length === 4 && "lg:grid-cols-4",
         steps.length === 5 && "lg:grid-cols-5",
         steps.length === 3 && "lg:grid-cols-3",
@@ -344,14 +350,16 @@ function Steps({ steps }: { steps: { title: string; body: string }[] }) {
           as="li"
           key={st.title}
           delay={i * 80}
-          className={cn("lift flex min-w-0 gap-4 rounded-card p-5 sm:flex-col sm:gap-0", card)}
+          className={cn("lift flex min-w-0 flex-col rounded-card p-5 max-sm:w-[72%] max-sm:max-w-[17rem]", card)}
         >
           <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[linear-gradient(135deg,#9e4fe0,#6e16a8)] text-[0.8125rem] font-bold tabular-nums text-white shadow-[0_8px_18px_-8px_rgb(132_29_198/0.8)]">
             {String(i + 1).padStart(2, "0")}
           </span>
           <div className="min-w-0">
-            <h3 className="text-[1.125rem] font-bold tracking-[-0.02em] sm:mt-5">{st.title}</h3>
-            <p className={cn("mt-1.5 text-body-sm sm:mt-2", muted)}>{st.body}</p>
+            <h3 className="mt-4 text-[1.0625rem] font-bold tracking-[-0.02em] sm:mt-5 sm:text-[1.125rem]">{st.title}</h3>
+            <p className={cn("mt-1.5 text-body-sm sm:mt-2", muted)}>
+              <Short>{st.body}</Short>
+            </p>
           </div>
         </Reveal>
       ))}

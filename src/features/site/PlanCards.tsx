@@ -59,8 +59,10 @@ export function PlanCards() {
         <CurrencySwitch currencies={currencies} value={currency} onChange={setChosen} />
       )}
       <ul
+        data-rail
         className={cn(
           "grid gap-4",
+          state.plans.length > 1 && "max-sm:rail",
           state.plans.length === 2 && "md:grid-cols-2",
           state.plans.length >= 3 && "md:grid-cols-2 lg:grid-cols-3",
         )}
@@ -88,7 +90,7 @@ function CurrencySwitch({
   const { t } = useLanguage();
   const { muted, line } = useMuted();
   return (
-    <div className="mb-6 flex flex-wrap items-center gap-3">
+    <div className="mb-5 flex flex-wrap items-center gap-3 sm:mb-6">
       <span id="plan-currency-label" className={cn("text-body-sm font-semibold", muted)}>
         {t("pricing.currency_label")}
       </span>
@@ -127,12 +129,12 @@ function PlanCard({ plan, currency }: { plan: Plan; currency: string }) {
   const free = price.amount === 0;
 
   return (
-    <li className={cn("group lift relative flex min-w-0 flex-col overflow-hidden rounded-card p-6 sm:p-7", card)}>
+    <li className={cn("group lift relative flex min-w-0 flex-col overflow-hidden rounded-card p-5 max-sm:w-[84%] max-sm:max-w-[21rem] sm:p-7", card)}>
       <span aria-hidden className="absolute inset-x-0 top-0 h-1 bg-[linear-gradient(90deg,#6e16a8,#9e4fe0,#f7931e)] opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
       <h3 className="text-[1.125rem] font-bold tracking-[-0.015em]">{plan.name}</h3>
       {plan.description && <p className={cn("mt-1.5 text-body-sm", muted)}>{plan.description}</p>}
-      <p className="mt-6 flex flex-wrap items-baseline gap-x-2 gap-y-1">
-        <span className="text-[2rem] font-extrabold leading-none tracking-[-0.03em] tabular-nums">
+      <p className="mt-4 flex flex-wrap items-baseline gap-x-2 gap-y-1 sm:mt-6">
+        <span className="text-[1.75rem] font-extrabold sm:text-[2rem] leading-none tracking-[-0.03em] tabular-nums">
           {free ? t("pricing.free") : formatMoney(price.amount, price.currency, locale)}
         </span>
         {!free && <span className={cn("text-body-sm", muted)}>{period}</span>}
@@ -156,7 +158,7 @@ function PlanCard({ plan, currency }: { plan: Plan; currency: string }) {
           </li>
         ))}
       </ul>
-      <div className="mt-auto pt-7">
+      <div className="mt-auto pt-6 sm:pt-7">
         <Button
           to={`/auth?mode=register&plan=${encodeURIComponent(String(plan.id))}`}
           variant="primary"
