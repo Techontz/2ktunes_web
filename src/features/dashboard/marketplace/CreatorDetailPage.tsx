@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
-import { ExternalLink, Info, MapPin, Package } from "lucide-react";
+import { ExternalLink, Info, MapPin, Package, Play, ShieldCheck } from "lucide-react";
 import { Avatar, Badge, Button, Card, EmptyState } from "@/components/ui";
 import {
   DefinitionList,
@@ -11,26 +11,35 @@ import {
   Section,
 } from "@/features/dashboard/components";
 import { fetchCreator } from "@/lib/api/marketplace";
-import type { CreatorPackage, SocialAccount } from "@/lib/api/types";
+import type { CreatorPackage, PortfolioItem, SocialAccount } from "@/lib/api/types";
 import { useResource } from "@/lib/api/useResource";
 import { formatDate } from "@/lib/dates";
 import { useLanguage } from "@/lib/LanguageContext";
 import { formatBp, formatCount } from "@/lib/money";
 import { useCopy } from "@/lib/useCopy";
+import { cn } from "@/lib/utils";
 import { COPY } from "./copy";
+import { CreatorRequestDialog, type RequestTarget } from "./CreatorRequestDialog";
 import { countryName, useLabels } from "./labels";
-import { OrderDialog, type OrderTarget } from "./OrderDialog";
+import { REQ_COPY } from "./requestCopy";
 import { MetricsBadge } from "./shared";
 
+/**
+ * A creator's public profile for artists: packages and prices first (every
+ * price is visible before requesting), then about, audience numbers and past
+ * work. No contact details or social handles are ever shown: everything goes
+ * through 2kTunes.
+ */
 export default function CreatorDetailPage() {
   const { slug = "" } = useParams();
   const [sp] = useSearchParams();
   const campaign = sp.get("campaign");
   const c = useCopy(COPY);
+  const r = useCopy(REQ_COPY);
   const { locale } = useLanguage();
   const labels = useLabels();
   const res = useResource((signal) => fetchCreator(slug, { signal }), [slug]);
-  const [target, setTarget] = useState<OrderTarget | null>(null);
+  const [target, setTarget] = useState<RequestTarget | null>(null);
 
   const back = { to: `/dashboard/creators${campaign ? `?campaign=${encodeURIComponent(campaign)}` : ""}`, label: c.backToCreators };
 
@@ -45,10 +54,8 @@ export default function CreatorDetailPage() {
 
   const cr = res.data;
   const place = [cr.city, cr.country ? countryName(cr.country, locale) : null].filter(Boolean).join(", ");
-  const packages = cr.packages.filter((p) => p.is_active);
-
-  const order = (p: CreatorPackage) =>
-    setTarget({ kind: "package", id: p.id, title: p.title, priceMinor: p.price_minor, currency: p.currency });
+  const packages = cr.packages.filter((p) => p.is_active).sort((a, b) => a.price_minor - b.price_minor);
+  const request = (p: CreatorPackage) => setTarget({ pkg: p, creatorName: cr.display_name });
 
   return (
     <div>
@@ -77,39 +84,21 @@ export default function CreatorDetailPage() {
         }
       />
 
+      {cr.categories.length > 0 && (
+        <ul className="-mt-2 mb-6 flex flex-wrap gap-1.5 sm:-mt-4" aria-label={c.categories}>
+          {cr.categories.map((x) => (
+            <li key={x}>
+              <Badge tone="accent" size="sm">
+                {labels.category(x)}
+              </Badge>
+            </li>
+          ))}
+        </ul>
+      )}
+
       <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_20rem]">
         <div className="min-w-0 space-y-8">
-          <Section title={c.about} id="about">
-            <Card>
-              <p className="whitespace-pre-line break-words text-body-sm text-text-muted">{cr.bio || c.noBio}</p>
-              <DefinitionList
-                className="mt-5"
-                items={[
-                  { label: c.languages, value: cr.languages.length ? cr.languages.join(", ").toUpperCase() : "-" },
-                  {
-                    label: c.categories,
-                    value: cr.categories.length ? cr.categories.map(labels.category).join(", ") : "-",
-                  },
-                  { label: c.turnaround, value: cr.turnaround_days ? c.days(cr.turnaround_days) : "-" },
-                  { label: c.completedOrders, value: formatCount(cr.completed_orders ?? 0, locale) },
-                ]}
-              />
-            </Card>
-          </Section>
-
-          <Section title={c.socialTitle} description={c.socialIntro} id="socials">
-            {cr.social_accounts.length === 0 ? (
-              <EmptyState compact title={c.noSocial} />
-            ) : (
-              <ul className="grid gap-3 md:grid-cols-2">
-                {cr.social_accounts.map((s) => (
-                  <SocialCard key={s.id ?? s.platform} account={s} />
-                ))}
-              </ul>
-            )}
-          </Section>
-
-          <Section title={c.packagesTitle} description={c.packagesIntro} id="packages">
+          <Section title={c.packagesTitle} description={r.pricesNote} id="packages">
             {packages.length === 0 ? (
               <EmptyState compact icon={<Package />} title={c.noPackagesBody} />
             ) : (
@@ -119,7 +108,7 @@ export default function CreatorDetailPage() {
                     <Card className="flex h-full flex-col gap-3">
                       <div className="flex flex-wrap items-start justify-between gap-2">
                         <h3 className="min-w-0 break-words text-h4 font-bold text-text">{p.title}</h3>
-                        <Money minor={p.price_minor} currency={p.currency} className="font-bold text-text" />
+                        <Money minor={p.price_minor} currency={p.currency} className="text-h4 font-extrabold text-text" />
                       </div>
                       <p className="text-caption text-text-subtle">
                         {labels.platform(p.platform)} · {c.days(p.turnaround_days)}
@@ -135,8 +124,8 @@ export default function CreatorDetailPage() {
                       )}
                       {cr.is_available && (
                         <div className="mt-auto pt-2">
-                          <Button onClick={() => order(p)} fullWidth>
-                            {c.orderPackage}
+                          <Button onClick={() => request(p)} fullWidth aria-label={`${r.requestCreator}: ${p.title}`}>
+                            {r.requestCreator}
                           </Button>
                         </div>
                       )}
@@ -147,34 +136,40 @@ export default function CreatorDetailPage() {
             )}
           </Section>
 
+          <Section title={c.about} id="about">
+            <Card>
+              <p className="whitespace-pre-line break-words text-body-sm text-text-muted">{cr.bio || c.noBio}</p>
+              <DefinitionList
+                className="mt-5"
+                items={[
+                  { label: c.languages, value: cr.languages.length ? cr.languages.join(", ").toUpperCase() : "-" },
+                  { label: c.turnaround, value: cr.turnaround_days ? c.days(cr.turnaround_days) : "-" },
+                  { label: c.completedOrders, value: formatCount(cr.completed_orders ?? 0, locale) },
+                ]}
+              />
+            </Card>
+          </Section>
+
+          <Section title={c.socialTitle} description={r.socialNoHandles} id="socials">
+            {cr.social_accounts.length === 0 ? (
+              <EmptyState compact title={c.noSocial} />
+            ) : (
+              <ul className="grid gap-3 md:grid-cols-2">
+                {cr.social_accounts.map((s, i) => (
+                  <SocialCard key={s.id ?? `${s.platform}-${i}`} account={s} />
+                ))}
+              </ul>
+            )}
+          </Section>
+
           <Section title={c.portfolioTitle} id="portfolio">
             {cr.portfolio.length === 0 ? (
               <EmptyState compact title={c.noPortfolio} />
             ) : (
-              <ul className="grid gap-3 sm:grid-cols-2">
-                {cr.portfolio.map((item) => {
-                  const title = item.title || `${c.example} · ${labels.platform(item.platform)}`;
-                  return (
-                    <li key={item.id} className="min-w-0">
-                      <a
-                        href={item.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        aria-label={c.openExample(title)}
-                        className="flex h-full min-w-0 items-start justify-between gap-3 rounded-card border border-border-subtle bg-surface-raised p-4 transition-colors hover:border-border-strong focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-text"
-                      >
-                        <span className="min-w-0">
-                          <span className="block break-words font-semibold text-text">{title}</span>
-                          <span className="mt-1 block text-caption text-text-subtle">
-                            {labels.platform(item.platform)}
-                            {item.views != null && ` · ${c.views(formatCount(item.views, locale))}`}
-                          </span>
-                        </span>
-                        <ExternalLink className="h-4 w-4 shrink-0 text-text-subtle" aria-hidden />
-                      </a>
-                    </li>
-                  );
-                })}
+              <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                {cr.portfolio.map((item) => (
+                  <PortfolioTile key={item.id} item={item} />
+                ))}
               </ul>
             )}
           </Section>
@@ -184,52 +179,43 @@ export default function CreatorDetailPage() {
           <Card variant="sunken" className="lg:sticky lg:top-24">
             <h2 className="flex items-center gap-2 text-h4 font-bold text-text">
               <Info className="h-4 w-4 text-accent-text" aria-hidden />
-              {c.howItWorksTitle}
+              {r.howTitle}
             </h2>
-            <ul className="mt-3 list-disc space-y-2 pl-5 text-body-sm text-text-muted">
-              <li>{c.howItWorks1}</li>
-              <li>{c.howItWorks2}</li>
-              <li>{c.howItWorks3}</li>
-              <li className="font-semibold text-text">{c.howItWorks4}</li>
-            </ul>
+            <ol className="mt-3 list-decimal space-y-2 pl-5 text-body-sm text-text-muted">
+              <li>{r.how1}</li>
+              <li>{r.how2}</li>
+              <li>{r.how3}</li>
+            </ol>
+            <p className="mt-3 text-body-sm font-semibold text-text">{r.how4}</p>
+            <p className="mt-4 flex gap-2 border-t border-border-subtle pt-4 text-caption text-text-subtle">
+              <ShieldCheck className="h-4 w-4 shrink-0 text-accent-text" aria-hidden />
+              <span>{r.noContact}</span>
+            </p>
           </Card>
         </aside>
       </div>
 
-      <OrderDialog open={!!target} onClose={() => setTarget(null)} target={target} defaultCampaignId={campaign} />
+      <CreatorRequestDialog
+        target={target}
+        onClose={() => setTarget(null)}
+        campaignId={campaign && /^\d+$/.test(campaign) ? Number(campaign) : null}
+      />
     </div>
   );
 }
 
+/** Audience numbers per platform. Handles and profile links are never shown to artists. */
 function SocialCard({ account: s }: { account: SocialAccount }) {
   const c = useCopy(COPY);
   const { locale } = useLanguage();
   const labels = useLabels();
-  const platform = labels.platform(s.platform);
-  const handle = s.handle.startsWith("@") ? s.handle : `@${s.handle}`;
   const verified = s.metrics_source && s.metrics_source !== "self_reported";
 
   return (
     <li className="min-w-0">
       <Card padding="sm" className="h-full">
         <div className="flex flex-wrap items-start justify-between gap-2">
-          <div className="min-w-0">
-            <p className="text-caption font-semibold uppercase tracking-wide text-text-subtle">{platform}</p>
-            {s.url ? (
-              <a
-                href={s.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label={c.openAccount(platform, handle)}
-                className="inline-flex items-center gap-1 break-all font-semibold text-accent-text hover:underline"
-              >
-                {handle}
-                <ExternalLink className="h-3.5 w-3.5 shrink-0" aria-hidden />
-              </a>
-            ) : (
-              <p className="break-all font-semibold text-text">{handle}</p>
-            )}
-          </div>
+          <p className="font-bold text-text">{labels.platform(s.platform)}</p>
           <MetricsBadge source={s.metrics_source} />
         </div>
         <DefinitionList
@@ -253,6 +239,86 @@ function SocialCard({ account: s }: { account: SocialAccount }) {
           <p className="mt-3 text-caption text-text-subtle">{c.verifiedOn(formatDate(s.metrics_verified_at, locale))}</p>
         )}
       </Card>
+    </li>
+  );
+}
+
+/** A 9:16 tile: uploaded videos play inline (on demand), links open in a new tab. */
+function PortfolioTile({ item }: { item: PortfolioItem }) {
+  const c = useCopy(COPY);
+  const r = useCopy(REQ_COPY);
+  const { locale } = useLanguage();
+  const labels = useLabels();
+  const [playing, setPlaying] = useState(false);
+  const title = item.caption || item.title || `${c.example} · ${labels.platform(item.platform)}`;
+  const views = item.views != null ? r.selfReportedViews(formatCount(item.views, locale)) : null;
+
+  const media = (
+    <div className="relative aspect-[9/16] overflow-hidden rounded-card bg-[linear-gradient(160deg,#2a0f4a,#6e16a8)]">
+      {item.video_src && playing ? (
+        <video
+          src={item.video_src}
+          poster={item.thumbnail_url ?? undefined}
+          controls
+          autoPlay
+          playsInline
+          className="absolute inset-0 h-full w-full object-cover"
+        />
+      ) : item.thumbnail_url ? (
+        <img src={item.thumbnail_url} alt="" loading="lazy" className="absolute inset-0 h-full w-full object-cover" />
+      ) : null}
+      {!playing && (
+        <>
+          <span aria-hidden className="absolute inset-0 bg-[linear-gradient(180deg,transparent_50%,rgb(16_6_30/0.85))]" />
+          {item.platform && item.platform !== "upload" && (
+            <span className="absolute left-2 top-2">
+              <Badge tone="neutral" size="sm" className="bg-black/45 text-white ring-0 backdrop-blur">
+                {labels.platform(item.platform)}
+              </Badge>
+            </span>
+          )}
+          <span aria-hidden className="absolute inset-0 flex items-center justify-center">
+            <span className="flex h-11 w-11 items-center justify-center rounded-full bg-white/90 text-brand-800 shadow-overlay">
+              {item.video_src ? <Play className="ml-0.5 h-5 w-5" /> : <ExternalLink className="h-5 w-5" />}
+            </span>
+          </span>
+          <span className="absolute inset-x-2 bottom-2 text-left text-white">
+            <span className="line-clamp-2 block text-caption font-semibold">{title}</span>
+            {views && <span className="mt-0.5 block text-[0.6875rem] text-white/80">{views}</span>}
+          </span>
+        </>
+      )}
+    </div>
+  );
+
+  return (
+    <li className="min-w-0">
+      {item.video_src ? (
+        playing ? (
+          media
+        ) : (
+          <button
+            type="button"
+            onClick={() => setPlaying(true)}
+            aria-label={r.watchExample(title)}
+            className={cn("block w-full rounded-card focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-text")}
+          >
+            {media}
+          </button>
+        )
+      ) : item.url ? (
+        <a
+          href={item.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={r.openExample(title)}
+          className="block rounded-card focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-text"
+        >
+          {media}
+        </a>
+      ) : (
+        media
+      )}
     </li>
   );
 }

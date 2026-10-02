@@ -1,4 +1,4 @@
-import { request } from "./client";
+import { request, uploadWithProgress } from "./client";
 import type {
   Campaign,
   CampaignObjective,
@@ -128,13 +128,34 @@ export function deletePackage(id: number) {
   return request<{ message: string }>(`/creator/packages/${id}`, { method: "DELETE" });
 }
 
-export async function addPortfolioItem(input: {
-  platform: string;
-  url: string;
+export type PortfolioInput = {
+  /** MP4 or WebM, up to 50 MB. Required unless `url` is sent. */
+  video?: File | null;
+  /** https link (TikTok, Instagram, YouTube…). Required unless `video` is sent. */
+  url?: string | null;
+  /** Optional; the API derives it from the link (or "upload"). */
+  platform?: string | null;
+  thumbnail?: File | null;
   title?: string | null;
+  caption?: string | null;
+  /** Self-reported. */
   views?: number | null;
-}): Promise<PortfolioItem> {
-  const res = await request<{ item: PortfolioItem }>("/creator/portfolio", { method: "POST", body: input });
+};
+
+/** POST /creator/portfolio (multipart), with upload progress. 422 `portfolio_full`. */
+export async function addPortfolioItem(
+  input: PortfolioInput,
+  onProgress?: (fraction: number) => void,
+): Promise<PortfolioItem> {
+  const form = new FormData();
+  if (input.video) form.append("video", input.video);
+  else if (input.url) form.append("url", input.url);
+  if (input.platform) form.append("platform", input.platform);
+  if (input.thumbnail) form.append("thumbnail", input.thumbnail);
+  if (input.title) form.append("title", input.title);
+  if (input.caption) form.append("caption", input.caption);
+  if (input.views != null) form.append("views", String(input.views));
+  const res = await uploadWithProgress<{ item: PortfolioItem }>("/creator/portfolio", form, { onProgress });
   return res.item;
 }
 
@@ -212,13 +233,54 @@ async function orderAction(id: number, action: string, body?: unknown): Promise<
   return res.order;
 }
 
-export const payOrderFromWallet = (id: number) => orderAction(id, "pay");
-export const acceptOrder = (id: number) => orderAction(id, "accept");
+/** Song for a creator request: one of my releases (track optional), or an external link. */
+export type RequestSong =
+  | { release_id: number; track_id?: number | null }
+  | { song_url: string; song_title: string; song_artist: string };
+
+export type CreatorRequestInput = RequestSong & {
+  creator_package_id: number;
+  brief?: string | null;
+  /** YYYY-MM-DD, today or later. */
+  preferred_post_date?: string | null;
+  campaign_id?: number | null;
+};
+
+/** POST /creator-requests → 201 {order} with status "requested". */
+export async function createCreatorRequest(input: CreatorRequestInput): Promise<Order> {
+  const body: Record<string, unknown> = { creator_package_id: input.creator_package_id };
+  if ("song_url" in input) {
+    body.song_url = input.song_url;
+    body.song_title = input.song_title;
+    body.song_artist = input.song_artist;
+  } else {
+    body.release_id = input.release_id;
+    if (input.track_id) body.track_id = input.track_id;
+  }
+  if (input.brief) body.brief = input.brief;
+  if (input.preferred_post_date) body.preferred_post_date = input.preferred_post_date;
+  if (input.campaign_id) body.campaign_id = input.campaign_id;
+  const res = await request<{ order: Order }>("/creator-requests", { method: "POST", body });
+  return res.order;
+}
+
+export type ManualPaymentMethod = "mpesa_tz" | "airtel_tz" | "mixx_tz" | "bank";
+
+/** Pay from the wallet (200, → in_progress) or submit a manual reference (202, stays awaiting_payment). */
+export function payOrder(
+  id: number,
+  input: { method: "wallet" } | { method: "manual"; payment_method: ManualPaymentMethod; payment_reference: string },
+) {
+  return request<{ message?: string; order: Order }>(`/orders/${id}/pay`, { method: "POST", body: input });
+}
+
+export const payOrderFromWallet = (id: number) => orderAction(id, "pay", { method: "wallet" });
+export const acceptOrder = (id: number, note?: string | null) =>
+  orderAction(id, "accept", note ? { note } : {});
 export const declineOrder = (id: number, reason: string) => orderAction(id, "decline", { reason });
-export const submitOrderWork = (id: number, url: string, notes?: string | null) =>
-  orderAction(id, "submit", { url, notes: notes || undefined });
-export const requestOrderRevision = (id: number, note: string) => orderAction(id, "revision", { note });
-export const completeOrder = (id: number) => orderAction(id, "complete");
+/** 1 to 10 http(s) links to the published post(s). */
+export const submitOrderWork = (id: number, urls: string[], notes?: string | null) =>
+  orderAction(id, "submit", notes ? { urls, notes } : { urls });
 export const cancelOrder = (id: number) => orderAction(id, "cancel");
 
 export type DisputeReason = "not_delivered" | "not_as_described" | "late" | "quality" | "payment" | "other";
@@ -231,7 +293,7 @@ export function disputeOrder(id: number, reason: DisputeReason, details: string)
 }
 
 export function sendOrderMessage(id: number, body: string) {
-  return request<{ message: unknown }>(`/orders/${id}/messages`, { method: "POST", body: { body } });
+  return request<{ message: { id: number; body: string; was_redacted?: boolean } }>(`/orders/${id}/messages`, { method: "POST", body: { body } });
 }
 
 /* ── Public smart link (no auth) ───────────────────────────────────── */

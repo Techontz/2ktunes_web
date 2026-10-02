@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState, type FormEvent, type ReactNode } from "react";
-import { Link, Navigate, useNavigate } from "react-router-dom";
+import { Link, Navigate, useNavigate, useSearchParams } from "react-router-dom";
 import { Building2, Clapperboard, Mic2 } from "lucide-react";
 import { Wordmark } from "@/components/brand/Wordmark";
 import {
@@ -19,10 +19,12 @@ import { completeOnboarding, type OnboardingPayload } from "@/lib/api/account";
 import { ACCOUNT_TYPES, type AccountType } from "@/lib/api/auth";
 import { fieldErrorsOf, useErrorMessage } from "@/lib/api/errors";
 import { createArtist, fetchArtists, fetchReleaseConfig } from "@/lib/api/catalog";
-import { saveMyCreatorProfile } from "@/lib/api/marketplace";
+import { saveMyCreatorProfile, uploadCreatorAvatar } from "@/lib/api/marketplace";
+import { PhotoPicker } from "@/features/dashboard/creator/PhotoStep";
+import { WORK_COPY } from "@/features/dashboard/creator/workCopy";
 import { useResource } from "@/lib/api/useResource";
 import { useAuth } from "@/lib/auth/AuthProvider";
-import { DASHBOARD_HOME } from "@/lib/auth/routes";
+import { DASHBOARD_HOME, safeNext } from "@/lib/auth/routes";
 import { useLanguage } from "@/lib/LanguageContext";
 import { useCopy } from "@/lib/useCopy";
 import { CountrySelect } from "@/components/forms/CountrySelect";
@@ -74,6 +76,7 @@ export default function OnboardingPage() {
   const c = useCopy(COPY);
   const { t, language, setLanguage } = useLanguage();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { toast } = useToast();
   const headingRef = useRef<HTMLHeadingElement>(null);
   const toMessage = useErrorMessage();
@@ -138,7 +141,8 @@ export default function OnboardingPage() {
     const res = await finish.run();
     if (res.ok) {
       toast({ title: c.welcome, description: c.welcomeBody, tone: "success" });
-      navigate(DASHBOARD_HOME, { replace: true });
+      // e.g. a creator profile picked on the home page before signing up.
+      navigate(safeNext(searchParams.get("next")) ?? DASHBOARD_HOME, { replace: true });
       return;
     }
     if (res.ignored) return;
@@ -610,15 +614,20 @@ function CreatorStep({
   const [categories, setCategories] = useState<string[]>([]);
   const [languages, setLanguages] = useState<string[]>([]);
   const [nameError, setNameError] = useState<string | null>(null);
+  const [photo, setPhoto] = useState<File | null>(null);
+  const [photoError, setPhotoError] = useState<string | null>(null);
+  const w = useCopy(WORK_COPY);
 
-  const save = useAction(() =>
-    saveMyCreatorProfile({
+  // The profile must exist before its photo can be uploaded: save, then upload.
+  const save = useAction(async (file: File) => {
+    await saveMyCreatorProfile({
       display_name: displayName.trim(),
       country: defaultCountry || null,
       categories,
       languages,
-    }),
-  );
+    });
+    return uploadCreatorAvatar(file);
+  });
 
   const languageOptions = useMemo(() => {
     const map = config.data?.languages ?? {};
@@ -648,12 +657,11 @@ function CreatorStep({
 
   const submit = async (e: FormEvent) => {
     e.preventDefault();
-    if (!displayName.trim()) {
-      setNameError(c.displayNameRequired);
-      return;
-    }
-    setNameError(null);
-    const res = await save.run();
+    const noName = !displayName.trim();
+    setNameError(noName ? c.displayNameRequired : null);
+    setPhotoError(photo ? null : w.photoRequired);
+    if (noName || !photo) return;
+    const res = await save.run(photo);
     if (res.ok) {
       toast({ title: c.creatorSaved, tone: "success" });
       await onFinish();
@@ -670,6 +678,22 @@ function CreatorStep({
         sub={recommended ? c.creatorSubCreator : c.creatorSubOther}
       />
       {save.error && <FormAlert>{save.error}</FormAlert>}
+
+      <fieldset className="min-w-0 rounded-card border border-accent/25 bg-accent-soft/50 p-4">
+        <legend className="px-1 text-body-sm font-semibold text-text">
+          {w.photoStepTitle} <span className="text-danger" aria-hidden>*</span>
+        </legend>
+        <p className="mb-3 text-caption text-text-muted">{w.photoStepBody}</p>
+        <PhotoPicker
+          file={photo}
+          name={displayName || c.displayName}
+          onPick={(f) => {
+            setPhoto(f);
+            setPhotoError(null);
+          }}
+          error={photoError ?? save.fieldErrors.avatar}
+        />
+      </fieldset>
 
       <Field label={c.displayName} hint={c.displayNameHint} error={nameError ?? save.fieldErrors.display_name} required>
         <Input value={displayName} onChange={(e) => setDisplayName(e.target.value)} maxLength={80} />

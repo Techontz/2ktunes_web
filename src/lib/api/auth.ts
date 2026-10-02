@@ -1,4 +1,5 @@
 import { request } from "./client";
+import type { ReferralResult } from "./growth";
 
 /**
  * The authentication endpoints.
@@ -67,6 +68,9 @@ export type AuthUser = {
   subscription_expires_at?: string | null;
   locale?: string | null;
   preferred_currency?: string | null;
+  /** 8 character invite code and its {FRONTEND_URL}/join/{code} link. */
+  referral_code?: string | null;
+  referral_link?: string | null;
   allow_email?: boolean | number | null;
   allow_mobile_alerts?: boolean | number | null;
 
@@ -74,7 +78,14 @@ export type AuthUser = {
   updated_at: string;
 };
 
-type TokenResponse = { message: string; token: string; user: AuthUser };
+type TokenResponse = {
+  message: string;
+  token: string;
+  user: AuthUser;
+  /** Only when a `referral_code` was sent (and, for Google, the account is new). */
+  referral?: ReferralResult | null;
+  is_new_user?: boolean;
+};
 
 type LoginPayload = { email: string; password: string };
 
@@ -87,6 +98,8 @@ type RegisterPayload = {
   account_type: AccountType;
   /** UI language at sign-up ("en" | "sw" | "fr"). */
   locale?: "en" | "sw" | "fr";
+  /** Invite code from /join/:code. Sign-up never fails because of it. */
+  referral_code?: string;
 };
 
 export function login(payload: LoginPayload) {
@@ -150,10 +163,10 @@ export function resetPassword(payload: ResetPasswordPayload) {
 }
 
 /** Exchanges a Google Identity Services credential (JWT) for a 2kTunes session. */
-export function googleLogin(idToken: string) {
+export function googleLogin(idToken: string, referralCode?: string | null) {
   return request<TokenResponse>("/google-login", {
     method: "POST",
-    body: { id_token: idToken },
+    body: referralCode ? { id_token: idToken, referral_code: referralCode } : { id_token: idToken },
     auth: false,
   });
 }

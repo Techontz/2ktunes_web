@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { request } from "./client";
+import type { PlanOffer } from "./types";
 
 /**
  * Public subscription plans.
@@ -33,6 +34,11 @@ export type Plan = {
   max_artists: number;
   features: string[];
   order: number;
+  /**
+   * Best current price for the viewer in the currency the list was fetched
+   * in (GET /plans?currency=), or null. Never cached: offers are time-bound.
+   */
+  offer: PlanOffer | null;
 };
 
 /** A row as GET /plans sends it (`price` is a decimal string, `features` a JSON array). */
@@ -49,7 +55,27 @@ type RawPlan = {
   is_active?: boolean;
   order: number | null;
   features?: string[] | null;
+  offer?: unknown;
 };
+
+/** Accepts an `offer` only when it has the fields the UI needs. */
+function offerOf(raw: unknown): PlanOffer | null {
+  if (!raw || typeof raw !== "object") return null;
+  const o = raw as Partial<PlanOffer>;
+  if (typeof o.list_minor !== "number" || typeof o.final_minor !== "number" || typeof o.currency !== "string") return null;
+  if (o.final_minor >= o.list_minor && o.final_minor > 0) return null;
+  return {
+    headline: typeof o.headline === "string" ? o.headline : "",
+    type: typeof o.type === "string" ? o.type : "",
+    list_minor: o.list_minor,
+    final_minor: Math.max(0, o.final_minor),
+    final: typeof o.final === "string" ? o.final : String(o.final_minor / 100),
+    currency: o.currency.toUpperCase(),
+    ends_at: typeof o.ends_at === "string" ? o.ends_at : null,
+    free_days: typeof o.free_days === "number" && o.free_days > 0 ? o.free_days : null,
+    referral_applied: o.referral_applied === true,
+  };
+}
 
 const num = (v: unknown, fallback: number) => {
   const n = typeof v === "string" ? Number.parseFloat(v) : v;
@@ -98,7 +124,9 @@ function readCache(): Plan[] | null {
   try {
     const raw = localStorage.getItem(CACHE_KEY);
     const plans = raw ? (JSON.parse(raw) as Plan[]) : null;
-    return Array.isArray(plans) && plans.length && plans.every((p) => Array.isArray(p.prices)) ? plans : null;
+    return Array.isArray(plans) && plans.length && plans.every((p) => Array.isArray(p.prices))
+      ? plans.map((p) => ({ ...p, offer: null }))
+      : null;
   } catch {
     return null;
   }
@@ -106,7 +134,7 @@ function readCache(): Plan[] | null {
 
 function writeCache(plans: Plan[]) {
   try {
-    localStorage.setItem(CACHE_KEY, JSON.stringify(plans));
+    localStorage.setItem(CACHE_KEY, JSON.stringify(plans.map((p) => ({ ...p, offer: null }))));
   } catch {
     /* private mode / storage full: the live list still renders */
   }
@@ -126,14 +154,20 @@ export function normalisePlans(raw: RawPlan[]): Plan[] {
       max_artists: Math.max(1, num(p.max_artists, 1)),
       features: (p.features ?? []).filter((x) => typeof x === "string" && x.trim() !== ""),
       order: num(p.order, i + 1),
+      offer: offerOf(p.offer),
     }))
     .sort((a, b) => a.order - b.order);
 }
 
-async function fetchPlans(signal?: AbortSignal): Promise<Plan[]> {
+/**
+ * GET /plans?currency=. The Bearer token (when signed in) is sent so the
+ * offer reflects the viewer's own eligibility and referral price; the route
+ * is public, so a stale token simply counts as anonymous.
+ */
+export async function fetchPlans(signal?: AbortSignal, currency?: string): Promise<Plan[]> {
   const res = await request<{ status?: boolean; plans?: RawPlan[] }>("/plans", {
-    auth: false,
     signal,
+    query: { currency },
   });
   return normalisePlans(res?.plans ?? []);
 }
@@ -163,8 +197,11 @@ type PlansState =
   /** The API answered with no active plans: the admin has none on sale. */
   | { status: "empty"; plans: Plan[] };
 
-/** Fetch-on-mount. Plans stay visible when the API is down (cached, else DEFAULT_PLANS). */
-export function usePlans(): PlansState & { reload: () => void } {
+/**
+ * Fetch-on-mount (and again when `currency` changes, so offers are quoted in
+ * it). Plans stay visible when the API is down (cached, else DEFAULT_PLANS).
+ */
+export function usePlans(currency?: string): PlansState & { reload: () => void } {
   const [state, setState] = useState<PlansState>(() => {
     const cached = readCache();
     return cached ? { status: "ready", plans: cached, source: "cached" } : { status: "loading", plans: [] };
@@ -173,7 +210,7 @@ export function usePlans(): PlansState & { reload: () => void } {
 
   useEffect(() => {
     const controller = new AbortController();
-    fetchPlans(controller.signal)
+    fetchPlans(controller.signal, currency)
       .then((plans) => {
         if (plans.length) writeCache(plans);
         setState(plans.length ? { status: "ready", plans, source: "live" } : { status: "empty", plans: [] });
@@ -181,14 +218,16 @@ export function usePlans(): PlansState & { reload: () => void } {
       .catch((err) => {
         if (err instanceof DOMException && err.name === "AbortError") return;
         const cached = readCache();
-        setState(
-          cached
-            ? { status: "ready", plans: cached, source: "cached" }
-            : { status: "ready", plans: DEFAULT_PLANS, source: "default" },
+        setState((prev) =>
+          prev.status === "ready" && prev.source === "live"
+            ? { ...prev, plans: prev.plans.map((p) => ({ ...p, offer: null })) }
+            : cached
+              ? { status: "ready", plans: cached, source: "cached" }
+              : { status: "ready", plans: DEFAULT_PLANS, source: "default" },
         );
       });
     return () => controller.abort();
-  }, [nonce]);
+  }, [nonce, currency]);
 
   const reload = useCallback(() => setNonce((n) => n + 1), []);
   return { ...state, reload };

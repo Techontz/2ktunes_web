@@ -4,6 +4,7 @@ import {
   BookOpen,
   CreditCard,
   Disc3,
+  Gift,
   HandCoins,
   LayoutDashboard,
   LifeBuoy,
@@ -59,6 +60,7 @@ export const NAV: NavGroup[] = [
       { to: "/dashboard/orders", label: "dash.nav_orders", icon: Receipt },
       { to: "/dashboard/creator", label: "dash.nav_creator_workspace", icon: Palette, visible: isCreator },
       { to: "/dashboard/analytics", label: "dash.nav_analytics", icon: BarChart3 },
+      { to: "/dashboard/referrals", label: "dash.nav_referrals", icon: Gift },
     ],
   },
   {

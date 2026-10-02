@@ -24,6 +24,7 @@ import { useCopy } from "@/lib/useCopy";
 import { cn } from "@/lib/utils";
 import { LoadError, Money, PageHeader, PageLoading, Section, StatusPill } from "../components";
 import { ReleaseCover } from "../music/shared";
+import { InviteCard } from "../referrals/InviteCard";
 import { COPY } from "./copy";
 
 const GROUPS: Record<"drafts" | "in_review" | "distributing" | "live" | "inactive", string[]> = {
@@ -77,6 +78,7 @@ export default function OverviewPage() {
       ) : (
         <Content data={state.data} locale={locale} />
       )}
+      <InviteCard className="mt-8 sm:mt-10" />
     </>
   );
 }

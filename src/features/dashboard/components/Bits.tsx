@@ -50,6 +50,11 @@ const TONE: Record<string, BadgeTone> = {
   superseded: "neutral",
   confirmed: "success",
   expired: "neutral",
+  forwarded: "info",
+  awaiting_payment: "warning",
+  joined: "info",
+  qualified: "accent",
+  rewarded: "success",
 };
 
 /** A translated status badge. Unknown values show humanised raw text. */

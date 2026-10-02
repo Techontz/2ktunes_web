@@ -18,6 +18,11 @@ const PLATFORMS: Record<string, string> = {
   boomplay: "Boomplay",
   spotify: "Spotify",
   apple_music: "Apple Music",
+  soundcloud: "SoundCloud",
+  deezer: "Deezer",
+  mdundo: "Mdundo",
+  youtube_music: "YouTube Music",
+  threads: "Threads",
 };
 
 const EN = {
@@ -39,6 +44,7 @@ const EN = {
     gaming: "Gaming",
     family: "Family",
     faith: "Faith",
+    motivational_speaker: "Motivational speaker",
   } as Record<string, string>,
   campaignTypes: {
     creator_campaign: "Creator campaign",
@@ -93,6 +99,7 @@ const SW: typeof EN = {
     gaming: "Michezo ya video",
     family: "Familia",
     faith: "Imani",
+    motivational_speaker: "Mzungumzaji wa hamasa",
   },
   campaignTypes: {
     creator_campaign: "Kampeni ya watengeneza maudhui",
@@ -147,6 +154,7 @@ const FR: typeof EN = {
     gaming: "Jeux vidéo",
     family: "Famille",
     faith: "Foi",
+    motivational_speaker: "Orateur motivationnel",
   },
   campaignTypes: {
     creator_campaign: "Campagne créateurs",

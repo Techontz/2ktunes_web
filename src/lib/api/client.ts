@@ -237,3 +237,57 @@ export async function request<T>(
     details: res.status >= 500 ? null : extra.details,
   });
 }
+
+/**
+ * Multipart POST with upload progress (XMLHttpRequest; fetch has no upload
+ * progress). Same envelope, auth and error mapping as `request`.
+ * `onProgress` receives 0..1.
+ */
+export function uploadWithProgress<T>(
+  path: string,
+  form: FormData,
+  { onProgress, signal }: { onProgress?: (fraction: number) => void; signal?: AbortSignal } = {},
+): Promise<T> {
+  if (!apiConfigured) return Promise.reject(new ApiNotConfiguredError());
+  return new Promise<T>((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", `${API_BASE}/api${path}`);
+    xhr.setRequestHeader("Accept", "application/json");
+    const token = getToken();
+    if (token) xhr.setRequestHeader("Authorization", `Bearer ${token}`);
+    xhr.upload.onprogress = (e) => {
+      if (e.lengthComputable && onProgress) onProgress(Math.min(1, e.loaded / e.total));
+    };
+    const abort = () => xhr.abort();
+    signal?.addEventListener("abort", abort, { once: true });
+    xhr.onabort = () => reject(new DOMException("Aborted", "AbortError"));
+    xhr.onerror = () => reject(new ApiError("NETWORK", 0, {}, true));
+    xhr.onload = () => {
+      signal?.removeEventListener("abort", abort);
+      let payload: Record<string, unknown> = {};
+      try {
+        payload = xhr.responseText ? (JSON.parse(xhr.responseText) as Record<string, unknown>) : {};
+      } catch {
+        /* non-JSON body */
+      }
+      if (xhr.status >= 200 && xhr.status < 300) {
+        onProgress?.(1);
+        resolve(payload as T);
+        return;
+      }
+      if (xhr.status === 401) onUnauthenticated?.();
+      const fieldErrors: Record<string, string> = {};
+      const errors = (payload.errors ?? {}) as Record<string, string[]>;
+      for (const [k, v] of Object.entries(errors)) if (Array.isArray(v) && v.length) fieldErrors[k] = v[0];
+      const server = xhr.status >= 500;
+      reject(
+        new ApiError(server ? "SERVER" : String(payload.message ?? `HTTP ${xhr.status}`), xhr.status, fieldErrors, false, {
+          code: typeof payload.code === "string" ? payload.code : null,
+          details: server ? null : ((payload.details as Record<string, unknown>) ?? null),
+          body: server ? null : payload,
+        }),
+      );
+    };
+    xhr.send(form);
+  });
+}

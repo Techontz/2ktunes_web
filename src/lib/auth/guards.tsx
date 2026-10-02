@@ -46,8 +46,9 @@ export function RedirectIfAuthenticated({ children }: { children: ReactNode }) {
 
   if (status === "loading") return <Booting />;
   if (status === "authenticated") {
-    if (justRegistered) return <Navigate to={ONBOARDING_PATH} replace />;
     const next = safeNext(new URLSearchParams(location.search).get("next"));
+    if (justRegistered)
+      return <Navigate to={next ? `${ONBOARDING_PATH}?next=${encodeURIComponent(next)}` : ONBOARDING_PATH} replace />;
     return <Navigate to={next ?? DASHBOARD_HOME} replace />;
   }
   return <>{children}</>;

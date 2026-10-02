@@ -1,7 +1,7 @@
-import { useEffect, useState, type FormEvent } from "react";
+import { useState, type FormEvent } from "react";
 import { Link, useParams } from "react-router-dom";
-import { ExternalLink, ShieldCheck } from "lucide-react";
-import { Button, Card, Dialog, Field, Input, Select, Textarea, useToast } from "@/components/ui";
+import { AlertTriangle, ExternalLink, Headphones, ShieldCheck, ShieldOff } from "lucide-react";
+import { Badge, Button, Card, Field, Textarea, useToast } from "@/components/ui";
 import {
   ConfirmDialog,
   DefinitionList,
@@ -14,67 +14,45 @@ import {
   StatusPill,
   useAction,
 } from "@/features/dashboard/components";
-import {
-  acceptOrder,
-  cancelOrder,
-  completeOrder,
-  declineOrder,
-  disputeOrder,
-  fetchOrder,
-  payOrderFromWallet,
-  requestOrderRevision,
-  sendOrderMessage,
-  submitOrderWork,
-  type DisputeReason,
-} from "@/lib/api/marketplace";
-import type { Order } from "@/lib/api/types";
+import { acceptOrder, cancelOrder, declineOrder, fetchOrder, sendOrderMessage } from "@/lib/api/marketplace";
+import type { Order, OrderStatus } from "@/lib/api/types";
 import { useResource } from "@/lib/api/useResource";
-import { fetchWallet } from "@/lib/api/wallet";
 import { formatDate, formatDateTime } from "@/lib/dates";
 import { useLanguage } from "@/lib/LanguageContext";
-import { formatMinor, toMinor } from "@/lib/money";
-import { cn } from "@/lib/utils";
 import { useCopy } from "@/lib/useCopy";
-import { COPY } from "./copy";
-import { DISPUTE_REASONS, useLabels } from "./labels";
+import { cn } from "@/lib/utils";
+import { useLabels } from "./labels";
+import { Countdown, DisputeDialog, PayOrderDialog, SubmitLinksDialog } from "./OrderDialogs";
+import { REQ_COPY } from "./requestCopy";
+import { OrderStatusPill } from "./shared";
 
-/** Mirrors config/marketplace.php `max_revisions` (not exposed by the API). */
-const MAX_REVISIONS = 2;
+type Dlg = "pay" | "cancel" | "accept" | "decline" | "submit" | "dispute" | null;
 
-type Dlg = "pay" | "cancel" | "complete" | "revision" | "dispute" | "accept" | "decline" | "submit" | null;
+const UNPAID: OrderStatus[] = ["requested", "under_review", "forwarded", "awaiting_payment", "pending_payment"];
+const HELD: OrderStatus[] = ["in_progress", "submitted"];
 
-/** Which actions the API allows for this viewer (see OrderService + OrderStatus). */
-function orderActions(o: Pick<Order, "status" | "role" | "creator" | "revision_count">) {
+/** The API's `can` block, or the same rules (OrderController::abilities) for older payloads. */
+export function orderAbilities(o: Order) {
   const s = o.status;
-  const isService = !o.creator;
-  if (o.role === "buyer") {
-    return {
-      pay: s === "pending_payment",
-      cancel: s === "pending_payment" || s === "awaiting_creator",
-      complete: s === "submitted" && !isService,
-      revision: s === "submitted" && !isService && o.revision_count < MAX_REVISIONS,
-      dispute: ["accepted", "in_progress", "submitted", "revision_requested"].includes(s),
-      accept: false,
-      decline: false,
-      submit: false,
-    };
-  }
-  return {
-    pay: false,
-    cancel: false,
-    complete: false,
-    revision: false,
-    dispute: ["accepted", "submitted", "revision_requested"].includes(s),
-    accept: s === "awaiting_creator",
-    decline: s === "awaiting_creator",
-    submit: s === "accepted" || s === "revision_requested",
+  const buyer = o.role === "buyer";
+  const closed = ["completed", "rejected", "declined", "expired", "cancelled", "refunded"].includes(s);
+  const fallback = {
+    cancel: buyer && UNPAID.includes(s) && !o.payment?.paid_at,
+    pay: buyer && (s === "awaiting_payment" || s === "pending_payment"),
+    accept: !buyer && s === "forwarded",
+    decline: !buyer && s === "forwarded",
+    submit: !buyer && o.kind !== "service" && s === "in_progress",
+    dispute: HELD.includes(s),
+    message: !closed && (buyer || !!o.forwarded_at),
   };
+  return { ...fallback, ...(o.can ?? {}) };
 }
 
 export default function OrderDetailPage() {
   const { id = "" } = useParams();
-  const c = useCopy(COPY);
+  const c = useCopy(REQ_COPY);
   const { locale } = useLanguage();
+  const labels = useLabels();
   const { toast } = useToast();
   const res = useResource((signal) => fetchOrder(id, { signal }), [id]);
   const [dlg, setDlg] = useState<Dlg>(null);
@@ -91,33 +69,57 @@ export default function OrderDetailPage() {
 
   const o = res.data;
   const isBuyer = o.role === "buyer";
-  const isService = !o.creator;
-  const can = orderActions(o);
-  const anyAction = Object.values(can).some(Boolean);
+  const isService = o.kind === "service" || (!o.creator && !!o.service);
+  const can = orderAbilities(o);
+  const manualWaiting = isBuyer && !!o.payment?.manual_reference_submitted && o.status === "awaiting_payment";
+  const actions = [can.pay && !manualWaiting, can.accept, can.decline, can.submit, can.cancel, can.dispute].some(Boolean);
 
-  const done = (title: string) => {
-    toast({ title, tone: "success" });
+  const done = (title: string, description?: string) => {
+    toast({ title, description, tone: "success" });
     res.reload();
   };
 
-  const counterpart = o.creator ? (
-    <Link to={`/dashboard/creators/${encodeURIComponent(o.creator.slug)}`} className="font-semibold text-accent-text hover:underline">
-      {o.creator.display_name}
-    </Link>
-  ) : o.service ? (
-    `${o.service.name} · ${c.serviceBy2k}`
-  ) : (
-    "-"
-  );
+  const stage = (isBuyer ? c.stageBuyer : c.stageCreator)[o.status] ?? o.status_label ?? "";
+  const deadline =
+    o.status === "awaiting_payment" && o.pay_by
+      ? { text: c.payBy(formatDateTime(o.pay_by, locale)), at: o.pay_by }
+      : o.status === "forwarded" && o.respond_by
+        ? { text: (isBuyer ? c.respondBy : c.respondByCreator)(formatDateTime(o.respond_by, locale)), at: o.respond_by }
+        : o.status === "in_progress" && o.due_at
+          ? { text: c.dueBy(formatDateTime(o.due_at, locale)), at: o.due_at }
+          : null;
+
+  const song = o.song;
+  const listen = song?.listen_url ?? song?.url ?? null;
+  const posts = o.submission_urls ?? [];
 
   return (
     <div>
-      <PageHeader
-        back={back}
-        title={o.title}
-        meta={<StatusPill status={o.status} size="md" />}
-        description={c.orderRef(o.reference)}
-      />
+      <PageHeader back={back} title={o.title} meta={<OrderStatusPill status={o.status} size="md" role={o.role} />} description={c.orderRef(o.reference)} />
+
+      {/* What happens now */}
+      <Card variant="accent" className="mb-6 space-y-2" aria-live="polite">
+        <p className="font-semibold text-text">{stage}</p>
+        {deadline && (
+          <p className="flex flex-wrap items-center gap-2 text-body-sm text-text-muted">
+            <span>{deadline.text}</span>
+            <Countdown until={deadline.at} />
+          </p>
+        )}
+        {manualWaiting && <p className="text-body-sm text-text-muted">{c.manualWaiting}</p>}
+        {o.overdue && (
+          <p className="flex items-start gap-2 text-body-sm font-semibold text-warning">
+            <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden />
+            {c.overdue}
+          </p>
+        )}
+        {!isBuyer && o.status === "in_progress" && o.fix_note && (
+          <FormAlert tone="warning">
+            <span className="font-semibold">{c.fixTitle}: </span>
+            {o.fix_note}
+          </FormAlert>
+        )}
+      </Card>
 
       <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_22rem]">
         <div className="min-w-0 space-y-8">
@@ -125,14 +127,48 @@ export default function OrderDetailPage() {
             <Card>
               <DefinitionList
                 items={[
-                  { label: isService ? c.service : c.creator, value: counterpart },
                   {
-                    label: c.release,
-                    value: o.release ? `${o.release.title} · ${o.release.artist}` : "-",
-                    hidden: !o.release,
+                    label: isService ? c.service : isBuyer ? c.creator : c.artist,
+                    value: isService ? (
+                      (o.service?.name ?? "-")
+                    ) : isBuyer && o.creator ? (
+                      <Link to={`/dashboard/creators/${encodeURIComponent(o.creator.slug)}`} className="font-semibold text-accent-text hover:underline">
+                        {o.creator.display_name}
+                      </Link>
+                    ) : (
+                      (o.artist?.display_name ?? song?.artist ?? "-")
+                    ),
                   },
-                  { label: c.track, value: o.track?.title ?? "-", hidden: !o.track },
-                  { label: c.price, value: <Money minor={o.price_minor} currency={o.currency} /> },
+                  {
+                    label: c.pkg,
+                    value: o.package ? `${o.package.title} · ${labels.platform(o.package.platform)}` : "-",
+                    hidden: !o.package,
+                  },
+                  {
+                    label: c.song,
+                    hidden: !song,
+                    value: song ? (
+                      <span className="flex flex-wrap items-center gap-x-3 gap-y-1">
+                        <span className="break-words">
+                          {[song.title, song.artist].filter(Boolean).join(" · ") || "-"}
+                          {song.platform && <span className="text-text-subtle"> ({labels.platform(song.platform)})</span>}
+                        </span>
+                        {listen && (
+                          <a
+                            href={listen}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1 font-semibold text-accent-text hover:underline"
+                          >
+                            <Headphones className="h-4 w-4" aria-hidden />
+                            {c.listen}
+                            <span className="sr-only"> {c.opensNewTab}</span>
+                          </a>
+                        )}
+                      </span>
+                    ) : null,
+                  },
+                  { label: c.price, value: <Money minor={o.price_minor} currency={o.currency} className="font-semibold" /> },
                   {
                     label: c.platformFee,
                     value: <Money minor={o.platform_fee_minor ?? 0} currency={o.currency} />,
@@ -143,51 +179,50 @@ export default function OrderDetailPage() {
                     value: <Money minor={o.creator_payout_minor ?? 0} currency={o.currency} className="font-bold" />,
                     hidden: isBuyer || o.creator_payout_minor == null,
                   },
-                  {
-                    label: c.campaign,
-                    value: (
-                      <Link to={`/dashboard/promotion/campaigns/${o.campaign_id}`} className="text-accent-text hover:underline">
-                        {c.viewCampaign(o.campaign_id)}
-                      </Link>
-                    ),
-                    hidden: !isBuyer,
-                  },
-                  { label: c.due, value: formatDate(o.due_at, locale), hidden: !o.due_at },
-                  { label: c.revisions, value: String(o.revision_count), hidden: isService },
+                  { label: c.preferredDate, value: formatDate(o.preferred_post_date, locale), hidden: !o.preferred_post_date },
                   { label: c.created, value: formatDateTime(o.created_at, locale) },
-                  { label: c.paid, value: formatDateTime(o.paid_at, locale), hidden: !o.paid_at },
-                  { label: c.acceptedAt, value: formatDateTime(o.accepted_at, locale), hidden: !o.accepted_at },
-                  { label: c.submittedAt, value: formatDateTime(o.submitted_at, locale), hidden: !o.submitted_at },
-                  { label: c.completedAt, value: formatDateTime(o.completed_at, locale), hidden: !o.completed_at },
                 ]}
               />
             </Card>
           </Section>
 
           <Section title={c.briefTitle} id="brief">
-            <Card>
+            <Card className="space-y-4">
               <p className="whitespace-pre-line break-words text-body-sm text-text-muted">{o.brief || c.noBrief}</p>
+              {o.creator_note && (
+                <div className="border-t border-border-subtle pt-4">
+                  <p className="text-caption font-semibold text-text-subtle">{c.creatorNote}</p>
+                  <p className="mt-1 whitespace-pre-line break-words text-body-sm text-text">{o.creator_note}</p>
+                </div>
+              )}
             </Card>
           </Section>
 
-          {(o.submission_url || o.submission_notes) && (
-            <Section title={c.submissionTitle} id="submission">
+          {(posts.length > 0 || o.submission_notes) && (
+            <Section title={c.deliveredTitle} id="delivered">
               <Card className="space-y-3">
-                {o.submission_url && (
-                  <a
-                    href={o.submission_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex max-w-full items-center gap-1.5 break-all font-semibold text-accent-text hover:underline"
-                  >
-                    <span className="sr-only">{c.submissionLink}: </span>
-                    {o.submission_url}
-                    <ExternalLink className="h-4 w-4 shrink-0" aria-hidden />
-                  </a>
+                {posts.length > 0 && (
+                  <ul className="space-y-2">
+                    {posts.map((u, i) => (
+                      <li key={u}>
+                        <a
+                          href={u}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex min-w-0 items-center gap-2 rounded-control border border-border-subtle px-3 py-2.5 transition-colors hover:border-border-strong"
+                        >
+                          <span className="shrink-0 font-semibold text-text">{c.postLink(i + 1)}</span>
+                          <span className="min-w-0 flex-1 truncate text-body-sm text-accent-text">{u}</span>
+                          <ExternalLink className="h-4 w-4 shrink-0 text-text-subtle" aria-hidden />
+                          <span className="sr-only">{c.opensNewTab}</span>
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
                 )}
                 {o.submission_notes && (
                   <div>
-                    <p className="text-caption font-medium text-text-subtle">{c.submissionNotes}</p>
+                    <p className="text-caption font-semibold text-text-subtle">{c.deliveredNotes}</p>
                     <p className="mt-1 whitespace-pre-line break-words text-body-sm text-text">{o.submission_notes}</p>
                   </div>
                 )}
@@ -195,25 +230,20 @@ export default function OrderDetailPage() {
             </Section>
           )}
 
+          {o.timeline && o.timeline.length > 0 && <Timeline order={o} />}
           {o.disputes && o.disputes.length > 0 && <Disputes order={o} />}
-
-          <Messages order={o} onSent={res.reload} />
+          <Messages order={o} canSend={can.message} onSent={res.reload} />
         </div>
 
-        <aside className="min-w-0 space-y-4">
+        {/* Phones: next steps sit right under the status, before the details. */}
+        <aside className="order-first min-w-0 space-y-4 lg:order-none">
           <Card className="lg:sticky lg:top-24">
-            <h2 className="text-h4 font-bold text-text">{c.actionsTitle}</h2>
-            {anyAction ? (
+            <h2 className="text-h4 font-bold text-text">{c.nextTitle}</h2>
+            {actions ? (
               <div className="mt-4 flex flex-col gap-2">
-                {can.pay && <Button onClick={() => setDlg("pay")}>{c.pay}</Button>}
+                {can.pay && !manualWaiting && <Button onClick={() => setDlg("pay")}>{c.payNow}</Button>}
                 {can.accept && <Button onClick={() => setDlg("accept")}>{c.accept}</Button>}
-                {can.submit && <Button onClick={() => setDlg("submit")}>{c.submitWork}</Button>}
-                {can.complete && <Button onClick={() => setDlg("complete")}>{c.complete}</Button>}
-                {can.revision && (
-                  <Button variant="secondary" onClick={() => setDlg("revision")}>
-                    {c.revision}
-                  </Button>
-                )}
+                {can.submit && <Button onClick={() => setDlg("submit")}>{c.submitLinks}</Button>}
                 {can.decline && (
                   <Button variant="secondary" onClick={() => setDlg("decline")}>
                     {c.decline}
@@ -235,24 +265,24 @@ export default function OrderDetailPage() {
             )}
             <p className="mt-5 flex gap-2 border-t border-border-subtle pt-4 text-caption text-text-subtle">
               <ShieldCheck className="h-4 w-4 shrink-0 text-accent-text" aria-hidden />
-              <span>{isBuyer ? (isService ? c.serviceNote : c.holdingNote) : c.creatorNote}</span>
+              <span>{isService ? c.serviceNote : isBuyer ? c.heldNote : c.creatorHeldNote}</span>
             </p>
           </Card>
         </aside>
       </div>
 
-      {/* Buyer */}
-      <PayDialog
+      <PayOrderDialog
         open={dlg === "pay"}
         order={o}
         onClose={() => setDlg(null)}
-        onPaid={() => done(isService ? c.paidServiceToast : c.paidToast)}
+        onPaid={() => done(c.paidToast)}
+        onManualSent={() => done(c.manualSentToast, c.manualSentBody)}
       />
       <ConfirmDialog
         open={dlg === "cancel"}
         onClose={() => setDlg(null)}
         title={c.cancelTitle}
-        description={o.status === "awaiting_creator" ? c.cancelBodyPaid : c.cancelBodyUnpaid}
+        description={c.cancelBody}
         confirmLabel={c.cancel}
         danger
         onConfirm={async () => {
@@ -261,37 +291,14 @@ export default function OrderDetailPage() {
         }}
       />
       <ConfirmDialog
-        open={dlg === "complete"}
-        onClose={() => setDlg(null)}
-        title={c.completeTitle}
-        description={c.completeBody}
-        confirmLabel={c.complete}
-        onConfirm={async () => {
-          await completeOrder(o.id);
-          done(c.completedToast);
-        }}
-      />
-      <ConfirmDialog
-        open={dlg === "revision"}
-        onClose={() => setDlg(null)}
-        title={c.revisionTitle}
-        description={c.revisionBody}
-        confirmLabel={c.revision}
-        reason={{ label: c.revisionLabel, minLength: 1 }}
-        onConfirm={async (note) => {
-          await requestOrderRevision(o.id, note);
-          done(c.revisionToast);
-        }}
-      />
-      {/* Creator */}
-      <ConfirmDialog
         open={dlg === "accept"}
         onClose={() => setDlg(null)}
         title={c.acceptTitle}
         description={c.acceptBody}
         confirmLabel={c.accept}
-        onConfirm={async () => {
-          await acceptOrder(o.id);
+        reason={{ label: c.acceptNote, hint: c.acceptNoteHint, required: false }}
+        onConfirm={async (note) => {
+          await acceptOrder(o.id, note.slice(0, 1000) || null);
           done(c.acceptedToast);
         }}
       />
@@ -308,230 +315,60 @@ export default function OrderDetailPage() {
           done(c.declinedToast);
         }}
       />
-      <SubmitWorkDialog open={dlg === "submit"} order={o} onClose={() => setDlg(null)} onDone={() => done(c.submittedToast)} />
-      {/* Both */}
+      <SubmitLinksDialog open={dlg === "submit"} order={o} onClose={() => setDlg(null)} onDone={() => done(c.submittedToast)} />
       <DisputeDialog open={dlg === "dispute"} order={o} onClose={() => setDlg(null)} onDone={() => done(c.disputeToast)} />
     </div>
   );
 }
 
-/* ── Pay from wallet ───────────────────────────────────────────────── */
+/* ── Timeline (order_events) ───────────────────────────────────────── */
 
-function PayDialog({ open, order, onClose, onPaid }: { open: boolean; order: Order; onClose: () => void; onPaid: () => void }) {
-  const c = useCopy(COPY);
+function Timeline({ order }: { order: Order }) {
+  const c = useCopy(REQ_COPY);
   const { locale } = useLanguage();
-  const wallet = useResource(
-    (signal) => (open ? fetchWallet({ signal }) : Promise.resolve(null)),
-    [open],
-  );
-  const balance = wallet.data?.balances.find((b) => b.currency === order.currency) ?? null;
-  const available = balance ? toMinor(balance.available_minor) : 0n;
-  const short = wallet.data !== null && !wallet.loading && available < toMinor(order.price_minor);
-
-  return (
-    <ConfirmDialog
-      open={open}
-      onClose={onClose}
-      title={c.payTitle}
-      confirmLabel={c.pay}
-      onConfirm={async () => {
-        await payOrderFromWallet(order.id);
-        onPaid();
-      }}
-    >
-      <p className="text-body-sm text-text-muted">{c.payBody(formatMinor(order.price_minor, order.currency, locale))}</p>
-      <div className="rounded-control border border-border-subtle bg-surface-sunken px-4 py-3">
-        <p className="text-caption text-text-subtle">{c.walletBalance}</p>
-        {wallet.loading || wallet.data === null ? (
-          wallet.error ? (
-            <p className="text-body-sm text-danger">{wallet.error}</p>
-          ) : (
-            <p className="text-body-sm text-text-subtle">{c.walletLoading}</p>
-          )
-        ) : balance ? (
-          <Money minor={balance.available_minor} currency={balance.currency} className="text-h4 font-bold text-text" />
-        ) : (
-          <p className="text-body-sm text-text">{c.walletNone(order.currency)}</p>
-        )}
-      </div>
-      {short && (
-        <FormAlert tone="warning">
-          {c.insufficient}{" "}
-          <Link to="/dashboard/wallet" className="font-semibold text-accent-text underline">
-            {c.topUpHint}
-          </Link>
-        </FormAlert>
-      )}
-    </ConfirmDialog>
-  );
-}
-
-/* ── Submit work (creator) ─────────────────────────────────────────── */
-
-function SubmitWorkDialog({
-  open,
-  order,
-  onClose,
-  onDone,
-}: {
-  open: boolean;
-  order: Order;
-  onClose: () => void;
-  onDone: () => void;
-}) {
-  const c = useCopy(COPY);
-  const { t } = useLanguage();
-  const [url, setUrl] = useState("");
-  const [notes, setNotes] = useState("");
-  const [urlError, setUrlError] = useState<string | null>(null);
-  const submit = useAction((u: string, n: string) => submitOrderWork(order.id, u, n || null));
-
-  useEffect(() => {
-    if (open) {
-      setUrl(order.submission_url ?? "");
-      setNotes("");
-      setUrlError(null);
-      submit.reset();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open]);
-
-  const onSubmit = async (e: FormEvent) => {
-    e.preventDefault();
-    const u = url.trim();
-    if (!/^https?:\/\/\S+\.\S+/i.test(u)) {
-      setUrlError(c.submitUrlInvalid);
-      return;
-    }
-    setUrlError(null);
-    const res = await submit.run(u, notes.trim());
-    if (res.ok) {
-      onClose();
-      onDone();
-    }
+  const events = order.timeline ?? [];
+  const actorName = (a: string) => {
+    if ((a === "artist" && order.role === "buyer") || (a === "creator" && order.role === "creator")) return c.actor.you;
+    return c.actor[a] ?? c.actor.system;
   };
-
-  const formId = "order-submit-work";
   return (
-    <Dialog
-      open={open}
-      onClose={submit.pending ? () => {} : onClose}
-      dismissible={!submit.pending}
-      title={c.submitTitle}
-      description={c.submitBody}
-      closeLabel={t("common.close")}
-      footer={
-        <>
-          <Button variant="ghost" onClick={onClose} disabled={submit.pending}>
-            {t("act.cancel")}
-          </Button>
-          <Button type="submit" form={formId} loading={submit.pending}>
-            {c.submitWork}
-          </Button>
-        </>
-      }
-    >
-      <form id={formId} onSubmit={onSubmit} noValidate className="space-y-4">
-        <Field label={c.submitUrl} hint={c.submitUrlHint} error={urlError ?? submit.fieldErrors.url} required>
-          <Input type="url" inputMode="url" value={url} onChange={(e) => setUrl(e.target.value)} maxLength={1024} />
-        </Field>
-        <Field label={c.submitNotes} optional optionalLabel={t("common.optional")} error={submit.fieldErrors.notes}>
-          <Textarea value={notes} onChange={(e) => setNotes(e.target.value)} maxLength={2000} rows={4} />
-        </Field>
-        {submit.error && !submit.fieldErrors.url && <FormAlert>{submit.error}</FormAlert>}
-      </form>
-    </Dialog>
+    <Section title={c.timelineTitle} id="timeline">
+      <Card>
+        <ol className="relative space-y-5 border-l border-border-subtle pl-5">
+          {events.map((e, i) => {
+            const last = i === events.length - 1;
+            return (
+              <li key={`${e.to}-${e.at}-${i}`} className="relative">
+                <span
+                  aria-hidden
+                  className={cn(
+                    "absolute -left-[1.6875rem] top-1 h-3 w-3 rounded-full border-2 border-surface-raised",
+                    last ? "bg-accent" : "bg-border-strong",
+                  )}
+                />
+                <p className="flex flex-wrap items-center gap-2">
+                  <span className="font-semibold text-text">{c.status[e.to as OrderStatus] ?? e.label ?? e.to}</span>
+                  <span className="text-caption text-text-subtle">
+                    {actorName(e.actor)} · <time dateTime={e.at}>{formatDateTime(e.at, locale)}</time>
+                  </span>
+                </p>
+                {/* System notes are English boilerplate; people's notes (reasons, fixes) are shown. */}
+                {e.note && e.actor !== "system" && (
+                  <p className="mt-1 whitespace-pre-line break-words text-body-sm text-text-muted">{e.note}</p>
+                )}
+              </li>
+            );
+          })}
+        </ol>
+      </Card>
+    </Section>
   );
 }
 
-/* ── Dispute (buyer or creator) ────────────────────────────────────── */
-
-function DisputeDialog({
-  open,
-  order,
-  onClose,
-  onDone,
-}: {
-  open: boolean;
-  order: Order;
-  onClose: () => void;
-  onDone: () => void;
-}) {
-  const c = useCopy(COPY);
-  const { t } = useLanguage();
-  const labels = useLabels();
-  const [reason, setReason] = useState<DisputeReason | "">("");
-  const [details, setDetails] = useState("");
-  const [errors, setErrors] = useState<Record<string, string>>({});
-  const act = useAction((r: DisputeReason, d: string) => disputeOrder(order.id, r, d));
-
-  useEffect(() => {
-    if (open) {
-      setReason("");
-      setDetails("");
-      setErrors({});
-      act.reset();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open]);
-
-  const onSubmit = async (e: FormEvent) => {
-    e.preventDefault();
-    const errs: Record<string, string> = {};
-    if (!reason) errs.reason = c.disputeReasonRequired;
-    if (details.trim().length < 20) errs.details = c.disputeDetailsShort;
-    setErrors(errs);
-    if (Object.keys(errs).length || !reason) return;
-    const res = await act.run(reason, details.trim());
-    if (res.ok) {
-      onClose();
-      onDone();
-    }
-  };
-
-  const formId = "order-dispute";
-  return (
-    <Dialog
-      open={open}
-      onClose={act.pending ? () => {} : onClose}
-      dismissible={!act.pending}
-      title={c.disputeTitle}
-      description={c.disputeBody}
-      closeLabel={t("common.close")}
-      footer={
-        <>
-          <Button variant="ghost" onClick={onClose} disabled={act.pending}>
-            {t("act.cancel")}
-          </Button>
-          <Button type="submit" form={formId} loading={act.pending} variant="danger">
-            {c.dispute}
-          </Button>
-        </>
-      }
-    >
-      <form id={formId} onSubmit={onSubmit} noValidate className="space-y-4">
-        <Field label={c.disputeReason} error={errors.reason ?? act.fieldErrors.reason} required>
-          <Select value={reason} onChange={(e) => setReason(e.target.value as DisputeReason)} placeholder={c.disputeReason}>
-            {DISPUTE_REASONS.map((r) => (
-              <option key={r} value={r}>
-                {labels.disputeReason(r)}
-              </option>
-            ))}
-          </Select>
-        </Field>
-        <Field label={c.disputeDetails} hint={c.disputeDetailsHint} error={errors.details ?? act.fieldErrors.details} required>
-          <Textarea value={details} onChange={(e) => setDetails(e.target.value)} maxLength={3000} rows={5} />
-        </Field>
-        {act.error && !act.fieldErrors.reason && !act.fieldErrors.details && <FormAlert>{act.error}</FormAlert>}
-      </form>
-    </Dialog>
-  );
-}
-
-/* ── Disputes list ─────────────────────────────────────────────────── */
+/* ── Disputes ──────────────────────────────────────────────────────── */
 
 function Disputes({ order }: { order: Order }) {
-  const c = useCopy(COPY);
+  const c = useCopy(REQ_COPY);
   const { locale } = useLanguage();
   const labels = useLabels();
   return (
@@ -562,16 +399,19 @@ function Disputes({ order }: { order: Order }) {
   );
 }
 
-/* ── Message thread ────────────────────────────────────────────────── */
+/* ── Messages (filtered by the server, visible to staff) ───────────── */
 
-function Messages({ order, onSent }: { order: Order; onSent: () => void }) {
-  const c = useCopy(COPY);
+function Messages({ order, canSend, onSent }: { order: Order; canSend: boolean; onSent: () => void }) {
+  const c = useCopy(REQ_COPY);
   const { locale } = useLanguage();
   const { toast } = useToast();
   const [body, setBody] = useState("");
   const [error, setError] = useState<string | null>(null);
   const send = useAction((text: string) => sendOrderMessage(order.id, text));
   const messages = order.messages ?? [];
+
+  const authorName = (a: string | null | undefined) =>
+    a === "artist" ? c.actor.artist : a === "creator" ? c.actor.creator : (a ?? c.actor.staff);
 
   const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -583,7 +423,7 @@ function Messages({ order, onSent }: { order: Order; onSent: () => void }) {
     const res = await send.run(body.trim());
     if (res.ok) {
       setBody("");
-      toast({ title: c.messageSent, tone: "success" });
+      toast({ title: res.value.message?.was_redacted ? c.messageSentRedacted : c.messageSent, tone: "success" });
       onSent();
     }
   };
@@ -591,6 +431,10 @@ function Messages({ order, onSent }: { order: Order; onSent: () => void }) {
   return (
     <Section title={c.messagesTitle} id="messages">
       <Card>
+        <p className="mb-4 flex gap-2 rounded-control bg-surface-sunken px-3 py-2 text-caption text-text-muted">
+          <ShieldOff className="mt-px h-4 w-4 shrink-0 text-accent-text" aria-hidden />
+          <span>{c.contactRemovedNote}</span>
+        </p>
         {messages.length === 0 ? (
           <p className="text-body-sm text-text-subtle">{c.noMessages}</p>
         ) : (
@@ -598,30 +442,32 @@ function Messages({ order, onSent }: { order: Order; onSent: () => void }) {
             {messages.map((m) =>
               m.is_system ? (
                 <li key={m.id} className="flex justify-center">
-                  <p className="max-w-full rounded-full bg-white/[0.04] px-3 py-1 text-center text-caption text-text-subtle">
-                    <span className="font-semibold">{c.system}:</span> <span className="break-words">{m.body}</span>
-                    <span className="sr-only"> · </span>
-                    <time dateTime={m.created_at} className="ml-2 whitespace-nowrap opacity-80">
-                      {formatDateTime(m.created_at, locale)}
-                    </time>
+                  <p className="max-w-full rounded-full bg-tint/[0.05] px-3 py-1 text-center text-caption text-text-subtle">
+                    <span className="font-semibold">2kTunes:</span> <span className="break-words">{m.body}</span>
                   </p>
                 </li>
               ) : (
                 <li key={m.id} className={cn("flex", m.mine ? "justify-end" : "justify-start")}>
                   <div
                     className={cn(
-                      "max-w-[85%] min-w-0 rounded-card px-4 py-2.5",
+                      "min-w-0 max-w-[85%] rounded-card px-4 py-2.5",
                       m.mine ? "bg-accent-soft text-text" : "border border-border-subtle bg-surface-sunken text-text",
                     )}
                   >
-                    <p className="text-caption font-semibold text-text-subtle">
-                      {m.mine ? c.you : (m.author ?? "-")}
-                      <span aria-hidden> · </span>
+                    <p className="flex flex-wrap items-center gap-x-1.5 text-caption font-semibold text-text-subtle">
+                      {m.mine ? c.actor.you : authorName(m.author)}
+                      <span aria-hidden>·</span>
                       <time dateTime={m.created_at} className="font-normal">
                         {formatDateTime(m.created_at, locale)}
                       </time>
                     </p>
                     <p className="mt-1 whitespace-pre-line break-words text-body-sm">{m.body}</p>
+                    {m.was_redacted && (
+                      <Badge tone="warning" size="sm" className="mt-1.5">
+                        <ShieldOff className="mr-1 inline h-3 w-3 align-[-2px]" aria-hidden />
+                        {c.redacted}
+                      </Badge>
+                    )}
                   </div>
                 </li>
               ),
@@ -629,17 +475,19 @@ function Messages({ order, onSent }: { order: Order; onSent: () => void }) {
           </ol>
         )}
 
-        <form onSubmit={onSubmit} noValidate className="mt-5 space-y-3 border-t border-border-subtle pt-5">
-          <Field label={c.messageLabel} error={error ?? send.fieldErrors.body}>
-            <Textarea value={body} onChange={(e) => setBody(e.target.value)} maxLength={2000} rows={3} />
-          </Field>
-          {send.error && !send.fieldErrors.body && <FormAlert>{send.error}</FormAlert>}
-          <div className="flex justify-end">
-            <Button type="submit" loading={send.pending}>
-              {c.send}
-            </Button>
-          </div>
-        </form>
+        {canSend && (
+          <form onSubmit={onSubmit} noValidate className="mt-5 space-y-3 border-t border-border-subtle pt-5">
+            <Field label={c.messageLabel} error={error ?? send.fieldErrors.body}>
+              <Textarea value={body} onChange={(e) => setBody(e.target.value)} maxLength={2000} rows={3} />
+            </Field>
+            {send.error && !send.fieldErrors.body && <FormAlert>{send.error}</FormAlert>}
+            <div className="flex justify-end">
+              <Button type="submit" loading={send.pending}>
+                {c.send}
+              </Button>
+            </div>
+          </form>
+        )}
       </Card>
     </Section>
   );

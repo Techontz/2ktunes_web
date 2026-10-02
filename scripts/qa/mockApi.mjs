@@ -280,7 +280,7 @@ const creator = {
   id: 4,
   slug: "amani-dances",
   display_name: "Amani Dances",
-  avatar_url: null,
+  avatar_url: "/images/artists/artist-2-sm.webp",
   country: "TZ",
   city: "Arusha",
   languages: ["sw", "en"],
@@ -292,8 +292,8 @@ const creator = {
   from_price_minor: 150_000_00,
   from_price_currency: "TZS",
   social_accounts: [
-    { id: 1, platform: "tiktok", handle: "@amanidances", url: "https://www.tiktok.com/@amanidances", followers: 152_000, avg_views: 41_000, engagement_rate_bp: 820, audience_countries: [{ country: "TZ", percent: 71 }], metrics_source: "admin_verified", verified: true, metrics_verified_at: "2026-09-01T00:00:00Z" },
-    { id: 2, platform: "instagram", handle: "@amani.dances", url: null, followers: 32_000, avg_views: 6_000, engagement_rate_bp: 410, audience_countries: [], metrics_source: "self_reported", verified: false, metrics_verified_at: null },
+    { id: 1, platform: "tiktok", handle: null, url: null, followers: 152_000, avg_views: 41_000, engagement_rate_bp: 820, audience_countries: [{ country: "TZ", percent: 71 }], metrics_source: "admin_verified", verified: true, metrics_verified_at: "2026-09-01T00:00:00Z" },
+    { id: 2, platform: "instagram", handle: null, url: null, followers: 32_000, avg_views: 6_000, engagement_rate_bp: 410, audience_countries: [], metrics_source: "self_reported", verified: false, metrics_verified_at: null },
   ],
 };
 const creatorFull = {
@@ -306,41 +306,105 @@ const creatorFull = {
     { id: 11, title: "One TikTok dance video", platform: "tiktok", description: "A 15 to 30 second original dance to your song, posted on my account.", deliverable: "1 TikTok post", price_minor: 150_000_00, currency: "TZS", turnaround_days: 5, is_active: true },
     { id: 12, title: "Instagram Reel + Story", platform: "instagram", description: null, deliverable: "1 Reel, 1 Story", price_minor: 220_000_00, currency: "TZS", turnaround_days: 7, is_active: true },
   ],
-  portfolio: [{ id: 1, platform: "tiktok", url: "https://www.tiktok.com/@amanidances/video/1", title: "Amapiano challenge", views: 210_000 }],
+  portfolio: [
+    { id: 1, platform: "upload", media_type: "upload", url: null, title: null, caption: "Amapiano challenge", video_src: "/qa/none.mp4", thumbnail_url: "/images/artists/artist-2-lg.webp", views: 210_000, views_source: "self_reported", featured_on_home: true },
+    { id: 2, platform: "tiktok", media_type: "external", url: "https://www.tiktok.com/@amanidances/video/1", title: "Bongo Flava duet", caption: null, video_src: null, thumbnail_url: "/images/artists/artist-4-sm.webp", views: 48_000, views_source: "self_reported", featured_on_home: false },
+    { id: 3, platform: "instagram", media_type: "external", url: "https://www.instagram.com/reel/abc", title: null, caption: "Studio session reel", video_src: null, thumbnail_url: null, views: null, views_source: "self_reported", featured_on_home: false },
+  ],
 };
 
-const order = {
-  id: 5,
-  reference: "OR-8K2P1Q",
-  title: "One TikTok dance video",
-  status: "submitted",
+const orderBase = {
+  kind: "creator_request",
   role: "buyer",
   price_minor: 150_000_00,
   currency: "TZS",
-  platform_fee_minor: 22_500_00,
-  creator_payout_minor: 127_500_00,
-  creator: { id: 4, display_name: "Amani Dances", slug: "amani-dances", avatar_url: null },
+  platform_fee_minor: null,
+  creator_payout_minor: null,
+  creator: { id: 4, display_name: "Amani Dances", slug: "amani-dances", avatar_url: "/images/artists/artist-2-sm.webp" },
+  artist: null,
+  package: { id: 11, title: "One TikTok dance video", platform: "tiktok", turnaround_days: 5 },
   service: null,
-  campaign_id: 1,
-  brief: "Dance to the chorus of “Bahari”. Tag @neema and use #BahariChallenge.",
-  submission_url: "https://www.tiktok.com/@amanidances/video/2",
-  submission_notes: "Posted at 7pm EAT for best reach.",
-  revision_count: 0,
-  due_at: "2026-10-04T00:00:00Z",
-  paid_at: "2026-09-25T00:00:00Z",
+  campaign_id: null,
+  song: { source: "catalog", release_id: 7, track_id: 71, title: "Bahari", artist: "Neema", url: null, platform: null, listen_url: "/qa/none.mp3" },
+  brief: "Dance to the chorus of “Bahari”. Use #BahariChallenge.",
+  preferred_post_date: "2026-10-10",
+  creator_note: "Karibu! I'll post it Tuesday evening.",
+  submission_urls: [],
+  submission_notes: null,
+  fix_note: null,
+  fix_count: 0,
+  close_reason: null,
+  close_note: null,
+  respond_by: null,
+  pay_by: null,
+  due_at: null,
+  payment: { method: null, paid_at: null, manual_reference_submitted: false },
+  overdue: false,
+  forwarded_at: "2026-09-24T10:00:00Z",
   accepted_at: "2026-09-25T06:00:00Z",
-  submitted_at: "2026-09-29T19:00:00Z",
+  submitted_at: null,
+  verified_at: null,
   completed_at: null,
+  closed_at: null,
   created_at: "2026-09-24T00:00:00Z",
-  release: { id: 7, title: "Bahari ya Hindi", artist: "Neema", slug: "bahari-ya-hindi-k2j9aa" },
-  track: { id: 71, title: "Bahari" },
-  messages: [
-    { id: 1, body: "Order paid from wallet.", is_system: true, author: null, mine: false, created_at: "2026-09-25T00:00:00Z" },
-    { id: 2, body: "Karibu! I'll post it Tuesday evening.", is_system: false, author: "Amani Dances", mine: false, created_at: "2026-09-25T06:10:00Z" },
-    { id: 3, body: "Asante sana!", is_system: false, author: "Neema Said", mine: true, created_at: "2026-09-25T07:00:00Z" },
-  ],
   disputes: [],
 };
+const ev = (from, to, label, actor, note, at) => ({ from, to, label, actor, note, at });
+const order = {
+  ...orderBase,
+  id: 5,
+  reference: "OR260924AK2P1Q",
+  title: "One TikTok dance video · Amani Dances",
+  status: "submitted",
+  status_label: "Delivered, being verified",
+  submission_urls: ["https://www.tiktok.com/@amanidances/video/2", "https://www.instagram.com/reel/bahari"],
+  submission_notes: "Posted at 7pm EAT for best reach.",
+  due_at: "2026-09-30T00:00:00Z",
+  payment: { method: "wallet", paid_at: "2026-09-25T09:00:00Z", manual_reference_submitted: false },
+  submitted_at: "2026-09-29T19:00:00Z",
+  can: { cancel: false, pay: false, accept: false, decline: false, submit: false, dispute: true, message: true },
+  timeline: [
+    ev(null, "requested", "Requested", "artist", "Request submitted.", "2026-09-24T00:00:00Z"),
+    ev("requested", "forwarded", "Waiting for the creator", "staff", null, "2026-09-24T10:00:00Z"),
+    ev("forwarded", "awaiting_payment", "Accepted, awaiting payment", "creator", "Karibu! I'll post it Tuesday evening.", "2026-09-25T06:00:00Z"),
+    ev("awaiting_payment", "in_progress", "In progress", "artist", "Paid from wallet.", "2026-09-25T09:00:00Z"),
+    ev("in_progress", "submitted", "Delivered, being verified", "creator", null, "2026-09-29T19:00:00Z"),
+  ],
+  messages: [
+    { id: 1, body: "Paid from wallet.", is_system: true, was_redacted: false, author: "2kTunes", mine: false, created_at: "2026-09-25T09:00:00Z" },
+    { id: 2, body: "Karibu! Message me on [contact details removed] for the stems.", is_system: false, was_redacted: true, author: "creator", mine: false, created_at: "2026-09-25T09:10:00Z" },
+    { id: 3, body: "Asante sana! Everything is in the brief.", is_system: false, was_redacted: false, author: "artist", mine: true, created_at: "2026-09-25T10:00:00Z" },
+  ],
+};
+const orderAwaiting = {
+  ...orderBase,
+  id: 6,
+  reference: "OR261001ZX81KD",
+  title: "Instagram Reel + Story · Amani Dances",
+  status: "awaiting_payment",
+  status_label: "Accepted, awaiting payment",
+  price_minor: 220_000_00,
+  package: { id: 12, title: "Instagram Reel + Story", platform: "instagram", turnaround_days: 7 },
+  song: { source: "external", release_id: null, track_id: null, title: "Moyo Wangu", artist: "Neema", url: "https://open.spotify.com/track/example", platform: "spotify", listen_url: "https://open.spotify.com/track/example" },
+  pay_by: "2026-10-08T06:00:00Z",
+  accepted_at: "2026-10-01T06:00:00Z",
+  created_at: "2026-09-30T08:00:00Z",
+  can: { cancel: true, pay: true, accept: false, decline: false, submit: false, dispute: false, message: true },
+  timeline: [
+    ev(null, "requested", "Requested", "artist", "Request submitted.", "2026-09-30T08:00:00Z"),
+    ev("requested", "forwarded", "Waiting for the creator", "staff", null, "2026-09-30T12:00:00Z"),
+    ev("forwarded", "awaiting_payment", "Accepted, awaiting payment", "creator", "Happy to do this. I'll post on the 10th.", "2026-10-01T06:00:00Z"),
+  ],
+  messages: [],
+};
+/** Creator view of incoming work. */
+const asCreator = (o, over) => ({ ...o, role: "creator", platform_fee_minor: Math.round(o.price_minor * 0.15), creator_payout_minor: Math.round(o.price_minor * 0.85), artist: { display_name: "Neema Said" }, ...over });
+const creatorOrders = [
+  asCreator(orderAwaiting, { id: 21, status: "forwarded", status_label: "Waiting for the creator", respond_by: "2026-10-04T12:00:00Z", pay_by: null, accepted_at: null, can: { accept: true, decline: true, message: true } }),
+  asCreator(order, { id: 22, status: "in_progress", status_label: "In progress", submission_urls: [], due_at: "2026-10-06T00:00:00Z", fix_note: "Please use the chorus, not the intro.", fix_count: 1, can: { submit: true, dispute: true, message: true } }),
+  asCreator(order, { id: 23, title: "Instagram Reel + Story · Amani Dances", status: "awaiting_payment", status_label: "Accepted, awaiting payment", can: { message: true } }),
+];
+const ordersById = Object.fromEntries([order, orderAwaiting, ...creatorOrders].map((o) => [String(o.id), o]));
 
 const campaign = {
   id: 1,
@@ -398,6 +462,11 @@ const help = {
   ],
 };
 
+const planOffer = (id, currency) => {
+  if (id === 1) return { headline: "Joining is free", type: "free", list_minor: currency === "USD" ? 1500 : 3_900_000, final_minor: 0, final: "0.00", currency, ends_at: "2026-12-31T20:59:59Z", free_days: 30, referral_applied: false };
+  if (id === 2) return { headline: "Launch offer", type: "percent_off", list_minor: currency === "USD" ? 2300 : 5_900_000, final_minor: currency === "USD" ? 1725 : 4_425_000, final: currency === "USD" ? "17.25" : "44250.00", currency, ends_at: "2026-12-31T20:59:59Z", free_days: null, referral_applied: false };
+  return null;
+};
 const plans = [
   { id: 1, name: "Single Artist", price: "39000.00", currency: "TZS", price_usd: "15.00", prices: [{ currency: "TZS", amount: "39000.00" }, { currency: "USD", amount: "15.00" }], duration: 365, description: "For independent artists releasing their own music.", max_artists: 1, is_active: true, order: 1, features: ["Unlimited releases for a year", "Delivery to all major stores and platforms", "Keep 100% of your rights"] },
   { id: 2, name: "2 Artists", price: "59000.00", currency: "TZS", price_usd: "23.00", prices: [{ currency: "TZS", amount: "59000.00" }, { currency: "USD", amount: "23.00" }], duration: 365, description: "For duos and artists who manage a second act.", max_artists: 2, is_active: true, order: 2, features: ["Everything in Single Artist", "Separate analytics per artist", "Royalty splits between collaborators"] },
@@ -445,6 +514,56 @@ const publicRelease = {
   artist_links: { instagram: "https://instagram.com/neema" },
 };
 
+
+const activeOffers = [
+  { id: 3, headline: "Launch offer", description: "Join free for 30 days.", type: "free", percent_bp: null, amount_minor: null, currency: null, free_days: 30, audience: "first_subscription", requires_code: false, plan_ids: [1], starts_at: "2026-09-01T00:00:00Z", ends_at: "2026-12-31T20:59:59Z" },
+];
+
+const friendGets = {
+  mode: "percent",
+  discount_bp: 2000,
+  plans: [{ plan_id: 1, plan_name: "Single Artist", duration_days: 365, list_minor: 3_900_000, price_minor: 3_120_000, currency: "TZS" }],
+  text: "20% off your first plan",
+};
+
+const referralSummary = {
+  code: "K7M2Q9XA",
+  link: "https://2ktunes.com/join/K7M2Q9XA",
+  program: {
+    enabled: true,
+    friend_gets: friendGets,
+    you_get: { type: "wallet_credit", amount_minor: 500_000, currency: "TZS", free_days: 0, text: "You get TZS 5,000.00 in your wallet for each friend who joins and starts a paid plan." },
+    reward_trigger: "on_first_paid_subscription",
+    hold_days: 7,
+    max_rewards_per_month: 10,
+  },
+  stats: { joined: 4, qualified: 2, rewarded: 1, pending_rewards: 1, rejected: 0, earned: [{ currency: "TZS", amount_minor: 500_000 }], free_days_earned: 0 },
+  referrals: [
+    { id: 8, initials: "BM", status: "joined", reward_pending: false, reward_skipped: false, joined_at: "2026-09-29T00:00:00Z", qualified_at: null, reward_due_at: null, rewarded_at: null },
+    { id: 7, initials: "AJ", status: "qualified", reward_pending: true, reward_skipped: false, joined_at: "2026-09-20T00:00:00Z", qualified_at: "2026-09-27T00:00:00Z", reward_due_at: "2026-10-04T00:00:00Z", rewarded_at: null },
+    { id: 6, initials: "NK", status: "rewarded", reward_pending: false, reward_skipped: false, joined_at: "2026-09-02T00:00:00Z", qualified_at: "2026-09-05T00:00:00Z", reward_due_at: null, rewarded_at: "2026-09-12T00:00:00Z" },
+    { id: 5, initials: "SO", status: "joined", reward_pending: false, reward_skipped: false, joined_at: "2026-08-28T00:00:00Z", qualified_at: null, reward_due_at: null, rewarded_at: null },
+  ],
+};
+
+const showcaseCreator = (n, slug, name, categories, verified, price) => ({
+  slug, display_name: name, avatar_url: `/images/artists/artist-${n}-sm.webp`, categories, verified, from_price_minor: price, from_price_currency: "TZS",
+});
+const showcase = [
+  { id: 1, caption: "Bahari dance challenge", platform: "upload", media_type: "upload", video_src: "/qa/none.mp4", external_url: null, thumbnail_url: "/images/artists/artist-2-lg.webp", views_count: 210_000, views_source: "self_reported", creator: showcaseCreator(2, "amani-dances", "Amani Dances", ["dance"], true, 150_000_00) },
+  { id: 2, caption: "Comedy skit with the hook", platform: "tiktok", media_type: "external", video_src: null, external_url: "https://www.tiktok.com/@x/video/1", thumbnail_url: "/images/artists/artist-4-lg.webp", views_count: 64_000, views_source: "self_reported", creator: showcaseCreator(4, "juma-jokes", "Juma Jokes", ["comedy"], false, 90_000_00) },
+  { id: 3, caption: "Lip sync in the market", platform: "instagram", media_type: "external", video_src: null, external_url: "https://www.instagram.com/reel/x", thumbnail_url: "/images/artists/artist-1-lg.webp", views_count: 38_500, views_source: "self_reported", creator: showcaseCreator(1, "zuri-vibes", "Zuri Vibes", ["lip_sync", "music"], true, 120_000_00) },
+  { id: 4, caption: "Morning motivation", platform: "youtube", media_type: "external", video_src: null, external_url: "https://youtube.com/shorts/x", thumbnail_url: "/images/artists/artist-3-lg.webp", views_count: null, views_source: "self_reported", creator: showcaseCreator(3, "baraka-speaks", "Baraka Speaks", ["motivational_speaker"], false, 200_000_00) },
+  { id: 5, caption: "Fashion walk to Amapiano", platform: "upload", media_type: "upload", video_src: "/qa/none.mp4", external_url: null, thumbnail_url: "/images/artists/artist-5-lg.webp", views_count: 15_200, views_source: "self_reported", creator: showcaseCreator(5, "neema-style", "Neema Style", ["fashion"], true, 110_000_00) },
+];
+const publicCreators = showcase.map((i, n) => ({ ...i.creator, country: "TZ", packages_count: 2 + (n % 2) }));
+
+const earnings = {
+  earnings: [{ currency: "TZS", pending_minor: 127_500_00, pending_orders: 1, pending_withdrawable: false, available_minor: 85_000_00, lifetime_earned_minor: 340_000_00 }],
+  platform_fee_bp: 1500,
+  note: "Pending earnings are your share (after the platform fee) of paid orders. They move to your wallet when 2kTunes verifies your post.",
+};
+
 const ok = (payload, status = 200) => ({ status, body: { status: true, ...payload } });
 
 /** Route table: [method, path regex, handler(match, query, body)] */
@@ -480,7 +599,29 @@ const routes = [
       pending_payment: null,
       payment_instructions: { methods: ["mpesa_tz", "airtel_tz", "mixx_tz", "bank"], note: "Pay using the details shown in the app, then enter your payment reference.", details: { mpesa_lipa_number: "5123456", account_name: "2kTunes Ltd" } },
     })],
-  ["GET", /^\/plans$/, () => ok({ plans })],
+  ["GET", /^\/plans$/, (_m, q) => ok({ plans: plans.map((p) => ({ ...p, currencies: p.prices.map((x) => x.currency), offer: planOffer(p.id, (q.get("currency") || p.currency).toUpperCase()) })) })],
+  ["GET", /^\/offers\/active$/, () => ok({ offers: activeOffers })],
+  ["POST", /^\/offers\/validate$/, (_m, _q, body) => {
+    const p = plans.find((x) => x.id === Number(body?.plan_id)) ?? plans[0];
+    const cur = (body?.currency || p.currency).toUpperCase();
+    const list = Math.round(Number((p.prices.find((x) => x.currency === cur) ?? p.prices[0]).amount) * 100);
+    if (body?.code && String(body.code).toUpperCase() !== "STUDIO20") return { status: 422, body: { status: false, code: "offer_code_invalid", message: "That code is not valid." } };
+    // Offers never stack: the lowest of the automatic offer and the code wins.
+    const auto = planOffer(p.id, cur);
+    const coded = body?.code ? Math.round(list * 0.8) : Infinity;
+    const useCode = coded < (auto?.final_minor ?? list);
+    if (body?.code && !useCode) return { status: 422, body: { status: false, code: "offer_not_applicable", message: "Your price is already lower." } };
+    const final = useCode ? coded : (auto?.final_minor ?? list);
+    const offer = useCode ? { id: 9, headline: "Studio deal", type: "percent_off", ends_at: null } : auto ? { id: p.id === 1 ? 3 : 4, headline: auto.headline, type: auto.type, ends_at: auto.ends_at } : null;
+    return ok({ quote: { list_minor: list, final_minor: final, discount_minor: list - final, currency: cur, list: (list / 100).toFixed(2), final: (final / 100).toFixed(2), offer, referral_applied: false, free_days: !useCode && auto?.type === "free" ? auto.free_days : null } });
+  }],
+  ["GET", /^\/public\/referral\/(\w+)$/, (m) =>
+    ok({ referral: m[1].toUpperCase() === "INVALID" ? { valid: false, code: m[1].toUpperCase() } : { valid: true, code: m[1].toUpperCase(), referrer_name: "Zuri", friend_gets: friendGets, message: "Invited by Zuri: get 20% off your first plan" } })],
+  ["GET", /^\/referrals$/, () => ok({ referral: referralSummary })],
+  ["GET", /^\/public\/showcase$/, () => ok({ items: showcase })],
+  ["GET", /^\/public\/creators$/, () => ok({ creators: publicCreators })],
+  ["GET", /^\/creator\/earnings$/, () => ok(earnings)],
+  ["POST", /^\/creator-requests$/, () => ok({ order: { ...orderAwaiting, status: "requested" } }, 201)],
   ["GET", /^\/release-config$/, () => ok({ config })],
   ["GET", /^\/stores$/, () => ok({ stores })],
   ["GET", /^\/releases$/, (_m, q) => {
@@ -534,8 +675,12 @@ const routes = [
   ["GET", /^\/campaigns$/, () => ok({ campaigns: [campaign], meta: meta(1) })],
   ["GET", /^\/campaigns\/(\d+)$/, () => ok({ campaign })],
   ["GET", /^\/promotion-services$/, () => ok({ services })],
-  ["GET", /^\/orders$/, (_m, q) => ok({ orders: q.get("as") === "creator" ? [] : [order], meta: meta(q.get("as") === "creator" ? 0 : 1) })],
-  ["GET", /^\/orders\/(\d+)$/, () => ok({ order })],
+  ["GET", /^\/orders$/, (_m, q) => {
+    const statuses = (q.get("status") || "").split(",").filter(Boolean);
+    const list = (q.get("as") === "creator" ? creatorOrders : [orderAwaiting, order]).filter((o) => !statuses.length || statuses.includes(o.status));
+    return ok({ orders: list, meta: meta(list.length) });
+  }],
+  ["GET", /^\/orders\/(\d+)$/, (m) => (ordersById[m[1]] ? ok({ order: ordersById[m[1]] }) : { status: 404, body: { status: false, code: "not_found", message: "Not found." } })],
   ["GET", /^\/support\/tickets$/, () => ok({ tickets, meta: meta(1) })],
   ["GET", /^\/support\/tickets\/(\d+)$/, () => ok({ ticket })],
   ["GET", /^\/help$/, (_m, q) => ok({ articles: help[q.get("locale") === "sw" ? "sw" : "en"] })],

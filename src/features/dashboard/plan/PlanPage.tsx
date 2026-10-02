@@ -18,6 +18,7 @@ import { useAuth } from "@/lib/auth/AuthProvider";
 import { formatDate } from "@/lib/dates";
 import { useLanguage } from "@/lib/LanguageContext";
 import { formatCount, formatDecimal, formatMinor, isZeroDecimal } from "@/lib/money";
+import { OfferPrice } from "@/features/growth/OfferPrice";
 import { useCopy } from "@/lib/useCopy";
 import { cn } from "@/lib/utils";
 import { COPY, type PlanCopy } from "./copy";
@@ -108,6 +109,11 @@ export default function PlanPage() {
           toast({ title: c.submitted, tone: "success" });
           afterChange();
         }}
+        onActivated={(p) => {
+          setPaidPlan(null);
+          toast({ title: c.activated(p.name), description: c.activatedBody, tone: "success" });
+          afterChange();
+        }}
       />
     </>
   );
@@ -178,6 +184,8 @@ function PlanCard({
   const isPending = info.pending_payment?.plan_id === plan.id;
   const features = (plan.features ?? []).filter((f) => typeof f === "string" && f.trim());
   const headingId = `plan-${plan.id}-name`;
+  // GET /plans quotes the offer in the plan's main currency (my own eligibility).
+  const offer = !free && plan.offer && plan.offer.currency === main.currency ? plan.offer : null;
 
   return (
     <Card
@@ -201,15 +209,25 @@ function PlanCard({
           </Badge>
         )}
       </div>
-      <p className="mt-3 break-words text-[1.625rem] font-bold leading-tight tracking-[-0.025em] text-text">
-        {free ? c.free : formatDecimal(main.amount, main.currency, locale)}
-      </p>
+      {offer ? (
+        <OfferPrice
+          offer={offer}
+          size="md"
+          className="mt-3"
+          format={(minor, cur) => formatMinor(minor, cur, locale)}
+          period={plan.duration === 365 || plan.duration === 366 ? c.perYear : plan.duration ? c.perDays(formatCount(plan.duration, locale)) : undefined}
+        />
+      ) : (
+        <p className="mt-3 break-words text-[1.625rem] font-bold leading-tight tracking-[-0.025em] text-text">
+          {free ? c.free : formatDecimal(main.amount, main.currency, locale)}
+        </p>
+      )}
       {!free && others.length > 0 && (
         <p className="text-body-sm font-semibold text-text-muted">
           {others.map((p) => c.orPrice(formatDecimal(p.amount, p.currency, locale))).join(" · ")}
         </p>
       )}
-      {plan.duration ? (
+      {plan.duration && !offer ? (
         <p className="text-body-sm text-text-subtle">
           {plan.duration === 365 || plan.duration === 366 ? c.perYear : c.perDays(formatCount(plan.duration, locale))}
         </p>

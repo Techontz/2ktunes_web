@@ -121,6 +121,23 @@ export type Plan = {
   is_active?: boolean;
   order?: number | null;
   features?: string[] | null;
+  /** Same list as `prices`, codes only. */
+  currencies?: string[] | null;
+  /** Best current price for the viewer, quoted in the requested currency, or null. */
+  offer?: PlanOffer | null;
+};
+
+/** `offer` on GET /plans (DOCS/API.md, Offers and pricing). */
+export type PlanOffer = {
+  headline: string;
+  type: "percent_off" | "fixed_off" | "fixed_price" | "free" | "referral" | string;
+  list_minor: number;
+  final_minor: number;
+  final: string;
+  currency: string;
+  ends_at: string | null;
+  free_days: number | null;
+  referral_applied: boolean;
 };
 
 export type SubscriptionPayment = {
@@ -134,6 +151,13 @@ export type SubscriptionPayment = {
   review_note?: string | null;
   created_at: string;
   plan?: { id: number; name: string } | null;
+  /** Offer breakdown (what is due is `amount_minor`). */
+  list_minor?: number | null;
+  discount_minor?: number | null;
+  final_minor?: number | null;
+  offer_id?: number | null;
+  referral_id?: number | null;
+  free_days?: number | null;
 };
 
 export type SubscriptionInfo = {
@@ -643,9 +667,17 @@ export type CreatorPackage = {
 export type PortfolioItem = {
   id: number;
   platform: string;
-  url: string;
+  /** "upload" (a video file on 2kTunes) or "external" (a link). */
+  media_type?: "upload" | "external" | string;
+  url: string | null;
   title: string | null;
+  caption?: string | null;
+  video_src?: string | null;
+  thumbnail_url?: string | null;
+  /** Always self-reported by the creator. */
   views: number | null;
+  views_source?: "self_reported" | string;
+  featured_on_home?: boolean;
 };
 
 type CreatorProfileStatus = "draft" | "pending_review" | "approved" | "rejected" | "suspended";
@@ -707,51 +739,98 @@ export type CampaignObjective =
   | "playlist_consideration";
 
 export type OrderStatus =
+  | "requested"
+  | "under_review"
+  | "forwarded"
+  | "awaiting_payment"
   | "pending_payment"
-  | "awaiting_creator"
-  | "accepted"
   | "in_progress"
   | "submitted"
-  | "revision_requested"
-  | "completed"
-  | "declined"
-  | "cancelled"
   | "disputed"
+  | "completed"
+  | "rejected"
+  | "declined"
+  | "expired"
+  | "cancelled"
   | "refunded";
 
+export type OrderTimelineEvent = {
+  from: string | null;
+  to: string;
+  label: string | null;
+  actor: "artist" | "creator" | "staff" | "system" | string;
+  note: string | null;
+  at: string;
+};
+
+export type OrderMessage = {
+  id: number;
+  body: string;
+  is_system: boolean;
+  was_redacted?: boolean;
+  author?: "artist" | "creator" | "2kTunes" | string | null;
+  mine: boolean;
+  created_at: string;
+};
+
+export type OrderSong = {
+  source: "catalog" | "external" | string;
+  release_id: number | null;
+  track_id: number | null;
+  title: string | null;
+  artist: string | null;
+  url: string | null;
+  platform: string | null;
+  /** Detail only: the link, or a 30 minute signed audio URL for catalog songs. */
+  listen_url?: string | null;
+};
+
+/** GET /orders, GET /orders/{id} (DOCS/API.md, Creator requests). */
 export type Order = {
   id: number;
   reference: string;
+  kind: "creator_request" | "service" | string;
   title: string;
   status: OrderStatus;
+  status_label?: string | null;
   role: "buyer" | "creator";
   price_minor: number;
   currency: string;
+  /** Filled for the creator only. */
   platform_fee_minor: number | null;
   creator_payout_minor: number | null;
   creator: { id: number; display_name: string; slug: string; avatar_url: string | null } | null;
+  /** Creator view only. */
+  artist?: { display_name: string } | null;
+  package?: { id: number; title: string; platform: string; turnaround_days: number } | null;
   service: { id: number; name: string; category: string } | null;
-  campaign_id: number;
+  campaign_id: number | null;
+  song?: OrderSong | null;
   brief: string | null;
-  submission_url: string | null;
+  preferred_post_date?: string | null;
+  creator_note?: string | null;
+  submission_urls?: string[];
   submission_notes: string | null;
-  revision_count: number;
+  fix_note?: string | null;
+  fix_count?: number;
+  close_reason?: string | null;
+  close_note?: string | null;
+  respond_by?: string | null;
+  pay_by?: string | null;
   due_at: string | null;
-  paid_at: string | null;
+  payment?: { method: string | null; paid_at: string | null; manual_reference_submitted: boolean } | null;
+  overdue?: boolean;
+  forwarded_at?: string | null;
   accepted_at: string | null;
   submitted_at: string | null;
+  verified_at?: string | null;
   completed_at: string | null;
+  closed_at?: string | null;
   created_at: string;
+  can?: Partial<Record<"cancel" | "pay" | "accept" | "decline" | "submit" | "dispute" | "message", boolean>>;
   release?: { id: number; title: string; artist: string; slug: string | null } | null;
-  track?: { id: number; title: string } | null;
-  messages?: {
-    id: number;
-    body: string;
-    is_system: boolean;
-    author: string | null;
-    mine: boolean;
-    created_at: string;
-  }[];
+  timeline?: OrderTimelineEvent[];
+  messages?: OrderMessage[];
   disputes?: {
     id: number;
     reason: string;

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { Send } from "lucide-react";
 import { Button, Card, Tab, TabList, TabPanel, Tabs, useToast } from "@/components/ui";
 import { FormAlert, LoadError, PageHeader, PageLoading, StatusPill, useAction } from "@/features/dashboard/components";
@@ -9,8 +9,11 @@ import { useResource } from "@/lib/api/useResource";
 import { useAuth } from "@/lib/auth/AuthProvider";
 import { useCopy } from "@/lib/useCopy";
 import { COPY } from "./copy";
-import { IncomingOrders } from "./IncomingOrders";
+import { EarningsPanel } from "./EarningsPanel";
 import { PackagesPanel } from "./PackagesPanel";
+import { PhotoStep } from "./PhotoStep";
+import { ActiveWork, IncomingRequests } from "./RequestsPanel";
+import { WORK_COPY } from "./workCopy";
 import { PortfolioPanel } from "./PortfolioPanel";
 import { AvatarUpload, ProfileForm } from "./ProfileForm";
 import { SocialAccountsEditor } from "./SocialAccountsEditor";
@@ -67,6 +70,9 @@ export default function CreatorWorkspacePage() {
           ) : undefined
         }
       />
+      {(!profile.avatar_url || profile.status === "draft" || profile.status === "rejected") && (
+        <PhotoStep profile={profile} onSaved={setProfile} />
+      )}
       <StatusBanner profile={profile} onSubmitted={res.reload} />
       <Workspace profile={profile} market={market} setProfile={setProfile} reload={res.reload} />
     </div>
@@ -75,9 +81,11 @@ export default function CreatorWorkspacePage() {
 
 function StatusBanner({ profile, onSubmitted }: { profile: CreatorProfile; onSubmitted: () => void }) {
   const c = useCopy(COPY);
+  const w = useCopy(WORK_COPY);
   const { toast } = useToast();
   const submit = useAction(() => submitCreatorProfile());
   const canSubmit = profile.status === "draft" || profile.status === "rejected";
+  const hasPhoto = !!profile.avatar_url;
 
   const text: Record<string, string> = {
     draft: c.statusDraft,
@@ -116,9 +124,21 @@ function StatusBanner({ profile, onSubmitted }: { profile: CreatorProfile; onSub
               </p>
             )}
             {canSubmit && <p className="text-caption text-text-muted">{c.submitNeeds}</p>}
+            {canSubmit && !hasPhoto && (
+              <p id="photo-required" className="text-caption font-semibold text-warning">
+                {w.photoRequired}
+              </p>
+            )}
           </div>
           {canSubmit && (
-            <Button size="sm" leftIcon={<Send />} loading={submit.pending} onClick={run}>
+            <Button
+              size="sm"
+              leftIcon={<Send />}
+              loading={submit.pending}
+              onClick={run}
+              disabled={!hasPhoto}
+              aria-describedby={!hasPhoto ? "photo-required" : undefined}
+            >
               {c.submit}
             </Button>
           )}
@@ -141,16 +161,36 @@ function Workspace({
   reload: () => void;
 }) {
   const c = useCopy(COPY);
-  const [tab, setTab] = useState("profile");
+  const w = useCopy(WORK_COPY);
+  const [sp, setSp] = useSearchParams();
+  const tabs = ["requests", "active", "earnings", "portfolio", "profile", "social", "packages"];
+  const fallback = profile.status === "approved" ? "requests" : "profile";
+  const tab = tabs.includes(sp.get("tab") ?? "") ? (sp.get("tab") as string) : fallback;
+  const setTab = (v: string) => {
+    const next = new URLSearchParams(sp);
+    next.set("tab", v);
+    setSp(next, { replace: true });
+  };
   return (
     <Tabs value={tab} onValueChange={setTab} variant="underline">
       <TabList aria-label={c.tabsLabel} className="mb-6">
+        <Tab value="requests">{w.tabRequests}</Tab>
+        <Tab value="active">{w.tabActive}</Tab>
+        <Tab value="earnings">{w.tabEarnings}</Tab>
+        <Tab value="portfolio">{c.tabPortfolio}</Tab>
         <Tab value="profile">{c.tabProfile}</Tab>
         <Tab value="social">{c.tabSocial}</Tab>
         <Tab value="packages">{c.tabPackages}</Tab>
-        <Tab value="portfolio">{c.tabPortfolio}</Tab>
-        <Tab value="orders">{c.tabOrders}</Tab>
       </TabList>
+      <TabPanel value="requests">
+        <IncomingRequests />
+      </TabPanel>
+      <TabPanel value="active">
+        <ActiveWork />
+      </TabPanel>
+      <TabPanel value="earnings">
+        <EarningsPanel />
+      </TabPanel>
       <TabPanel value="profile">
         <Card className="space-y-6">
           <AvatarUpload profile={profile} onSaved={setProfile} />
@@ -166,10 +206,7 @@ function Workspace({
         <PackagesPanel profile={profile} market={market} onChanged={reload} />
       </TabPanel>
       <TabPanel value="portfolio">
-        <PortfolioPanel profile={profile} platforms={market.platforms} onChanged={reload} />
-      </TabPanel>
-      <TabPanel value="orders">
-        <IncomingOrders />
+        <PortfolioPanel profile={profile} onChanged={reload} />
       </TabPanel>
     </Tabs>
   );

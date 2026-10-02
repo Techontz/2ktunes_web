@@ -5,6 +5,7 @@ import { useLanguage } from "@/lib/LanguageContext";
 import SiteNav from "./SiteNav";
 import SiteFooter from "./SiteFooter";
 import MobileCtaBar from "./MobileCtaBar";
+import { OfferBar, useOfferBar } from "./OfferBar";
 
 /**
  * Shell for every public page: skip link, fixed nav, <main>, footer.
@@ -13,6 +14,7 @@ import MobileCtaBar from "./MobileCtaBar";
  */
 export default function SiteLayout() {
   const { t } = useLanguage();
+  const { offer, dismiss } = useOfferBar();
   return (
     <div className="flex min-h-svh flex-col bg-surface text-text">
       <a
@@ -21,8 +23,9 @@ export default function SiteLayout() {
       >
         {t("common.skip")}
       </a>
-      <SiteNav />
-      <main id="main" tabIndex={-1} className="flex-1 outline-none">
+      <SiteNav banner={offer ? <OfferBar offer={offer} onDismiss={dismiss} /> : null} />
+      {/* The fixed header grows by the offer bar (h-9); shift the page down to match. */}
+      <main id="main" tabIndex={-1} className={offer ? "flex-1 pt-9 outline-none" : "flex-1 outline-none"}>
         <Suspense
           fallback={
             <div className="flex min-h-[70svh] items-center justify-center text-text-muted">

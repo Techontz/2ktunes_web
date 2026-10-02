@@ -62,6 +62,10 @@ const TicketDetailPage = lazy(() => import("@/features/dashboard/support/TicketD
 const HelpArticlesPage = lazy(() => import("@/features/dashboard/support/HelpPage"));
 const HelpArticlePage = lazy(() => import("@/features/dashboard/support/HelpArticlePage"));
 const SettingsPage = lazy(() => import("@/features/dashboard/settings/SettingsPage"));
+const ReferralsPage = lazy(() => import("@/features/dashboard/referrals/ReferralsPage"));
+
+/* Referral landing: /join/:code → sign-up with the invite attached. */
+const JoinPage = lazy(() => import("@/features/growth/JoinPage"));
 
 /* Signed-in, outside the dashboard shell. */
 const OnboardingPage = lazy(() => import("@/features/onboarding/OnboardingPage"));
@@ -122,6 +126,14 @@ export default function App() {
                   </RedirectIfAuthenticated>
                 }
               />
+              <Route
+                path="/join/:code"
+                element={
+                  <RedirectIfAuthenticated>
+                    <JoinPage />
+                  </RedirectIfAuthenticated>
+                }
+              />
               <Route path="/forgot-password" element={<ForgotPasswordPage />} />
               <Route path="/reset-password" element={<ResetPasswordPage />} />
               <Route path="/email-verified" element={<EmailVerifiedPage />} />
@@ -169,6 +181,7 @@ export default function App() {
                 <Route path="help" element={<HelpArticlesPage />} />
                 <Route path="help/:slug" element={<HelpArticlePage />} />
                 <Route path="settings" element={<SettingsPage />} />
+                <Route path="referrals" element={<ReferralsPage />} />
                 <Route path="*" element={<Navigate to={DASHBOARD_HOME} replace />} />
               </Route>
             </Routes>

@@ -1,9 +1,11 @@
 import { BadgeCheck, CircleHelp } from "lucide-react";
 import { Badge } from "@/components/ui";
-import type { MetricsSource, SocialAccount } from "@/lib/api/types";
+import { StatusPill } from "@/features/dashboard/components";
+import type { MetricsSource, OrderStatus, SocialAccount } from "@/lib/api/types";
 import { useLanguage } from "@/lib/LanguageContext";
 import { useCopy } from "@/lib/useCopy";
 import { COPY } from "./copy";
+import { REQ_COPY } from "./requestCopy";
 
 /**
  * Provenance label for creator metrics. Self-reported numbers get a neutral,
@@ -54,15 +56,33 @@ export function TotalMetricsBadge({
 
 /** Statuses the orders list can be filtered by, in lifecycle order. */
 export const ORDER_STATUSES = [
+  "requested",
+  "under_review",
+  "forwarded",
+  "awaiting_payment",
   "pending_payment",
-  "awaiting_creator",
-  "accepted",
   "in_progress",
   "submitted",
-  "revision_requested",
   "disputed",
   "completed",
+  "rejected",
   "declined",
+  "expired",
   "cancelled",
   "refunded",
-] as const;
+] as const satisfies readonly OrderStatus[];
+
+/** Order status badge with the marketplace's own wording (e.g. "Delivered, being verified"). */
+export function OrderStatusPill({
+  status,
+  size = "sm",
+  role,
+}: {
+  status: OrderStatus | string;
+  size?: "sm" | "md";
+  role?: "buyer" | "creator";
+}) {
+  const r = useCopy(REQ_COPY);
+  const label = role === "creator" && status === "forwarded" ? r.newRequest : r.status[status as OrderStatus];
+  return <StatusPill status={status} label={label} size={size} />;
+}

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import { Button, Sheet } from "@/components/ui";
@@ -24,7 +24,7 @@ const SECONDARY_NAV = [
   { to: "/contact", key: "nav.contact" },
 ] as const;
 
-export default function SiteNav() {
+export default function SiteNav({ banner }: { banner?: ReactNode }) {
   const { t } = useLanguage();
   const { status } = useAuth();
   const signedIn = status === "authenticated";
@@ -55,6 +55,7 @@ export default function SiteNav() {
           : "border-transparent bg-transparent",
       )}
     >
+      {banner}
       <div className="shell flex h-16 items-center justify-between gap-4">
         <div className="flex min-w-0 items-center gap-8 xl:gap-10">
           <Link

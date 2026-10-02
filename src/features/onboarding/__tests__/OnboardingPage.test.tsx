@@ -88,4 +88,42 @@ describe("OnboardingPage", () => {
     await user.click(await screen.findByRole("button", { name: "Continue" }));
     expect(await screen.findByText("Choose your country.")).toBeInTheDocument();
   });
+
+  it("requires a profile photo before saving a creator profile, then uploads it", async () => {
+    const newUser = { ...defaultUser, onboarding_completed_at: null, account_type: "creator", country: "TZ" };
+    let completed = false;
+    const api = mockApi({
+      "GET /profile": () => ({ user: completed ? { ...newUser, onboarding_completed_at: "2026-10-01T00:00:00Z" } : newUser }),
+      "GET /release-config": { config },
+      "PUT /creator/profile": ({ body }) => ({ profile: { id: 1, slug: "amani", status: "draft", ...(body as object) } }),
+      "POST /creator/profile/avatar": { profile: { id: 1, slug: "amani", status: "draft", avatar_url: "https://cdn.example/a.jpg" } },
+      "POST /onboarding/complete": ({ body }) => {
+        completed = true;
+        return { user: { ...newUser, ...(body as object), onboarding_completed_at: "2026-10-01T00:00:00Z" } };
+      },
+    });
+    const user = userEvent.setup();
+    renderPage(<OnboardingPage />, { route: "/onboarding" });
+
+    await user.click(await screen.findByRole("radio", { name: /Creator/ }));
+    const first = screen.getByLabelText(/First name/);
+    await user.clear(first);
+    await user.type(first, "Amani");
+    await user.type(screen.getByRole("combobox", { name: /^Country/ }), "Kenya");
+    await user.keyboard("{Enter}");
+    await user.click(screen.getByRole("button", { name: "Continue" }));
+    expect(await screen.findByRole("heading", { name: "Creator profile" })).toBeInTheDocument();
+    expect(screen.getByText("Step 1: add your profile photo")).toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "Save and finish" }));
+    expect(await screen.findByText("Add a profile photo before you submit for review.")).toBeInTheDocument();
+    expect(api.calls("PUT /creator/profile")).toHaveLength(0);
+
+    await user.upload(screen.getByTestId("creator-photo-input"), new File(["img"], "me.jpg", { type: "image/jpeg" }));
+    await user.click(screen.getByRole("button", { name: "Save and finish" }));
+    await waitFor(() => expect(api.calls("POST /creator/profile/avatar")).toHaveLength(1));
+    expect(api.calls("PUT /creator/profile")).toHaveLength(1);
+    expect(api.calls("POST /creator/profile/avatar")[0].body).toBeInstanceOf(FormData);
+    await waitFor(() => expect(api.calls("POST /onboarding/complete")).toHaveLength(1));
+  });
 });

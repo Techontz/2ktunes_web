@@ -1,4 +1,5 @@
 import { request } from "./client";
+import type { OfferQuote } from "./growth";
 import type { AuthUser } from "./auth";
 import type {
   Analytics,
@@ -137,8 +138,9 @@ export async function saveNotificationPreferences(preferences: NotificationPrefe
 
 /* ── Plans & subscription ──────────────────────────────────────────── */
 
+/** GET /plans with my token, so each plan's `offer` reflects my own eligibility. */
 export async function fetchPlanList({ signal }: S = {}): Promise<Plan[]> {
-  const res = await request<{ plans: Plan[] }>("/plans", { signal, auth: false });
+  const res = await request<{ plans: Plan[] }>("/plans", { signal });
   return res.plans ?? [];
 }
 
@@ -162,11 +164,15 @@ export function subscribe(payload: {
   payment_reference?: string;
   /** The currency the artist chose to pay in; omitted means the plan's main one. */
   currency?: string;
+  /** Promo code (case-insensitive). Offers never stack: the lowest price applies. */
+  code?: string;
 }) {
   return request<{
     message: string;
+    /** 200 "active" when the quoted price is 0 (free plan, free offer or 100% off); 202 "pending_payment" otherwise. */
     subscription_status: "active" | "pending_payment";
     payment: SubscriptionPayment | null;
+    quote?: OfferQuote | null;
     user: AuthUser;
   }>("/subscribe", { method: "POST", body: payload });
 }

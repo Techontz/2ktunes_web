@@ -1,6 +1,6 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
-import { Check, Mic2, Building2, Clapperboard } from "lucide-react";
+import { Check, Gift, Mic2, Building2, Clapperboard } from "lucide-react";
 import {
   Button,
   Field,
@@ -11,11 +11,20 @@ import {
   TabList,
   TabPanel,
   Tabs,
+  useToast,
 } from "@/components/ui";
 import { useAuth } from "@/lib/auth/AuthProvider";
 import { DASHBOARD_HOME, ONBOARDING_PATH, safeNext } from "@/lib/auth/routes";
 import { ApiError } from "@/lib/api/client";
 import { ACCOUNT_TYPES, PASSWORD_MIN, type AccountType } from "@/lib/api/auth";
+import {
+  cleanReferralCode,
+  rememberReferralCode,
+  rememberedReferralCode,
+  type ReferralResult,
+} from "@/lib/api/growth";
+import { REFERRAL_COPY } from "@/features/growth/referralCopy";
+import { useCopy } from "@/lib/useCopy";
 import { useLanguage } from "@/lib/LanguageContext";
 import { API_LOCALE } from "@/i18n";
 import { cn } from "@/lib/utils";
@@ -30,6 +39,8 @@ import { EMAIL_RE, authErrorKey, mapFieldErrors } from "./authErrors";
  *   /auth?mode=register           create account
  *   /auth?mode=register&type=creator   … with the account type preselected
  *   /auth?next=/dashboard/wallet  return there after logging in
+ *   /auth?mode=register&ref=CODE  … with an invite code (also kept for this
+ *                                 session, so Google sign-up sends it too)
  *
  * The server is the authority on validation: its 422 `errors` are rendered
  * next to the matching fields. 401 → invalid credentials, 429 → throttled.
@@ -54,6 +65,13 @@ export default function AuthPage() {
     document.title = `${t(mode === "register" ? "auth.tab_register" : "auth.tab_login")} · 2kTunes`;
   }, [mode, t]);
 
+  // An invite code in the URL wins; otherwise the one /join/:code remembered.
+  const urlRef = cleanReferralCode(params.get("ref"));
+  useEffect(() => {
+    if (urlRef) rememberReferralCode(urlRef);
+  }, [urlRef]);
+  const referralCode = urlRef ?? cleanReferralCode(rememberedReferralCode());
+
   return (
     <AuthLayout wide={mode === "register"}>
       <Tabs value={mode} onValueChange={setMode}>
@@ -65,7 +83,7 @@ export default function AuthPage() {
           <LoginForm />
         </TabPanel>
         <TabPanel value="register" className="focus-visible:outline-none">
-          <RegisterForm />
+          <RegisterForm referralCode={referralCode} />
         </TabPanel>
       </Tabs>
     </AuthLayout>
@@ -74,16 +92,35 @@ export default function AuthPage() {
 
 /* ── Log in ─────────────────────────────────────────────────────────── */
 
-function useGoogle(setFormError: (s: string | null) => void) {
+/** Tells the new account whether its invite code was applied (POST /register, /google-login `referral`). */
+export function useReferralToast() {
+  const { toast } = useToast();
+  const c = useCopy(REFERRAL_COPY);
+  return (result: ReferralResult | null | undefined) => {
+    if (!result) return;
+    rememberReferralCode(null);
+    if (result.applied) toast({ title: c.appliedTitle, description: c.appliedBody, tone: "success", duration: 8000 });
+    else
+      toast({
+        title: c.notAppliedTitle,
+        description: c.reasons[result.reason ?? ""] ?? c.reasons.unavailable,
+        tone: "info",
+        duration: 8000,
+      });
+  };
+}
+
+function useGoogle(setFormError: (s: string | null) => void, referralCode?: string | null) {
   const auth = useAuth();
   const navigate = useNavigate();
   const [params] = useSearchParams();
   const { t } = useLanguage();
+  const referralToast = useReferralToast();
   return {
     onCredential: async (idToken: string) => {
       setFormError(null);
       try {
-        await auth.loginWithGoogle(idToken);
+        referralToast(await auth.loginWithGoogle(idToken, referralCode));
         navigate(safeNext(params.get("next")) ?? DASHBOARD_HOME, { replace: true });
       } catch (err) {
         setFormError(err instanceof ApiError && err.status === 401 ? t("auth.err_google") : t(authErrorKey(err)));
@@ -185,8 +222,11 @@ const TYPE_DESC = {
   creator: "auth.type_creator_desc",
 } as const satisfies Record<AccountType, string>;
 
-function RegisterForm() {
+/** The one-screen sign-up. `referralCode` (from /join/:code or ?ref=) is sent with it. */
+export function RegisterForm({ referralCode, hideHeading }: { referralCode?: string | null; hideHeading?: boolean }) {
   const { t, language } = useLanguage();
+  const rc = useCopy(REFERRAL_COPY);
+  const referralToast = useReferralToast();
   const auth = useAuth();
   const navigate = useNavigate();
   const [params] = useSearchParams();
@@ -198,7 +238,7 @@ function RegisterForm() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [formError, setFormError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
-  const google = useGoogle(setFormError);
+  const google = useGoogle(setFormError, referralCode);
 
   const set = (k: keyof typeof values) => (e: React.ChangeEvent<HTMLInputElement>) => {
     setValues((v) => ({ ...v, [k]: e.target.value }));
@@ -224,15 +264,18 @@ function RegisterForm() {
 
     setBusy(true);
     try {
-      await auth.register({
+      const result = await auth.register({
         name: values.name.trim(),
         email: values.email.trim(),
         password: values.password,
         passwordConfirmation: values.confirm,
         accountType,
         locale: API_LOCALE[language],
+        referralCode: referralCode ?? null,
       });
-      navigate(ONBOARDING_PATH, { replace: true });
+      referralToast(result);
+      const next = safeNext(params.get("next"));
+      navigate(next ? `${ONBOARDING_PATH}?next=${encodeURIComponent(next)}` : ONBOARDING_PATH, { replace: true });
     } catch (err) {
       if (err instanceof ApiError && err.isValidation) {
         const mapped = mapFieldErrors(err.fieldErrors);
@@ -252,7 +295,7 @@ function RegisterForm() {
 
   return (
     <>
-      <AuthHeading title={t("auth.title_register")} sub={t("auth.sub_register")} compact />
+      {!hideHeading && <AuthHeading title={t("auth.title_register")} sub={t("auth.sub_register")} compact />}
       <form noValidate onSubmit={onSubmit} className="space-y-4">
         <div>
           <RadioCardGroup<AccountType>
@@ -324,6 +367,13 @@ function RegisterForm() {
             />
           </Field>
         </div>
+        {/* The join page shows the invite in its own header. */}
+        {referralCode && !hideHeading && (
+          <p className="flex items-center gap-2 rounded-control border border-accent/25 bg-accent-soft px-3 py-2 text-body-sm font-semibold text-accent-text">
+            <Gift aria-hidden className="h-4 w-4 shrink-0" />
+            {rc.codeLabel(referralCode)}
+          </p>
+        )}
         {formError && <FormAlert>{formError}</FormAlert>}
         <Button type="submit" size="lg" fullWidth loading={busy}>
           {busy ? t("auth.creating") : t("auth.register_btn")}

@@ -23,6 +23,7 @@ import {
   useMuted,
 } from "../kit";
 import { PlanCards } from "../PlanCards";
+import { CreatorsSlider, ShowcaseRail } from "../CreatorShowcase";
 import { StoreMarquee, StoreWall } from "../StoreWall";
 import { AnalyticsMock, CampaignMock, SplitsMock, WalletMock } from "../visuals";
 import { usePageMeta } from "../usePageMeta";
@@ -277,6 +278,7 @@ export default function HomePage() {
   return (
     <>
       <Hero />
+      <CreatorsSlider />
       <Promises />
 
       <Band tone="light" labelledBy="stores-title">
@@ -288,6 +290,7 @@ export default function HomePage() {
 
       <Workflow />
       <Promotion />
+      <ShowcaseRail />
       <Royalties />
       <Splits />
       <Analytics />

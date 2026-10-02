@@ -22,7 +22,10 @@
  *   WIDTHS      site suite widths, default 360,390,768,1280,1920
  *   DASH_MATRIX dashboard width:lang pairs, default 360:EN,1280:EN,360:SW
  *   ROUTES      comma list to limit routes (matched by substring)
- *   LANG_CODE   EN | SW for the site suite (default EN)
+ *   LANG_CODE   EN | SW | FR for the site suite (default EN)
+ *   MOCK_SITE   "1" answers the site suite's /api/ calls from the QA mock too
+ *               (signed out), so offers, the creators slider, reels and
+ *               /join/:code render populated
  *   FULL        "0" for viewport-only shots
  *   FORMAT      png (default) | jpg (much smaller files)
  *
@@ -65,6 +68,8 @@ const ALL_ROUTES = [
   "/this-page-does-not-exist",
   "/auth",
   "/auth?mode=register",
+  "/join/ABC",
+  "/join/INVALID",
   "/forgot-password",
   "/reset-password?token=abc&email=artist%40example.com",
   "/reset-password",
@@ -73,7 +78,11 @@ const ALL_ROUTES = [
 ];
 
 const filter = process.env.ROUTES?.split(",").filter(Boolean);
-const pick = (list) => (filter ? list.filter((r) => filter.some((f) => (r.path ?? r).includes(f))) : list);
+// "=/path" matches exactly; anything else is a substring match.
+const pick = (list) =>
+  filter
+    ? list.filter((r) => filter.some((f) => (f.startsWith("=") ? (r.path ?? r) === f.slice(1) : (r.path ?? r).includes(f))))
+    : list;
 const routes = pick(ALL_ROUTES);
 
 /** Dashboard + signed-in routes; `as: "new"` signs in as a not-yet-onboarded user. */
@@ -98,9 +107,20 @@ const DASHBOARD_ROUTES = pick([
   { path: "/dashboard/promotion/campaigns/1" },
   { path: "/dashboard/creators" },
   { path: "/dashboard/creators/amani-dances" },
+  { path: "/dashboard/creators/amani-dances", click: "Request this creator", label: "request" },
   { path: "/dashboard/orders" },
   { path: "/dashboard/orders/5" },
+  { path: "/dashboard/orders/6" },
+  { path: "/dashboard/orders/6", click: "Pay now", label: "pay" },
+  { path: "/dashboard/orders/21" },
   { path: "/dashboard/creator" },
+  { path: "/dashboard/creator?tab=requests" },
+  { path: "/dashboard/creator?tab=active" },
+  { path: "/dashboard/creator?tab=earnings" },
+  { path: "/dashboard/creator?tab=portfolio" },
+  { path: "/dashboard/referrals" },
+  { path: "/dashboard/plan", click: "Renew the 2 Artists plan", label: "pay" },
+  { path: "/dashboard/plan", click: "Choose the Single Artist plan", label: "free" },
   { path: "/dashboard/analytics" },
   { path: "/dashboard/royalties" },
   { path: "/dashboard/wallet" },
@@ -203,11 +223,23 @@ async function measure(page) {
   });
 }
 
-async function shoot(page, route, width, prefix, label) {
+async function shoot(page, route, width, prefix, label, click) {
   await page.goto(BASE + route, { waitUntil: "networkidle" });
+  // Scroll through once so lazy images below the fold load before a full-page shot.
+  await page.evaluate(async () => {
+    for (let y = 0; y < document.body.scrollHeight; y += window.innerHeight) {
+      window.scrollTo(0, y);
+      await new Promise((r) => setTimeout(r, 60));
+    }
+    window.scrollTo(0, 0);
+  });
   await page.waitForTimeout(300);
+  if (click) {
+    await page.getByRole("button", { name: click }).first().click();
+    await page.waitForTimeout(700);
+  }
   const m = await measure(page);
-  const file = join(OUT, `${prefix}${slug(route)}@${width}${label ? "-" + label : ""}.${FORMAT}`);
+  const file = join(OUT, `${prefix}${slug(route)}${click ? "_" + slug(click) : ""}@${width}${label ? "-" + label : ""}.${FORMAT}`);
   await page.screenshot({ path: file, fullPage: FULL, ...(FORMAT === "jpg" ? { type: "jpeg", quality: 60 } : {}) });
   const overflow = m.scrollWidth > m.innerWidth;
   if (overflow) problems.push({ route, width, ...m });
@@ -228,6 +260,25 @@ if (SUITE === "site" || SUITE === "all") {
         localStorage.setItem("2ktunes.lang", lang);
       } catch {}
     }, LANG);
+    if (process.env.MOCK_SITE === "1") {
+      await context.route(
+        (url) => url.pathname.startsWith("/api/"),
+        async (route) => {
+          const req = route.request();
+          const url = new URL(req.url());
+          let body = null;
+          try {
+            body = req.postDataJSON();
+          } catch {}
+          const res = mockHandle(req.method(), url.pathname.replace(/^\/api/, ""), url.searchParams, body);
+          await route.fulfill({
+            status: res?.status ?? 404,
+            contentType: "application/json",
+            body: JSON.stringify(res?.body ?? { status: false, code: "not_found", message: "Not found." }),
+          });
+        },
+      );
+    }
     const page = await context.newPage();
     for (const route of routes) await shoot(page, route, width, "", LANG === "EN" ? "" : LANG);
     await context.close();
@@ -281,7 +332,7 @@ if (SUITE === "dashboard" || SUITE === "all") {
         if (msg.type() === "error") consoleErrors.push(`${width} ${lang} ${r.path}: ${msg.text().slice(0, 200)}`);
       });
       page.on("pageerror", (err) => consoleErrors.push(`${width} ${lang} ${r.path}: ${String(err).slice(0, 200)}`));
-      const landed = await shoot(page, r.path, width, "dash-", lang);
+      const landed = await shoot(page, r.path, width, "dash-", lang, r.click);
       if (!r.signedOut && /\/auth(\?|$)/.test(new URL(landed).pathname + new URL(landed).search)) {
         console.error(
           "\nThe dashboard redirected to /auth: the dev server was started without VITE_API_URL.\n" +

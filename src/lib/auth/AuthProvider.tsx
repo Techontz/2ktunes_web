@@ -18,6 +18,7 @@ import {
 import * as authApi from "@/lib/api/auth";
 import { clearResumeKeys } from "@/lib/upload/resumeKeys";
 import type { AccountType, AuthUser } from "@/lib/api/auth";
+import type { ReferralResult } from "@/lib/api/growth";
 
 /**
  * THE SINGLE SOURCE OF TRUTH FOR AUTHENTICATION
@@ -54,9 +55,10 @@ type AuthContextValue = {
     passwordConfirmation: string;
     accountType: AccountType;
     locale?: "en" | "sw" | "fr";
-  }) => Promise<void>;
+    referralCode?: string | null;
+  }) => Promise<ReferralResult | null>;
   /** Exchanges a Google Identity Services credential for a session. */
-  loginWithGoogle: (idToken: string) => Promise<void>;
+  loginWithGoogle: (idToken: string, referralCode?: string | null) => Promise<ReferralResult | null>;
   /**
    * True from a successful registration until the app navigates on. The
    * /auth guard reads it to send new accounts to onboarding instead of the
@@ -164,6 +166,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       passwordConfirmation: string;
       accountType: AccountType;
       locale?: "en" | "sw" | "fr";
+      referralCode?: string | null;
     }) => {
       // The backend returns a token straight from /register, so a successful
       // registration IS a session. We follow that rather than bouncing the user
@@ -175,17 +178,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         password_confirmation: input.passwordConfirmation,
         account_type: input.accountType,
         ...(input.locale ? { locale: input.locale } : {}),
+        ...(input.referralCode ? { referral_code: input.referralCode } : {}),
       });
       setJustRegistered(true);
       await adoptSession(res.token, res.user);
+      return res.referral ?? null;
     },
     [adoptSession],
   );
 
   const loginWithGoogle = useCallback(
-    async (idToken: string) => {
-      const res = await authApi.googleLogin(idToken);
+    async (idToken: string, referralCode?: string | null) => {
+      const res = await authApi.googleLogin(idToken, referralCode);
       await adoptSession(res.token, res.user);
+      return res.referral ?? null;
     },
     [adoptSession],
   );

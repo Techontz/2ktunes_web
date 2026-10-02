@@ -1,7 +1,7 @@
 import { Link, useSearchParams } from "react-router-dom";
 import { ShoppingBag } from "lucide-react";
 import { Button, DataTable, EmptyState, Tab, TabList, TabPanel, Tabs, type Column } from "@/components/ui";
-import { ChipGroup, LoadError, Money, PageHeader, Pagination, StatusPill } from "@/features/dashboard/components";
+import { ChipGroup, LoadError, Money, PageHeader, Pagination } from "@/features/dashboard/components";
 import { fetchOrders } from "@/lib/api/marketplace";
 import type { Order } from "@/lib/api/types";
 import { useResource } from "@/lib/api/useResource";
@@ -10,13 +10,13 @@ import { formatDate } from "@/lib/dates";
 import { useLanguage } from "@/lib/LanguageContext";
 import { useCopy } from "@/lib/useCopy";
 import { COPY } from "./copy";
-import { ORDER_STATUSES } from "./shared";
+import { REQ_COPY } from "./requestCopy";
+import { ORDER_STATUSES, OrderStatusPill } from "./shared";
 
 type Role = "buyer" | "creator";
 
 export default function OrdersPage() {
-  const c = useCopy(COPY);
-  const { t } = useLanguage();
+  const c = useCopy(REQ_COPY);
   const { user } = useAuth();
   const [sp, setSp] = useSearchParams();
   const canCreator = user?.account_type === "creator" || !!user?.has_creator_profile;
@@ -33,7 +33,10 @@ export default function OrdersPage() {
     setSp(next);
   };
 
-  const statuses = role === "creator" ? ORDER_STATUSES.filter((s) => s !== "pending_payment") : ORDER_STATUSES;
+  const statuses: readonly string[] =
+    role === "creator"
+      ? ORDER_STATUSES.filter((s) => !["requested", "under_review", "rejected", "pending_payment"].includes(s))
+      : ORDER_STATUSES;
 
   const body = (
     <>
@@ -41,7 +44,7 @@ export default function OrdersPage() {
         label={c.statusFilter}
         value={status}
         onChange={(v) => update({ status: v || null, page: null })}
-        options={[{ value: "", label: c.allStatuses }, ...statuses.map((s) => ({ value: s, label: t(`status.${s}`) }))]}
+        options={[{ value: "", label: c.all }, ...statuses.map((s) => ({ value: s, label: c.status[s as keyof typeof c.status] }))]}
         className="mb-5"
       />
       <OrderList role={role} status={status} page={page} onPage={(p) => update({ page: p > 1 ? String(p) : null })} />
@@ -86,7 +89,8 @@ function OrderList({
   page: number;
   onPage: (p: number) => void;
 }) {
-  const c = useCopy(COPY);
+  const c = useCopy(REQ_COPY);
+  const m = useCopy(COPY);
   const { locale } = useLanguage();
   const res = useResource(
     (signal) => fetchOrders({ as: role, status: status || undefined, page }, { signal }),
@@ -117,12 +121,10 @@ function OrderList({
       header: c.colWith,
       cell: (o) =>
         role === "creator"
-          ? o.release
-            ? `${o.release.title} · ${o.release.artist}`
-            : "-"
-          : (o.creator?.display_name ?? (o.service ? `${o.service.name} · ${c.serviceBy2k}` : "-")),
+          ? (o.artist?.display_name ?? o.song?.artist ?? "-")
+          : (o.creator?.display_name ?? (o.service ? `${o.service.name} · ${m.serviceBy2k}` : "-")),
     },
-    { key: "status", header: c.colStatus, cell: (o) => <StatusPill status={o.status} /> },
+    { key: "status", header: c.colStatus, cell: (o) => <OrderStatusPill status={o.status} role={role} /> },
     {
       key: "price",
       header: role === "creator" ? c.colYourPayout : c.colPrice,
@@ -140,7 +142,7 @@ function OrderList({
         rows={res.data?.orders ?? []}
         columns={columns}
         getRowKey={(o) => o.id}
-        caption={c.ordersCaption}
+        caption={c.ordersTitle}
         loading={res.loading}
         empty={
           <EmptyState

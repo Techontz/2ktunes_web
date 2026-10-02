@@ -1,87 +1,76 @@
-import { useState, type FormEvent } from "react";
-import { ExternalLink, Plus, Trash2 } from "lucide-react";
-import { Button, Card, EmptyState, Field, Input, Select, useToast } from "@/components/ui";
+import { useEffect, useRef, useState, type ChangeEvent, type FormEvent } from "react";
+import { Film, ImageIcon, Link2, Play, Plus, Sparkles, Trash2, Upload } from "lucide-react";
+import { Badge, Button, Card, EmptyState, Field, Input, ProgressBar, RadioCardGroup, Textarea, useToast } from "@/components/ui";
 import { ConfirmDialog, FormAlert, useAction } from "@/features/dashboard/components";
 import { useLabels } from "@/features/dashboard/marketplace/labels";
-import { addPortfolioItem, deletePortfolioItem } from "@/lib/api/marketplace";
+import { detectPlatform } from "@/features/dashboard/marketplace/platform";
+import { addPortfolioItem, deletePortfolioItem, type PortfolioInput } from "@/lib/api/marketplace";
 import type { CreatorProfile, PortfolioItem } from "@/lib/api/types";
 import { useLanguage } from "@/lib/LanguageContext";
 import { formatCount } from "@/lib/money";
 import { useCopy } from "@/lib/useCopy";
-import { COPY } from "./copy";
+import { WORK_COPY } from "./workCopy";
 
-const MAX_ITEMS = 12;
+/** config/marketplace.php: portfolio_max_items and showcase_video_max_kb (51200). */
+export const MAX_ITEMS = 12;
+export const MAX_VIDEO_BYTES = 50 * 1024 * 1024;
+const MAX_THUMB_BYTES = 4 * 1024 * 1024;
+const VIDEO_TYPES = ["video/mp4", "video/webm"];
+const IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
+
+/** Client-side check mirroring CreatorController@storePortfolio. */
+export function videoProblem(file: File): "type" | "size" | null {
+  if (!VIDEO_TYPES.includes(file.type)) return "type";
+  if (file.size > MAX_VIDEO_BYTES) return "size";
+  return null;
+}
 
 export function PortfolioPanel({
   profile,
-  platforms,
   onChanged,
 }: {
   profile: CreatorProfile;
-  platforms: string[];
+  platforms?: string[];
   onChanged: () => void;
 }) {
-  const c = useCopy(COPY);
-  const { t, locale } = useLanguage();
-  const labels = useLabels();
+  const w = useCopy(WORK_COPY);
+  const { t } = useLanguage();
   const { toast } = useToast();
   const [removing, setRemoving] = useState<PortfolioItem | null>(null);
   const items = profile.portfolio;
-  const title = (i: PortfolioItem) => i.title || `${c.example} · ${labels.platform(i.platform)}`;
+  const labels = useLabels();
+  const titleOf = (i: PortfolioItem) => i.caption || i.title || `${w.item} · ${labels.platform(i.platform)}`;
 
   return (
     <div className="space-y-5">
-      <p className="text-body-sm text-text-muted">{c.portfolioIntro(MAX_ITEMS)}</p>
+      <p className="max-w-[70ch] text-body-sm text-text-muted">{w.portfolioIntro(MAX_ITEMS)}</p>
       {items.length === 0 ? (
-        <EmptyState compact title={c.portfolioEmpty} />
+        <EmptyState compact icon={<Film />} title={w.empty} />
       ) : (
-        <ul className="grid gap-3 sm:grid-cols-2">
+        <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
           {items.map((i) => (
-            <li key={i.id} className="min-w-0">
-              <Card padding="sm" className="flex items-start justify-between gap-3">
-                <a
-                  href={i.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={c.openExample(title(i))}
-                  className="min-w-0 rounded-[4px] hover:text-accent-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-text"
-                >
-                  <span className="flex items-center gap-1.5 break-words font-semibold text-text">
-                    {title(i)}
-                    <ExternalLink className="h-3.5 w-3.5 shrink-0 text-text-subtle" aria-hidden />
-                  </span>
-                  <span className="mt-1 block break-all text-caption text-text-subtle">{i.url}</span>
-                  {i.views != null && (
-                    <span className="mt-1 block text-caption text-text-subtle">
-                      {c.exViews}: {formatCount(i.views, locale)}
-                    </span>
-                  )}
-                </a>
-                <Button variant="ghost" size="sm" aria-label={c.removeExample(title(i))} onClick={() => setRemoving(i)}>
-                  <Trash2 className="h-4 w-4" aria-hidden />
-                </Button>
-              </Card>
-            </li>
+            <PortfolioCard key={i.id} item={i} title={titleOf(i)} onRemove={() => setRemoving(i)} />
           ))}
         </ul>
       )}
 
       {items.length >= MAX_ITEMS ? (
-        <FormAlert tone="info">{c.portfolioFull(MAX_ITEMS)}</FormAlert>
+        <FormAlert tone="info">{w.full(MAX_ITEMS)}</FormAlert>
       ) : (
-        <AddExample platforms={platforms} onAdded={onChanged} />
+        <AddItem onAdded={onChanged} />
       )}
 
       <ConfirmDialog
         open={!!removing}
         onClose={() => setRemoving(null)}
-        title={removing ? c.removeExample(title(removing)) : ""}
+        title={w.removeTitle}
+        description={removing ? titleOf(removing) : undefined}
         confirmLabel={t("act.remove")}
         danger
         onConfirm={async () => {
           if (!removing) return;
           await deletePortfolioItem(removing.id);
-          toast({ title: c.exRemoved, tone: "success" });
+          toast({ title: w.removed, tone: "success" });
           onChanged();
         }}
       />
@@ -89,65 +78,218 @@ export function PortfolioPanel({
   );
 }
 
-function AddExample({ platforms, onAdded }: { platforms: string[]; onAdded: () => void }) {
-  const c = useCopy(COPY);
+function PortfolioCard({ item, title, onRemove }: { item: PortfolioItem; title: string; onRemove: () => void }) {
+  const w = useCopy(WORK_COPY);
+  const { locale } = useLanguage();
+  const labels = useLabels();
+  return (
+    <li className="min-w-0">
+      <Card padding="none" className="overflow-hidden">
+        <div className="relative aspect-[9/16] bg-[linear-gradient(160deg,#2a0f4a,#6e16a8)]">
+          {item.video_src ? (
+            <video
+              src={item.video_src}
+              poster={item.thumbnail_url ?? undefined}
+              preload="none"
+              controls
+              playsInline
+              className="absolute inset-0 h-full w-full object-cover"
+              aria-label={title}
+            />
+          ) : item.thumbnail_url ? (
+            <img src={item.thumbnail_url} alt="" loading="lazy" className="absolute inset-0 h-full w-full object-cover" />
+          ) : (
+            <span aria-hidden className="absolute inset-0 flex items-center justify-center text-white/80">
+              {item.url ? <Link2 className="h-8 w-8" /> : <Play className="h-8 w-8" />}
+            </span>
+          )}
+          <span className="pointer-events-none absolute left-2 top-2 flex flex-wrap gap-1">
+            <Badge tone="neutral" size="sm" className="bg-black/50 text-white ring-0">
+              {item.media_type === "upload" || item.platform === "upload" ? w.uploadedVideo : labels.platform(item.platform)}
+            </Badge>
+            {item.featured_on_home && (
+              <Badge tone="accent" size="sm" className="bg-accent text-white">
+                <Sparkles className="mr-1 inline h-3 w-3 align-[-2px]" aria-hidden />
+                {w.featured}
+              </Badge>
+            )}
+          </span>
+        </div>
+        <div className="flex items-start justify-between gap-2 p-3">
+          <div className="min-w-0">
+            {item.url && !item.video_src ? (
+              <a href={item.url} target="_blank" rel="noopener noreferrer" className="line-clamp-2 break-words text-body-sm font-semibold text-text hover:text-accent-text">
+                {title}
+              </a>
+            ) : (
+              <p className="line-clamp-2 break-words text-body-sm font-semibold text-text">{title}</p>
+            )}
+            {item.views != null && <p className="mt-0.5 text-caption text-text-subtle">{w.selfReported(formatCount(item.views, locale))}</p>}
+          </div>
+          <Button variant="ghost" size="sm" aria-label={w.remove(title)} onClick={onRemove} className="-mr-1 shrink-0 px-2">
+            <Trash2 className="h-4 w-4" aria-hidden />
+          </Button>
+        </div>
+      </Card>
+    </li>
+  );
+}
+
+type Mode = "upload" | "link";
+
+function AddItem({ onAdded }: { onAdded: () => void }) {
+  const w = useCopy(WORK_COPY);
   const { t } = useLanguage();
   const labels = useLabels();
   const { toast } = useToast();
-  const [f, setF] = useState({ platform: platforms[0] ?? "", url: "", title: "", views: "" });
+  const videoInput = useRef<HTMLInputElement>(null);
+  const thumbInput = useRef<HTMLInputElement>(null);
+  const [mode, setMode] = useState<Mode>("upload");
+  const [video, setVideo] = useState<File | null>(null);
+  const [thumb, setThumb] = useState<File | null>(null);
+  const [thumbUrl, setThumbUrl] = useState<string | null>(null);
+  const [url, setUrl] = useState("");
+  const [caption, setCaption] = useState("");
+  const [views, setViews] = useState("");
+  const [progress, setProgress] = useState<number | null>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const add = useAction((input: Parameters<typeof addPortfolioItem>[0]) => addPortfolioItem(input));
+  const add = useAction((input: PortfolioInput) => addPortfolioItem(input, (f) => setProgress(f)));
+
+  // Preview the chosen thumbnail; free the object URL afterwards.
+  useEffect(() => {
+    if (!thumb || typeof URL.createObjectURL !== "function") {
+      setThumbUrl(null);
+      return;
+    }
+    const u = URL.createObjectURL(thumb);
+    setThumbUrl(u);
+    return () => URL.revokeObjectURL(u);
+  }, [thumb]);
+
+  const pickVideo = (e: ChangeEvent<HTMLInputElement>) => {
+    const f = e.target.files?.[0] ?? null;
+    e.target.value = "";
+    if (!f) return;
+    const problem = videoProblem(f);
+    setErrors((p) => ({ ...p, video: problem === "type" ? w.videoType : problem === "size" ? w.videoSize : "" }));
+    setVideo(problem ? null : f);
+  };
+  const pickThumb = (e: ChangeEvent<HTMLInputElement>) => {
+    const f = e.target.files?.[0] ?? null;
+    e.target.value = "";
+    if (!f) return;
+    const bad = !IMAGE_TYPES.includes(f.type) ? w.thumbnailType : f.size > MAX_THUMB_BYTES ? w.thumbnailSize : "";
+    setErrors((p) => ({ ...p, thumbnail: bad }));
+    setThumb(bad ? null : f);
+  };
+
+  const detected = mode === "link" && /^https:\/\//i.test(url.trim()) ? detectPlatform(url) : null;
 
   const submit = async (e: FormEvent) => {
     e.preventDefault();
     const errs: Record<string, string> = {};
-    const url = f.url.trim();
-    if (!/^https:\/\/\S+\.\S+/i.test(url)) errs.url = c.exUrlInvalid;
-    const views = f.views.trim().replace(/[\s,]/g, "");
-    if (views && !/^\d{1,12}$/.test(views)) errs.views = c.wholeNumber;
+    if (mode === "upload" && !video) errs.video = errors.video || w.videoRequired;
+    if (mode === "link" && !/^https:\/\/\S+\.\S+/i.test(url.trim())) errs.url = w.linkInvalid;
+    const v = views.trim().replace(/[\s,.]/g, "");
+    if (v && !/^\d{1,10}$/.test(v)) errs.views = w.wholeNumber;
     setErrors(errs);
-    if (Object.keys(errs).length) return;
-    const res = await add.run({ platform: f.platform, url, title: f.title.trim() || null, views: views ? Number(views) : null });
+    if (Object.values(errs).some(Boolean)) return;
+    setProgress(mode === "upload" ? 0 : null);
+    const res = await add.run({
+      video: mode === "upload" ? video : null,
+      url: mode === "link" ? url.trim() : null,
+      platform: mode === "link" && detected && ["tiktok", "instagram", "youtube", "facebook", "x", "snapchat", "audiomack", "boomplay"].includes(detected) ? detected : null,
+      thumbnail: thumb,
+      caption: caption.trim() || null,
+      views: v ? Number(v) : null,
+    });
+    setProgress(null);
     if (res.ok) {
-      toast({ title: c.exAdded, tone: "success" });
-      setF({ platform: f.platform, url: "", title: "", views: "" });
+      toast({ title: w.added, tone: "success" });
+      setVideo(null);
+      setThumb(null);
+      setUrl("");
+      setCaption("");
+      setViews("");
       onAdded();
     }
   };
 
-  const err = (k: string) => errors[k] ?? add.fieldErrors[k];
+  const err = (k: string) => errors[k] || add.fieldErrors[k];
   const opt = { optional: true, optionalLabel: t("common.optional") };
+  const pct = progress != null ? Math.round(progress * 100) : null;
 
   return (
-    <Card as="section" padding="sm">
-      <h3 className="mb-3 font-bold text-text">{c.addExample}</h3>
-      <form onSubmit={submit} noValidate className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <Field label={c.platform} error={err("platform")} required>
-          <Select value={f.platform} onChange={(e) => setF({ ...f, platform: e.target.value })}>
-            {platforms.map((p) => (
-              <option key={p} value={p}>
-                {labels.platform(p)}
-              </option>
-            ))}
-          </Select>
-        </Field>
-        <Field label={c.exUrl} error={err("url")} required className="lg:col-span-3">
-          <Input type="url" inputMode="url" value={f.url} onChange={(e) => setF({ ...f, url: e.target.value })} maxLength={1024} placeholder="https://" />
-        </Field>
-        <Field label={c.exTitle} error={err("title")} className="sm:col-span-1 lg:col-span-2" {...opt}>
-          <Input value={f.title} onChange={(e) => setF({ ...f, title: e.target.value })} maxLength={120} />
-        </Field>
-        <Field label={c.exViews} error={err("views")} {...opt}>
-          <Input inputMode="numeric" value={f.views} onChange={(e) => setF({ ...f, views: e.target.value })} />
-        </Field>
-        <div className="flex items-end">
-          <Button type="submit" leftIcon={<Plus />} loading={add.pending} fullWidth>
-            {t("act.add")}
+    <Card as="section" aria-labelledby="portfolio-add-title">
+      <h3 id="portfolio-add-title" className="mb-4 text-h4 font-bold text-text">
+        {w.addTitle}
+      </h3>
+      <form onSubmit={submit} noValidate className="space-y-4">
+        <RadioCardGroup<Mode>
+          legend={w.modeLabel}
+          name="portfolio-mode"
+          value={mode}
+          onChange={(m) => {
+            setMode(m);
+            setErrors({});
+            add.reset();
+          }}
+          columns={2}
+          options={[
+            { value: "upload", label: w.modeUpload, description: w.modeUploadHint, icon: <Upload /> },
+            { value: "link", label: w.modeLink, description: w.modeLinkHint, icon: <Link2 /> },
+          ]}
+        />
+
+        {mode === "upload" ? (
+          <Field label={w.video} hint={w.videoHint} error={err("video")} required>
+            <div className="flex flex-wrap items-center gap-3">
+              <input ref={videoInput} type="file" accept="video/mp4,video/webm" className="sr-only" tabIndex={-1} aria-hidden onChange={pickVideo} />
+              <Button type="button" variant="secondary" size="sm" leftIcon={<Film />} onClick={() => videoInput.current?.click()} disabled={add.pending}>
+                {video ? w.videoChange : w.videoChoose}
+              </Button>
+              {video && (
+                <span className="min-w-0 truncate text-body-sm text-text">
+                  {video.name} · {(video.size / 1024 / 1024).toFixed(1)} MB
+                </span>
+              )}
+            </div>
+          </Field>
+        ) : (
+          <Field label={w.link} hint={detected ? w.detected(labels.platform(detected)) : w.linkHint} error={err("url")} required>
+            <Input type="url" inputMode="url" placeholder="https://" value={url} onChange={(e) => setUrl(e.target.value)} maxLength={1024} />
+          </Field>
+        )}
+
+        <div className="grid gap-4 sm:grid-cols-[auto_minmax(0,1fr)]">
+          <Field label={w.thumbnail} hint={w.thumbnailHint} error={err("thumbnail")} {...opt}>
+            <div className="flex items-center gap-3">
+              <span className="relative flex h-20 w-[2.8125rem] shrink-0 items-center justify-center overflow-hidden rounded-[8px] border border-border-subtle bg-surface-sunken">
+                {thumbUrl ? <img src={thumbUrl} alt="" className="h-full w-full object-cover" /> : <ImageIcon className="h-4 w-4 text-text-subtle" aria-hidden />}
+              </span>
+              <input ref={thumbInput} type="file" accept="image/jpeg,image/png,image/webp" className="sr-only" tabIndex={-1} aria-hidden onChange={pickThumb} />
+              <Button type="button" variant="secondary" size="sm" onClick={() => thumbInput.current?.click()} disabled={add.pending}>
+                {w.thumbnailChoose}
+              </Button>
+            </div>
+          </Field>
+          <div className="grid gap-4 sm:grid-cols-[minmax(0,1fr)_9rem]">
+            <Field label={w.caption} error={err("caption")} {...opt}>
+              <Textarea value={caption} onChange={(e) => setCaption(e.target.value)} maxLength={300} rows={2} />
+            </Field>
+            <Field label={w.views} hint={w.viewsHint} error={err("views")} {...opt}>
+              <Input inputMode="numeric" value={views} onChange={(e) => setViews(e.target.value)} />
+            </Field>
+          </div>
+        </div>
+
+        {pct != null && add.pending && <ProgressBar value={pct} label={w.uploading(pct)} showValue />}
+        {add.error && !Object.keys(add.fieldErrors).length && <FormAlert>{add.error}</FormAlert>}
+        <div className="flex justify-end">
+          <Button type="submit" leftIcon={<Plus />} loading={add.pending}>
+            {w.add}
           </Button>
         </div>
-        {add.error && !Object.keys(add.fieldErrors).length && (
-          <FormAlert className="sm:col-span-2 lg:col-span-4">{add.error}</FormAlert>
-        )}
       </form>
     </Card>
   );
