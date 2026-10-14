@@ -2,10 +2,8 @@ import { Suspense, useEffect, useRef, useState } from "react";
 import { Link, Outlet, useLocation } from "react-router-dom";
 import { ArrowUpRight, Bell, Disc3, ExternalLink, LayoutDashboard, LayoutGrid, LogOut, Megaphone, Settings, Wallet } from "lucide-react";
 import { Wordmark } from "@/components/brand/Wordmark";
-import { Avatar, Button, Sheet, useToast } from "@/components/ui";
+import { Avatar, Sheet } from "@/components/ui";
 import { LanguageSwitch } from "@/features/site/layout/LanguageSwitch";
-import { resendVerificationEmail } from "@/lib/api/auth";
-import { useErrorMessage } from "@/lib/api/errors";
 import { useAuth } from "@/lib/auth/AuthProvider";
 import { useLanguage } from "@/lib/LanguageContext";
 import { cn } from "@/lib/utils";
@@ -369,40 +367,6 @@ function MoreGrid({ onNavigate }: { onNavigate: () => void }) {
   );
 }
 
-function VerifyEmailBanner() {
-  const { t } = useLanguage();
-  const { user } = useAuth();
-  const { toast } = useToast();
-  const toMessage = useErrorMessage();
-  const [sending, setSending] = useState(false);
-  if (!user || user.email_verified !== false) return null;
-  return (
-    <div className="border-b border-warning/25 bg-warning-soft px-4 py-2.5 sm:px-6 lg:px-8">
-      <div className="flex max-w-[80rem] flex-wrap items-center justify-between gap-x-4 gap-y-2 text-body-sm text-text">
-        <p>{t("dash.unverified")}</p>
-        <Button
-          size="sm"
-          variant="secondary"
-          loading={sending}
-          onClick={async () => {
-            setSending(true);
-            try {
-              await resendVerificationEmail();
-              toast({ title: t("dash.verification_sent"), tone: "success" });
-            } catch (err) {
-              toast({ title: toMessage(err), tone: "danger" });
-            } finally {
-              setSending(false);
-            }
-          }}
-        >
-          {t("dash.resend_verification")}
-        </Button>
-      </div>
-    </div>
-  );
-}
-
 export default function DashboardLayout() {
   const { t } = useLanguage();
   const [open, setOpen] = useState(false);
@@ -495,7 +459,6 @@ export default function DashboardLayout() {
               </div>
             </div>
           </header>
-          <VerifyEmailBanner />
           <main
             id="dash-main"
             ref={main}

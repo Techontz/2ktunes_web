@@ -38,8 +38,9 @@ describe("i18n", () => {
         <Probe />
       </LanguageProvider>,
     );
-    expect(screen.getAllByRole("radio")).toHaveLength(3);
-    await user.click(screen.getByRole("radio", { name: "Français" }));
+    await user.click(screen.getByRole("button", { name: /English/ }));
+    expect(screen.getAllByRole("menuitemradio")).toHaveLength(3);
+    await user.click(screen.getByRole("menuitemradio", { name: "Français" }));
     expect(screen.getByText(DICTIONARIES.FR["cta.login"])).toBeInTheDocument();
     expect(localStorage.getItem("2ktunes.lang")).toBe("FR");
     expect(document.documentElement.lang).toBe("fr");

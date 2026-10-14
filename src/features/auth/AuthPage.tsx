@@ -14,7 +14,7 @@ import {
   useToast,
 } from "@/components/ui";
 import { useAuth } from "@/lib/auth/AuthProvider";
-import { DASHBOARD_HOME, ONBOARDING_PATH, safeNext } from "@/lib/auth/routes";
+import { DASHBOARD_HOME, isEmailVerified, safeNext, verifyEmailPath } from "@/lib/auth/routes";
 import { ApiError } from "@/lib/api/client";
 import { ACCOUNT_TYPES, PASSWORD_MIN, type AccountType } from "@/lib/api/auth";
 import {
@@ -44,7 +44,8 @@ import { EMAIL_RE, authErrorKey, mapFieldErrors } from "./authErrors";
  *
  * The server is the authority on validation: its 422 `errors` are rendered
  * next to the matching fields. 401 → invalid credentials, 429 → throttled.
- * New accounts are sent to /onboarding.
+ * New accounts confirm their email on /verify-email first, then go to
+ * /onboarding. An unconfirmed account that logs in also lands on /verify-email.
  */
 
 type Mode = "login" | "register";
@@ -159,8 +160,10 @@ function LoginForm() {
 
     setBusy(true);
     try {
-      await auth.login(values.email.trim(), values.password);
-      navigate(safeNext(params.get("next")) ?? DASHBOARD_HOME, { replace: true });
+      const user = await auth.login(values.email.trim(), values.password);
+      const next = safeNext(params.get("next"));
+      // An unconfirmed email waits on /verify-email; the API refuses the rest.
+      navigate(isEmailVerified(user) ? (next ?? DASHBOARD_HOME) : verifyEmailPath(next), { replace: true });
     } catch (err) {
       if (err instanceof ApiError && err.isValidation && Object.keys(err.fieldErrors).length) {
         setErrors(mapFieldErrors(err.fieldErrors));
@@ -274,8 +277,9 @@ export function RegisterForm({ referralCode, hideHeading }: { referralCode?: str
         referralCode: referralCode ?? null,
       });
       referralToast(result);
-      const next = safeNext(params.get("next"));
-      navigate(next ? `${ONBOARDING_PATH}?next=${encodeURIComponent(next)}` : ONBOARDING_PATH, { replace: true });
+      // New accounts confirm their email first; /verify-email then continues
+      // to onboarding (and on to `next`).
+      navigate(verifyEmailPath(params.get("next")), { replace: true });
     } catch (err) {
       if (err instanceof ApiError && err.isValidation) {
         const mapped = mapFieldErrors(err.fieldErrors);

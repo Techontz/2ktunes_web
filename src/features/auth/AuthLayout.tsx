@@ -124,15 +124,16 @@ export function AuthHeading({ title, sub, compact }: { title: ReactNode; sub?: R
 }
 
 /** Form-level error or notice, announced to screen readers. */
-export function FormAlert({ tone = "danger", children }: { tone?: "danger" | "success"; children: ReactNode }) {
+export function FormAlert({ tone = "danger", children }: { tone?: "danger" | "success" | "info"; children: ReactNode }) {
   return (
     <p
       role={tone === "danger" ? "alert" : "status"}
-      className={
-        tone === "danger"
-          ? "rounded-control border border-danger/30 bg-danger-soft px-4 py-3 text-body-sm font-medium text-danger"
-          : "rounded-control border border-success/30 bg-success-soft px-4 py-3 text-body-sm font-medium text-success"
-      }
+      className={cn(
+        "rounded-control border px-4 py-3 text-body-sm font-medium",
+        tone === "danger" && "border-danger/30 bg-danger-soft text-danger",
+        tone === "success" && "border-success/30 bg-success-soft text-success",
+        tone === "info" && "border-accent/30 bg-accent-soft text-accent-text",
+      )}
     >
       {children}
     </p>

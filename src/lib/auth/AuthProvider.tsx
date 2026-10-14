@@ -12,6 +12,7 @@ import {
   ApiError,
   apiConfigured,
   getToken,
+  setEmailUnverifiedHandler,
   setToken,
   setUnauthenticatedHandler,
 } from "@/lib/api/client";
@@ -47,7 +48,8 @@ type AuthContextValue = {
   user: AuthUser | null;
   /** True when VITE_API_URL is set; false means the API isn't configured. */
   configured: boolean;
-  login: (email: string, password: string) => Promise<void>;
+  /** Resolves with the signed-in user, so the caller can route an unverified account. */
+  login: (email: string, password: string) => Promise<AuthUser>;
   register: (input: {
     name: string;
     email: string;
@@ -67,6 +69,12 @@ type AuthContextValue = {
   justRegistered: boolean;
   logout: () => Promise<void>;
   refresh: () => Promise<void>;
+  /**
+   * Re-reads GET /api/profile without ever changing the session status: a
+   * failure (offline, 5xx) resolves null and leaves everything as it was.
+   * Used by polling, where a network blip must not sign anyone out.
+   */
+  reloadUser: () => Promise<AuthUser | null>;
 };
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
@@ -119,6 +127,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, [clearSession]);
 
+  /* A 403 `email_unverified` from any endpoint: mark the account unconfirmed so
+     the route guards send it to /verify-email. The session itself stays. */
+  useEffect(() => {
+    setEmailUnverifiedHandler(() => {
+      if (!mounted.current) return;
+      setUser((u) => (u && u.email_verified !== false ? { ...u, email_verified: false, email_verified_at: null } : u));
+    });
+    return () => setEmailUnverifiedHandler(null);
+  }, []);
+
+  const reloadUser = useCallback(async (): Promise<AuthUser | null> => {
+    if (!apiConfigured || !getToken()) return null;
+    try {
+      const fresh = await authApi.fetchProfile();
+      if (mounted.current) setUser(fresh);
+      return fresh;
+    } catch {
+      return null;
+    }
+  }, []);
+
   /* Boot: verify a stored token against the server before trusting it. */
   useEffect(() => {
     if (apiConfigured && getToken()) void refresh();
@@ -135,7 +164,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
    * the sign-in payload only if that follow-up call fails.
    */
   const adoptSession = useCallback(
-    async (token: string, fallbackUser: AuthUser) => {
+    async (token: string, fallbackUser: AuthUser): Promise<AuthUser> => {
       setToken(token);
       let resolved = fallbackUser;
       try {
@@ -143,9 +172,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       } catch {
         /* keep the sign-in payload */
       }
-      if (!mounted.current) return;
-      setUser(resolved);
-      setStatus("authenticated");
+      if (mounted.current) {
+        setUser(resolved);
+        setStatus("authenticated");
+      }
+      return resolved;
     },
     [],
   );
@@ -153,7 +184,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = useCallback(
     async (email: string, password: string) => {
       const res = await authApi.login({ email, password });
-      await adoptSession(res.token, res.user);
+      return adoptSession(res.token, res.user);
     },
     [adoptSession],
   );
@@ -222,8 +253,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       justRegistered,
       logout,
       refresh,
+      reloadUser,
     }),
-    [status, user, login, register, loginWithGoogle, justRegistered, logout, refresh],
+    [status, user, login, register, loginWithGoogle, justRegistered, logout, refresh, reloadUser],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

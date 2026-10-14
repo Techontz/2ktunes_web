@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { ApiError, request } from "./client";
+import { ApiError, request, setEmailUnverifiedHandler } from "./client";
 import { errorMessageFor } from "./errors";
 import { mockApi } from "@/test/api";
 
@@ -61,5 +61,23 @@ describe("API client error normalisation", () => {
   it("maps a thrown non-API value to generic copy", () => {
     expect(errorMessageFor(new Error("boom"), t)).toBe("t:err.generic");
     expect(errorMessageFor(undefined, t)).toBe("t:err.generic");
+  });
+
+  it("calls the email_unverified handler on that 403 only, and keeps the token", async () => {
+    const onUnverified = vi.fn();
+    setEmailUnverifiedHandler(onUnverified);
+    localStorage.setItem("2ktunes.token", "keep-me");
+    mockApi({
+      "GET /wallet": { status: 403, body: { status: false, code: "email_unverified", message: "Please confirm your email address to continue." } },
+      "GET /admin": { status: 403, body: { status: false, code: "forbidden", message: "No." } },
+    });
+    const err = await failure(request("/wallet"));
+    expect(err.status).toBe(403);
+    expect(err.code).toBe("email_unverified");
+    expect(onUnverified).toHaveBeenCalledTimes(1);
+    await failure(request("/admin"));
+    expect(onUnverified).toHaveBeenCalledTimes(1);
+    expect(localStorage.getItem("2ktunes.token")).toBe("keep-me");
+    setEmailUnverifiedHandler(null);
   });
 });

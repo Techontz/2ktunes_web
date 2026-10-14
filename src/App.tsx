@@ -33,6 +33,7 @@ const ForgotPasswordPage = lazy(() =>
 const ResetPasswordPage = lazy(() =>
   import("@/features/auth/RecoveryPages").then((m) => ({ default: m.ResetPasswordPage })),
 );
+const VerifyEmailPage = lazy(() => import("@/features/auth/VerifyEmailPage"));
 const EmailVerifiedPage = lazy(() =>
   import("@/features/auth/RecoveryPages").then((m) => ({ default: m.EmailVerifiedPage })),
 );
@@ -90,6 +91,9 @@ function Loading() {
  * focused layout. `RequireAuth` sits on the dashboard's PARENT route, so every
  * dashboard page is guarded by construction.
  *
+ * `RequireAuth` also sends accounts whose email is not confirmed to
+ * /verify-email: the API refuses them everything else (403 `email_unverified`).
+ *
  * /onboarding runs once after registration (account type, first artist
  * profile, optional creator profile) and then hands over to /dashboard.
  * /r/:slug is the public, mobile-first smart-link page for a release.
@@ -137,6 +141,8 @@ export default function App() {
               <Route path="/forgot-password" element={<ForgotPasswordPage />} />
               <Route path="/reset-password" element={<ResetPasswordPage />} />
               <Route path="/email-verified" element={<EmailVerifiedPage />} />
+              {/* Signed in but email not confirmed yet: the guards send people here. */}
+              <Route path="/verify-email" element={<VerifyEmailPage />} />
 
               <Route path="/r/:slug" element={<SmartLinkPage />} />
 

@@ -25,6 +25,8 @@
  *   failure  { status: false, message, code, errors?, details? }
  *     422  validation_failed (+ errors) or a business rule (`release_locked` …)
  *     401  unauthenticated · 403 forbidden | subscription_required | …
+ *     403  email_unverified: the account must confirm its email first
+ *          (the session is kept; the app shows /verify-email)
  *     5xx  never surfaced to the user verbatim
  */
 
@@ -112,6 +114,15 @@ export class ApiNotConfiguredError extends ApiError {
 let onUnauthenticated: (() => void) | null = null;
 export function setUnauthenticatedHandler(fn: (() => void) | null): void {
   onUnauthenticated = fn;
+}
+
+/**
+ * Called when the API answers 403 `email_unverified`: the account has not
+ * confirmed its email yet. The session stays; the app routes to /verify-email.
+ */
+let onEmailUnverified: (() => void) | null = null;
+export function setEmailUnverifiedHandler(fn: (() => void) | null): void {
+  onEmailUnverified = fn;
 }
 
 type Query = Record<string, string | number | boolean | null | undefined>;
@@ -221,6 +232,8 @@ export async function request<T>(
     throw new ApiError(data.message ?? "Unauthenticated.", 401, {}, false, extra);
   }
 
+  if (res.status === 403 && extra.code === "email_unverified" && auth) onEmailUnverified?.();
+
   const fieldErrors: Record<string, string> = {};
   for (const [field, messages] of Object.entries(data.errors ?? {})) {
     if (Array.isArray(messages) && messages.length) fieldErrors[field] = messages[0];
@@ -276,6 +289,7 @@ export function uploadWithProgress<T>(
         return;
       }
       if (xhr.status === 401) onUnauthenticated?.();
+      if (xhr.status === 403 && payload.code === "email_unverified") onEmailUnverified?.();
       const fieldErrors: Record<string, string> = {};
       const errors = (payload.errors ?? {}) as Record<string, string[]>;
       for (const [k, v] of Object.entries(errors)) if (Array.isArray(v) && v.length) fieldErrors[k] = v[0];

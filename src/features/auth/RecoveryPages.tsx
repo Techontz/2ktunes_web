@@ -5,7 +5,7 @@ import { Button, Field, Input, PasswordInput } from "@/components/ui";
 import { ApiError } from "@/lib/api/client";
 import { PASSWORD_MIN, forgotPassword, resendVerificationEmail, resetPassword } from "@/lib/api/auth";
 import { useAuth } from "@/lib/auth/AuthProvider";
-import { DASHBOARD_HOME } from "@/lib/auth/routes";
+import { VERIFY_EMAIL_PATH, homeAfterVerification, isEmailVerified } from "@/lib/auth/routes";
 import { useLanguage } from "@/lib/LanguageContext";
 import { cn } from "@/lib/utils";
 import AuthLayout, { AuthHeading, FormAlert } from "./AuthLayout";
@@ -272,6 +272,12 @@ export function ResetPasswordPage() {
 
 type VerifyStatus = "success" | "already" | "invalid" | "expired";
 
+/**
+ * Where the link in the verification email lands (the API redirects here).
+ * Signed in: refresh the user, then continue to onboarding or the dashboard.
+ * Signed out: confirm and ask them to sign in. A bad or expired link offers a
+ * fresh one when signed in.
+ */
 export function EmailVerifiedPage() {
   const { t } = useLanguage();
   const [params] = useSearchParams();
@@ -279,16 +285,25 @@ export function EmailVerifiedPage() {
   const status: VerifyStatus =
     raw === "success" || raw === "already" || raw === "expired" ? raw : "invalid";
   useTitle(`verify.${status}_title` as const);
-  const { status: authStatus, refresh } = useAuth();
+  const { status: authStatus, user, reloadUser } = useAuth();
   const signedIn = authStatus === "authenticated";
+  const ok = status === "success" || status === "already";
+  const [synced, setSynced] = useState(false);
   const [resend, setResend] = useState<"idle" | "busy" | "sent" | "error">("idle");
   const [resendError, setResendError] = useState<string | null>(null);
 
-  // A verified account should see the fresh flag in the dashboard.
+  // A confirmed account must not reach the guards with the stale "unverified" flag.
   useEffect(() => {
-    if (signedIn && (status === "success" || status === "already")) void refresh();
+    if (!signedIn || !ok) return;
+    let alive = true;
+    void reloadUser().finally(() => {
+      if (alive) setSynced(true);
+    });
+    return () => {
+      alive = false;
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [status, signedIn]);
+  }, [ok, signedIn]);
 
   const doResend = async () => {
     setResend("busy");
@@ -302,21 +317,22 @@ export function EmailVerifiedPage() {
     }
   };
 
-  const ok = status === "success" || status === "already";
   const icon = ok ? <CheckCircle2 /> : status === "expired" ? <Clock /> : <AlertTriangle />;
+  const body = ok && !signedIn && authStatus !== "loading" ? t("verify.success_signed_out_body") : t(`verify.${status}_body`);
 
   return (
     <AuthLayout>
-      <ResultPanel
-        icon={icon}
-        tone={ok ? "success" : "warning"}
-        title={t(`verify.${status}_title`)}
-        body={t(`verify.${status}_body`)}
-      >
+      <ResultPanel icon={icon} tone={ok ? "success" : "warning"} title={t(`verify.${status}_title`)} body={body}>
         {ok ? (
-          <Button to={signedIn ? DASHBOARD_HOME : "/auth"} size="lg" fullWidth>
-            {signedIn ? t("verify.continue") : t("auth.login_btn")}
-          </Button>
+          signedIn || authStatus === "loading" ? (
+            <Button to={homeAfterVerification(user)} size="lg" fullWidth loading={!synced}>
+              {t("verify.continue")}
+            </Button>
+          ) : (
+            <Button to="/auth" size="lg" fullWidth>
+              {t("auth.login_btn")}
+            </Button>
+          )
         ) : signedIn ? (
           <>
             {resend === "sent" ? (
@@ -327,8 +343,8 @@ export function EmailVerifiedPage() {
               </Button>
             )}
             {resendError && <FormAlert>{resendError}</FormAlert>}
-            <Button to={DASHBOARD_HOME} variant="ghost" size="lg" fullWidth>
-              {t("verify.continue")}
+            <Button to={isEmailVerified(user) ? homeAfterVerification(user) : VERIFY_EMAIL_PATH} variant="ghost" size="lg" fullWidth>
+              {isEmailVerified(user) ? t("verify.continue") : t("verify.back")}
             </Button>
           </>
         ) : (
