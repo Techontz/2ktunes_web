@@ -1,6 +1,22 @@
 import { Suspense, useEffect, useRef, useState } from "react";
 import { Link, Outlet, useLocation } from "react-router-dom";
-import { ArrowUpRight, Bell, Disc3, ExternalLink, LayoutDashboard, LayoutGrid, LogOut, Megaphone, Settings, Wallet } from "lucide-react";
+import {
+  ArrowUpRight,
+  BarChart3,
+  Bell,
+  ChevronDown,
+  CreditCard,
+  Disc3,
+  ExternalLink,
+  LayoutGrid,
+  LogOut,
+  Megaphone,
+  PieChart,
+  PlusCircle,
+  Settings,
+  UserRound,
+  Wallet,
+} from "lucide-react";
 import { Wordmark } from "@/components/brand/Wordmark";
 import { Avatar, Sheet } from "@/components/ui";
 import { LanguageSwitch } from "@/features/site/layout/LanguageSwitch";
@@ -14,7 +30,9 @@ import { UnreadProvider, useUnread } from "./UnreadContext";
 /**
  * THE AUTHENTICATED SHELL
  *
- * Desktop (lg+): fixed sidebar + sticky top bar. Below lg the app behaves
+ * Desktop (lg+): one dark top bar, DistroKid style (Upload menu, the
+ * everyday sections, a grid menu with every section, language, bell and
+ * account) over a centred page. Below lg the app behaves
  * like a native app: a compact top bar (logo, section name, bell, account)
  * and a bottom tab bar with the four key sections plus "More", which opens a
  * bottom sheet holding every other section and the language switch. The
@@ -23,54 +41,206 @@ import { UnreadProvider, useUnread } from "./UnreadContext";
  * on the new page, not on the link they pressed.
  */
 
-function NavList({ onNavigate }: { onNavigate?: () => void }) {
+/** Open/close state for a top-bar dropdown: outside click, Escape and navigation close it. */
+function useDropdown() {
+  const [open, setOpen] = useState(false);
+  const wrap = useRef<HTMLDivElement>(null);
+  const button = useRef<HTMLButtonElement>(null);
+  const { pathname } = useLocation();
+  useEffect(() => setOpen(false), [pathname]);
+  useEffect(() => {
+    if (!open) return;
+    const onDown = (e: MouseEvent) => {
+      if (wrap.current && !wrap.current.contains(e.target as Node)) setOpen(false);
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setOpen(false);
+        button.current?.focus();
+      }
+    };
+    document.addEventListener("mousedown", onDown);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("mousedown", onDown);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [open]);
+  return { open, setOpen, wrap, button };
+}
+
+const topLinkCls = (active: boolean) =>
+  cn(
+    "relative flex h-[57px] items-center gap-1.5 whitespace-nowrap px-2.5 text-[0.875rem] transition-colors xl:px-4",
+    "focus-visible:outline-2 focus-visible:outline-offset-[-8px] focus-visible:outline-accent-text",
+    "after:absolute after:inset-x-2.5 after:bottom-0 after:h-[3px] after:rounded-t-[2px] after:transition-colors xl:after:inset-x-4",
+    active ? "font-semibold text-white after:bg-nr-nav-active" : "font-medium text-white/85 hover:text-white after:bg-transparent",
+  );
+
+/** Desktop top-bar links, DistroKid style: the everyday sections, in the order artists use them. */
+const TOP: NavItem[] = [
+  { to: "/dashboard/music", label: "dash.nav_music", icon: Disc3 },
+  { to: "/dashboard/analytics", label: "dash.top_stats", icon: BarChart3 },
+  { to: "/dashboard/splits", label: "dash.nav_splits", icon: PieChart },
+  { to: "/dashboard/promotion", label: "dash.nav_promotion", icon: Megaphone },
+  { to: "/dashboard/plan", label: "dash.nav_plan", icon: CreditCard },
+  { to: "/dashboard/wallet", label: "dash.nav_wallet", icon: Wallet },
+];
+
+function UploadMenu() {
+  const { t } = useLanguage();
+  const { pathname } = useLocation();
+  const { open, setOpen, wrap, button } = useDropdown();
+  const active = pathname.startsWith("/dashboard/new-release") || pathname.startsWith("/dashboard/artists");
+  const items = [
+    { to: "/dashboard/new-release", icon: PlusCircle, title: t("dash.top_upload_music"), desc: t("dash.top_upload_music_desc") },
+    { to: "/dashboard/artists", icon: UserRound, title: t("dash.nav_artists"), desc: t("dash.top_artists_desc") },
+  ];
+  return (
+    <div ref={wrap} className="relative">
+      <button
+        ref={button}
+        type="button"
+        aria-expanded={open}
+        aria-controls="dash-upload-menu"
+        onClick={() => setOpen((v) => !v)}
+        className={topLinkCls(active)}
+      >
+        {t("dash.top_upload")}
+        <ChevronDown className={cn("h-4 w-4 transition-transform", open && "rotate-180")} aria-hidden />
+      </button>
+      {open && (
+        <div
+          id="dash-upload-menu"
+          className="absolute left-0 top-[calc(100%-0.25rem)] z-50 w-80 animate-fade-in rounded-card border border-border bg-surface-overlay p-2 shadow-overlay"
+        >
+          <ul>
+            {items.map((i) => (
+              <li key={i.to}>
+                <Link
+                  to={i.to}
+                  className="flex items-start gap-3 rounded-[10px] px-3 py-3 transition-colors hover:bg-tint/[0.05] focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-accent-text"
+                >
+                  <span aria-hidden className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px] bg-accent-soft text-accent-text">
+                    <i.icon className="h-[1.1rem] w-[1.1rem]" />
+                  </span>
+                  <span className="min-w-0">
+                    <span className="block text-body-sm font-bold text-text">{i.title}</span>
+                    <span className="block text-caption text-text-subtle">{i.desc}</span>
+                  </span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/** Grid button at the end of the top bar: every section, grouped. */
+function AllSectionsMenu() {
   const { t } = useLanguage();
   const { user } = useAuth();
   const { pathname } = useLocation();
+  const { open, setOpen, wrap, button } = useDropdown();
   return (
-    <nav aria-label={t("dash.nav_label")} className="space-y-5">
-      {NAV.map((group) => {
-        const items = group.items.filter((i) => !i.visible || i.visible(user));
-        if (!items.length) return null;
-        return (
-          <div key={group.label}>
-            <p className="mb-1.5 px-3 text-[0.6875rem] font-bold uppercase tracking-[0.14em] text-text-subtle">
-              {t(group.label)}
-            </p>
-            <ul className="space-y-0.5">
-              {items.map((item) => {
-                const active = isNavActive(item, pathname);
-                return (
-                  <li key={item.to}>
-                    <Link
-                      to={item.to}
-                      onClick={onNavigate}
-                      aria-current={active ? "page" : undefined}
-                      className={cn(
-                        "group relative flex min-h-[2.375rem] items-center gap-3 rounded-control px-3 py-1.5 text-[0.9rem] font-semibold transition-[background-color,color] duration-150",
-                        "focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-accent-text",
-                        active
-                          ? "bg-accent-soft text-text before:absolute before:inset-y-2 before:left-0 before:w-[3px] before:rounded-r-full before:bg-accent-text"
-                          : "text-text-muted hover:bg-tint/[0.06] hover:text-text",
-                      )}
-                    >
-                      <item.icon
-                        className={cn(
-                          "h-[1.05rem] w-[1.05rem] shrink-0 transition-colors",
-                          active ? "text-accent-text" : "text-text-subtle group-hover:text-text",
-                        )}
-                        aria-hidden
-                      />
-                      <span className="min-w-0 truncate">{t(item.label)}</span>
-                    </Link>
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
-        );
-      })}
-    </nav>
+    <div ref={wrap} className="relative">
+      <button
+        ref={button}
+        type="button"
+        aria-expanded={open}
+        aria-controls="dash-all-menu"
+        aria-label={t("dash.top_all")}
+        onClick={() => setOpen((v) => !v)}
+        className={cn(
+          "flex h-10 w-10 items-center justify-center rounded-control text-white transition-colors hover:bg-white/10",
+          "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-text",
+          open && "bg-white/10 text-white",
+        )}
+      >
+        <LayoutGrid className="h-[1.2rem] w-[1.2rem]" strokeWidth={1.75} aria-hidden />
+      </button>
+      {open && (
+        <nav
+          id="dash-all-menu"
+          aria-label={t("dash.top_all")}
+          className="absolute right-0 top-[calc(100%+0.5rem)] z-50 grid w-[44rem] max-w-[calc(100vw-2rem)] animate-fade-in grid-cols-4 gap-4 rounded-card border border-border bg-surface-overlay p-4 shadow-overlay"
+        >
+          {NAV.map((group) => {
+            const items = group.items.filter((i) => !i.visible || i.visible(user));
+            if (!items.length) return null;
+            return (
+              <div key={group.label} className="min-w-0">
+                <p className="mb-1.5 px-2 text-[0.6875rem] font-bold uppercase tracking-[0.14em] text-text-subtle">{t(group.label)}</p>
+                <ul className="space-y-0.5">
+                  {items.map((item) => {
+                    const active = isNavActive(item, pathname);
+                    return (
+                      <li key={item.to}>
+                        <Link
+                          to={item.to}
+                          aria-current={active ? "page" : undefined}
+                          className={cn(
+                            "flex items-center gap-2.5 rounded-[8px] px-2 py-2 text-body-sm font-semibold transition-colors",
+                            "focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-accent-text",
+                            active ? "bg-accent-soft text-text" : "text-text-muted hover:bg-tint/[0.05] hover:text-text",
+                          )}
+                        >
+                          <item.icon className={cn("h-4 w-4 shrink-0", active ? "text-accent-text" : "text-text-subtle")} aria-hidden />
+                          <span className="min-w-0 truncate">{t(item.label)}</span>
+                        </Link>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+            );
+          })}
+        </nav>
+      )}
+    </div>
+  );
+}
+
+/** Desktop (lg+) navigation: one slim deep-purple bar across the top: logo, centred sections, tools and account. */
+function DesktopTopBar() {
+  const { t } = useLanguage();
+  const { pathname } = useLocation();
+  return (
+    <header className="theme-dark sticky top-0 z-30 hidden border-b border-nr-nav-edge bg-nr-nav lg:block">
+      <div className="mx-auto flex h-[57px] max-w-[calc(94.25rem+4rem)] items-center px-8">
+        <div className="flex min-w-0 flex-1 basis-0 items-center">
+          <Link
+            to="/dashboard/music"
+            className="flex h-10 shrink-0 items-center rounded-sm text-[1.3rem] leading-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-text"
+            aria-label={t("nav.home")}
+          >
+            <Wordmark tone="dark" />
+          </Link>
+        </div>
+        <nav aria-label={t("dash.nav_label")} className="mx-4 flex shrink-0 items-center xl:mx-6">
+          <UploadMenu />
+          {TOP.map((item) => (
+            <Link
+              key={item.to}
+              to={item.to}
+              aria-current={isNavActive(item, pathname) ? "page" : undefined}
+              className={topLinkCls(isNavActive(item, pathname))}
+            >
+              {t(item.label)}
+            </Link>
+          ))}
+        </nav>
+        <div className="flex flex-1 basis-0 items-center justify-end gap-1 xl:gap-2">
+          <AllSectionsMenu />
+          <span aria-hidden className="mx-1 h-5 w-px bg-white/20" />
+          <LanguageSwitch bare />
+          <NotificationBell />
+          <UserMenu />
+        </div>
+      </div>
+    </header>
   );
 }
 
@@ -132,7 +302,7 @@ function NotificationBell() {
     <Link
       to="/dashboard/notifications"
       aria-label={count > 0 ? t("dash.bell_unread", { count }) : t("dash.bell_none")}
-      className="relative flex h-10 w-10 items-center justify-center rounded-control text-text-muted transition-colors hover:bg-tint/[0.06] hover:text-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-text"
+      className="relative flex h-10 w-10 items-center justify-center rounded-control text-text transition-colors hover:bg-tint/[0.06] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-text"
     >
       <Bell className="h-5 w-5" aria-hidden />
       {count > 0 && (
@@ -192,7 +362,8 @@ function UserMenu() {
         className="flex h-10 items-center gap-2 rounded-control pl-1 pr-1 transition-colors hover:bg-tint/[0.06] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-text sm:pr-2"
       >
         <Avatar name={user.name || user.email} src={user.avatar} size="sm" />
-        <span className="hidden max-w-[10rem] truncate text-body-sm font-semibold text-text md:inline">{user.name}</span>
+        <span className="hidden max-w-[10rem] truncate text-[0.8125rem] font-semibold text-text md:inline lg:hidden xl:inline">{user.name}</span>
+        <ChevronDown className={cn("hidden h-4 w-4 text-text-muted transition-transform xl:block", open && "rotate-180")} aria-hidden />
       </button>
       {open && (
         <div
@@ -240,8 +411,8 @@ function UserMenu() {
 /* ── Phone/tablet navigation ─────────────────────────────────────────── */
 
 const TABS: NavItem[] = [
-  { to: "/dashboard", label: "dash.nav_home", icon: LayoutDashboard, end: true },
   { to: "/dashboard/music", label: "dash.nav_music", icon: Disc3 },
+  { to: "/dashboard/new-release", label: "dash.nav_new_release", icon: PlusCircle },
   { to: "/dashboard/promotion", label: "dash.nav_promotion", icon: Megaphone },
   { to: "/dashboard/wallet", label: "dash.nav_wallet", icon: Wallet },
 ];
@@ -253,8 +424,7 @@ const TABS: NavItem[] = [
 function TabBar({ moreOpen, onMore }: { moreOpen: boolean; onMore: () => void }) {
   const { t } = useLanguage();
   const { pathname } = useLocation();
-  // The release wizard belongs to the catalog tab.
-  const path = pathname.startsWith("/dashboard/new-release") ? "/dashboard/music" : pathname;
+  const path = pathname;
   const activeTab = TABS.find((tab) => isNavActive(tab, path));
   const item =
     "tap relative flex min-w-0 flex-1 flex-col items-center justify-center gap-1 rounded-[12px] pb-1 pt-1.5 text-[0.6875rem] font-semibold leading-none tracking-[0.01em] focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-accent-text";
@@ -401,24 +571,7 @@ export default function DashboardLayout() {
           {t("common.skip")}
         </a>
 
-        {/* Desktop sidebar: deep brand purple, logo on top, release card below. */}
-        <aside className="theme-dark fixed inset-y-0 left-0 z-30 hidden w-64 flex-col overflow-hidden bg-[linear-gradient(180deg,#1a0b2e_0%,#241040_60%,#2a0f4a_100%)] lg:flex">
-          <div
-            aria-hidden
-            className="pointer-events-none absolute -right-24 -top-24 h-64 w-64 rounded-full bg-[radial-gradient(circle,rgb(132_29_198/0.45),transparent_65%)]"
-          />
-          <Link
-            to="/dashboard"
-            className="relative flex h-16 shrink-0 items-center px-5 text-[1.3rem] leading-none focus-visible:outline-2 focus-visible:outline-offset-[-4px] focus-visible:outline-accent-text"
-            aria-label={t("nav.home")}
-          >
-            <Wordmark tone="dark" />
-          </Link>
-          <div className="relative min-h-0 flex-1 overflow-y-auto px-3 pb-4 pt-3 no-scrollbar">
-            <NavList />
-          </div>
-          <SidebarRelease />
-        </aside>
+        <DesktopTopBar />
 
         {/* Phone/tablet navigation: bottom tabs + the "More" sheet. */}
         <TabBar moreOpen={open} onMore={() => setOpen(true)} />
@@ -437,12 +590,13 @@ export default function DashboardLayout() {
           <MoreGrid onNavigate={() => setOpen(false)} />
         </Sheet>
 
-        <div className="lg:pl-64">
-          <header className="sticky top-0 z-20 border-b border-border-subtle bg-white/85 pt-[env(safe-area-inset-top)] shadow-[0_1px_0_rgb(42_8_70/0.02),0_8px_24px_-20px_rgb(42_8_70/0.35)] backdrop-blur-md">
-            <div className="flex h-14 items-center justify-between gap-2 px-4 sm:h-16 sm:px-6 lg:px-8">
+        <div>
+          {/* Phone/tablet top bar; the desktop one is DesktopTopBar. */}
+          <header className="sticky top-0 z-20 border-b border-border-subtle bg-white/85 pt-[env(safe-area-inset-top)] shadow-[0_1px_0_rgb(42_8_70/0.02),0_8px_24px_-20px_rgb(42_8_70/0.35)] backdrop-blur-md lg:hidden">
+            <div className="flex h-14 items-center justify-between gap-2 px-4 sm:h-16 sm:px-6">
               <div className="flex min-w-0 items-center gap-3 lg:contents">
                 <Link
-                  to="/dashboard"
+                  to="/dashboard/music"
                   className="flex h-10 shrink-0 items-center rounded-sm text-[1.05rem] leading-none lg:hidden"
                   aria-label={t("nav.home")}
                 >
@@ -463,7 +617,7 @@ export default function DashboardLayout() {
             id="dash-main"
             ref={main}
             tabIndex={-1}
-            className="w-full max-w-[80rem] px-4 pb-[calc(6rem+env(safe-area-inset-bottom))] pt-5 focus:outline-none sm:px-6 sm:pt-7 lg:px-8 lg:pb-16"
+            className="mx-auto w-full max-w-[calc(94.25rem+4rem)] px-4 pb-[calc(6rem+env(safe-area-inset-bottom))] pt-5 focus:outline-none sm:px-6 sm:pt-7 lg:px-8 lg:pb-16 lg:pt-10"
           >
             <Suspense fallback={<PageLoading />}>
               <Outlet />

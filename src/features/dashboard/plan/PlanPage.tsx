@@ -1,266 +1,148 @@
 import { useState } from "react";
-import { Check, Clock, Package } from "lucide-react";
-import { Badge, Button, Card, EmptyState, useToast } from "@/components/ui";
-import {
-  ConfirmDialog,
-  DefinitionList,
-  FormAlert,
-  LoadError,
-  PageHeader,
-  PageLoading,
-  Section,
-  StatusPill,
-} from "@/features/dashboard/components";
-import { fetchPlanList, fetchSubscription, planPrices, subscribe } from "@/lib/api/account";
-import type { Plan, SubscriptionInfo } from "@/lib/api/types";
+import { CalendarX2, Clock } from "lucide-react";
+import { DefinitionList, FormAlert, LoadError, PageLoading } from "@/features/dashboard/components";
+import { fetchSubscription } from "@/lib/api/account";
+import type { SubscriptionInfo } from "@/lib/api/types";
 import { useResource } from "@/lib/api/useResource";
-import { useAuth } from "@/lib/auth/AuthProvider";
 import { formatDate } from "@/lib/dates";
 import { useLanguage } from "@/lib/LanguageContext";
-import { formatCount, formatDecimal, formatMinor, isZeroDecimal } from "@/lib/money";
-import { OfferPrice } from "@/features/growth/OfferPrice";
+import { formatMinor } from "@/lib/money";
 import { useCopy } from "@/lib/useCopy";
-import { cn } from "@/lib/utils";
 import { COPY, type PlanCopy } from "./copy";
-import { PayForPlanDialog } from "./PayForPlanDialog";
+import { PaymentReturn } from "./PaymentReturn";
+import { PlanPicker } from "./PlanPicker";
 
+/**
+ * PLANS & BILLING
+ *
+ * Also where Stripe Checkout and PayPal send the artist back
+ * (?payment={id}&result=success|cancel): see PaymentReturn.
+ *
+ * Where artists pick, change or renew a plan. The header, then any payment
+ * awaiting confirmation (in full) or an expired plan, then the plan cards
+ * (PlanPicker, variant "page"): the current plan carries a "Current plan"
+ * band and a Renew button, the others open the pay dialog.
+ */
 export default function PlanPage() {
   const c = useCopy(COPY);
-  const { toast } = useToast();
-  const auth = useAuth();
-  const plans = useResource((signal) => fetchPlanList({ signal }), []);
   const sub = useResource((signal) => fetchSubscription({ signal }), []);
-  const [freePlan, setFreePlan] = useState<Plan | null>(null);
-  const [paidPlan, setPaidPlan] = useState<Plan | null>(null);
-
-  const afterChange = () => {
-    sub.reload();
-    void auth.refresh();
-  };
-
-  if (plans.loading || sub.loading) return <PageLoading />;
-
-  const error = sub.error ?? plans.error;
-  if (error && (!sub.data || !plans.data)) {
-    return (
-      <>
-        <PageHeader title={c.title} description={c.intro} />
-        <LoadError
-          error={error}
-          onRetry={() => {
-            if (sub.error) sub.reload();
-            if (plans.error) plans.reload();
-          }}
-        />
-      </>
-    );
-  }
-
-  const info = sub.data as SubscriptionInfo;
-  const list = (plans.data ?? []).filter((p) => p.is_active !== false);
+  // Remounts the picker after a payment confirmed on return from Stripe or PayPal.
+  const [pickerKey, setPickerKey] = useState(0);
 
   return (
     <>
-      <PageHeader title={c.title} description={c.intro} />
-
-      <div className="space-y-10">
-        <Section id="current" title={c.currentTitle}>
-          <CurrentSubscription info={info} c={c} />
-        </Section>
-
-        <Section id="plans" title={c.plansTitle} description={c.plansDesc}>
-          {list.length === 0 ? (
-            <EmptyState icon={<Package />} title={c.plansEmptyTitle} description={c.plansEmptyBody} compact />
-          ) : (
-            <ul className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-              {list.map((p) => (
-                <PlanCard
-                  key={p.id}
-                  plan={p}
-                  info={info}
-                  c={c}
-                  onChoose={() => (isZeroDecimal(p.price) ? setFreePlan(p) : setPaidPlan(p))}
-                />
-              ))}
-            </ul>
-          )}
-        </Section>
+      {/* Soft lavender wash with faint light streaks (CSS only). */}
+      <div aria-hidden className="plan-backdrop" />
+      <div className="relative z-[1] w-full">
+        <PlanHeader c={c} />
+        {sub.loading ? (
+          <PageLoading />
+        ) : sub.error || !sub.data ? (
+          <div className="mt-8">
+            <LoadError error={sub.error} onRetry={sub.reload} />
+          </div>
+        ) : (
+          <>
+            <PaymentReturn
+              c={c}
+              onConfirmed={() => {
+                sub.reload();
+                setPickerKey((k) => k + 1);
+              }}
+            />
+            <SubscriptionNotice info={sub.data} c={c} />
+            <PlanPicker key={pickerKey} variant="page" onChanged={sub.reload} />
+          </>
+        )}
       </div>
-
-      <ConfirmDialog
-        open={!!freePlan}
-        onClose={() => setFreePlan(null)}
-        title={freePlan ? c.freeTitle(freePlan.name) : ""}
-        description={c.freeBody}
-        confirmLabel={c.freeConfirm}
-        onConfirm={async () => {
-          if (!freePlan) return;
-          await subscribe({ plan_id: freePlan.id });
-          toast({ title: c.activated(freePlan.name), tone: "success" });
-          afterChange();
-        }}
-      />
-      <PayForPlanDialog
-        plan={paidPlan}
-        instructions={info?.payment_instructions}
-        onClose={() => setPaidPlan(null)}
-        onSubmitted={() => {
-          setPaidPlan(null);
-          toast({ title: c.submitted, tone: "success" });
-          afterChange();
-        }}
-        onActivated={(p) => {
-          setPaidPlan(null);
-          toast({ title: c.activated(p.name), description: c.activatedBody, tone: "success" });
-          afterChange();
-        }}
-      />
     </>
   );
 }
 
-function CurrentSubscription({ info, c }: { info: SubscriptionInfo; c: PlanCopy }) {
-  const { locale } = useLanguage();
-  const status = info.subscription_status;
-  const pay = info.pending_payment;
-
+function PlanHeader({ c }: { c: PlanCopy }) {
   return (
-    <Card padding="md" className="space-y-5">
-      <DefinitionList
-        columns={3}
-        items={[
-          { label: c.planLabel, value: <span className="font-semibold">{info.plan?.name ?? c.noPlan}</span> },
-          { label: c.statusLabel, value: <StatusPill status={status} /> },
-          {
-            label: status === "expired" ? c.expiredLabel : c.expiresLabel,
-            value: formatDate(info.expires_at, locale),
-            hidden: !info.expires_at,
-          },
-        ]}
-      />
-      {status === "inactive" && !pay && <p className="text-body-sm text-text-muted">{c.inactiveBody}</p>}
-      {status === "expired" && <p className="text-body-sm text-text-muted">{c.expiredBody}</p>}
-      {pay && (
-        <FormAlert tone="warning">
-          <div className="flex items-start gap-3">
-            <Clock className="mt-0.5 h-4 w-4 shrink-0 text-warning" aria-hidden />
-            <div className="min-w-0 flex-1 space-y-3">
-              <div>
-                <p className="font-semibold">{c.pendingTitle}</p>
-                <p className="mt-0.5 text-text-muted">{c.pendingBody}</p>
-              </div>
-              <DefinitionList
-                items={[
-                  { label: c.pendingPlan, value: pay.plan?.name ?? "-", hidden: !pay.plan },
-                  { label: c.pendingMethod, value: c.methods[pay.method] ?? pay.method },
-                  { label: c.pendingReference, value: <span className="break-all font-mono">{pay.payer_reference}</span> },
-                  { label: c.pendingAmount, value: formatMinor(pay.amount_minor, pay.currency, locale) },
-                  { label: c.pendingSubmitted, value: formatDate(pay.created_at, locale) },
-                ]}
-              />
-            </div>
-          </div>
-        </FormAlert>
-      )}
-    </Card>
+    <header className="mx-auto flex max-w-[70rem] items-start justify-between gap-10">
+      <div className="min-w-0">
+        <p className="text-[0.75rem] font-semibold uppercase leading-none tracking-[0.14em] text-[#7a3fe4]">{c.eyebrow}</p>
+        <h1 className="mt-2.5 text-[1.875rem] font-extrabold leading-[1.1] tracking-[-0.03em] text-[#0b0a14] sm:text-[2.25rem]">
+          {c.changePlanTitle}
+        </h1>
+        <p className="mt-2 max-w-[48rem] text-[0.9375rem] leading-snug text-[#3a3560] sm:text-[1rem]">
+          {c.plansDesc}
+        </p>
+      </div>
+      <div className="hidden shrink-0 items-center gap-5 pr-1 pt-1 lg:flex">
+        <Waveform />
+        <p className="font-hand text-[1.125rem] font-light leading-[1.3] text-[#443c71]">
+          {c.taglineTop}
+          <br />
+          {c.taglineBottom}
+        </p>
+      </div>
+    </header>
   );
 }
 
-function PlanCard({
-  plan,
-  info,
-  c,
-  onChoose,
-}: {
-  plan: Plan;
-  info: SubscriptionInfo;
-  c: PlanCopy;
-  onChoose: () => void;
-}) {
-  const { locale } = useLanguage();
-  const free = isZeroDecimal(plan.price);
-  const [main, ...others] = planPrices(plan);
-  const isCurrent = info.subscription_status === "active" && info.plan?.id === plan.id;
-  const isPending = info.pending_payment?.plan_id === plan.id;
-  const features = (plan.features ?? []).filter((f) => typeof f === "string" && f.trim());
-  const headingId = `plan-${plan.id}-name`;
-  // GET /plans quotes the offer in the plan's main currency (my own eligibility).
-  const offer = !free && plan.offer && plan.offer.currency === main.currency ? plan.offer : null;
-
+/** Thin equaliser bars, the brand's "sound" motif. */
+function Waveform() {
+  const bars = [10, 18, 28, 52, 34, 20, 12, 22, 14];
   return (
-    <Card
-      as="li"
-      padding="md"
-      aria-labelledby={headingId}
-      className={cn("flex flex-col", isCurrent && "border-accent-text")}
-    >
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <h3 id={headingId} className="text-h4 font-bold text-text">
-          {plan.name}
-        </h3>
-        {isCurrent && (
-          <Badge tone="accent" size="sm">
-            {c.current}
-          </Badge>
-        )}
-        {!isCurrent && isPending && (
-          <Badge tone="warning" size="sm">
-            {c.pendingMarker}
-          </Badge>
-        )}
-      </div>
-      {offer ? (
-        <OfferPrice
-          offer={offer}
-          size="md"
-          className="mt-3"
-          format={(minor, cur) => formatMinor(minor, cur, locale)}
-          period={plan.duration === 365 || plan.duration === 366 ? c.perYear : plan.duration ? c.perDays(formatCount(plan.duration, locale)) : undefined}
-        />
-      ) : (
-        <p className="mt-3 break-words text-[1.625rem] font-bold leading-tight tracking-[-0.025em] text-text">
-          {free ? c.free : formatDecimal(main.amount, main.currency, locale)}
-        </p>
-      )}
-      {!free && others.length > 0 && (
-        <p className="text-body-sm font-semibold text-text-muted">
-          {others.map((p) => c.orPrice(formatDecimal(p.amount, p.currency, locale))).join(" · ")}
-        </p>
-      )}
-      {plan.duration && !offer ? (
-        <p className="text-body-sm text-text-subtle">
-          {plan.duration === 365 || plan.duration === 366 ? c.perYear : c.perDays(formatCount(plan.duration, locale))}
-        </p>
-      ) : null}
-      {plan.description && <p className="mt-3 text-body-sm text-text-muted">{plan.description}</p>}
-
-      <ul className="mt-4 space-y-2 text-body-sm text-text">
-        {plan.max_artists != null && (
-          <li className="flex gap-2">
-            <Check className="mt-0.5 h-4 w-4 shrink-0 text-success" aria-hidden />
-            {plan.max_artists === 1 ? c.oneArtist : c.maxArtists(formatCount(plan.max_artists, locale))}
-          </li>
-        )}
-        {features.map((f) => (
-          <li key={f} className="flex gap-2">
-            <Check className="mt-0.5 h-4 w-4 shrink-0 text-success" aria-hidden />
-            <span className="min-w-0 break-words">{f}</span>
-          </li>
-        ))}
-      </ul>
-
-      <div className="mt-auto pt-5">
-        {isCurrent && free ? null : (
-          <Button
-            fullWidth
-            variant={isCurrent ? "secondary" : "primary"}
-            onClick={onChoose}
-            aria-label={isCurrent ? c.renewPlan(plan.name) : c.choosePlan(plan.name)}
-          >
-            {isCurrent ? c.renew : c.choose}
-          </Button>
-        )}
-      </div>
-    </Card>
+    <svg aria-hidden width="44" height="44" viewBox="0 0 54 54" fill="none" className="text-[#7c48e6]">
+      {bars.map((h, i) => {
+        const x = 3 + i * 6;
+        return <line key={i} x1={x} x2={x} y1={27 - h / 2} y2={27 + h / 2} stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />;
+      })}
+    </svg>
   );
+}
+
+/** A payment being checked (in full) or a plan that has run out. */
+function SubscriptionNotice({ info, c }: { info: SubscriptionInfo; c: PlanCopy }) {
+  const { locale } = useLanguage();
+  const pay = info.pending_payment;
+
+  if (pay) {
+    return (
+      <FormAlert tone="warning" className="mx-auto mt-6 max-w-[70rem]">
+        <div className="flex items-start gap-3">
+          <Clock className="mt-0.5 h-4 w-4 shrink-0 text-warning" aria-hidden />
+          <div className="min-w-0 flex-1 space-y-3">
+            <div>
+              <p className="font-semibold">{c.pendingTitle}</p>
+              <p className="mt-0.5 text-text-muted">{c.pendingBody}</p>
+            </div>
+            <DefinitionList
+              items={[
+                { label: c.pendingPlan, value: pay.plan?.name ?? "-", hidden: !pay.plan },
+                { label: c.pendingMethod, value: c.methods[pay.method] ?? pay.method },
+                { label: c.pendingReference, value: <span className="break-all font-mono">{pay.payer_reference}</span> },
+                { label: c.pendingAmount, value: formatMinor(pay.amount_minor, pay.currency, locale) },
+                { label: c.pendingSubmitted, value: formatDate(pay.created_at, locale) },
+              ]}
+            />
+          </div>
+        </div>
+      </FormAlert>
+    );
+  }
+
+  if (info.subscription_status === "expired") {
+    return (
+      <FormAlert tone="warning" className="mx-auto mt-6 max-w-[70rem]">
+        <div className="flex items-start gap-3">
+          <CalendarX2 className="mt-0.5 h-4 w-4 shrink-0 text-warning" aria-hidden />
+          <div className="min-w-0">
+            {info.plan?.name && info.expires_at && (
+              <p className="font-semibold">
+                {info.plan.name} · {c.expiredLabel} {formatDate(info.expires_at, locale)}
+              </p>
+            )}
+            <p className="mt-0.5 text-text-muted">{c.expiredBody}</p>
+          </div>
+        </div>
+      </FormAlert>
+    );
+  }
+
+  return null;
 }

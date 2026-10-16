@@ -10,6 +10,51 @@
  */
 
 const now = "2026-10-01T09:30:00Z";
+// QA_NO_PLAN=1 screenshots a signed-in artist with no plan (dashboard plan picker, upload gate).
+const NO_PLAN = process.env.QA_NO_PLAN === "1";
+// QA_PLANS_REF=1 matches the Plan page design reference: the artist is on Single Artist,
+// plans have no offers and are sold in TZS only.
+const PLANS_REF = process.env.QA_PLANS_REF === "1";
+const PLAN_ID = PLANS_REF ? 1 : 2;
+const NO_OFFERS = PLANS_REF;
+// Plan payments (pay dialog QA):
+//   QA_CURRENCY=TZS|USD   default_currency from the API (default TZS)
+//   QA_PAY_MM=1 / QA_PAY_CARD=1 / QA_PAY_PAYPAL=1   that provider is connected (default: none, all "Coming soon")
+//   QA_PAY_RESULT=confirmed|failed|pending   what the payment status poll ends in (default confirmed)
+//   QA_PAY_DELAY_MS       how long a push waits before QA_PAY_RESULT (default 6000)
+const QA_CURRENCY = (process.env.QA_CURRENCY || "TZS").toUpperCase();
+const QA_PAY_MM = process.env.QA_PAY_MM === "1";
+const QA_PAY_CARD = process.env.QA_PAY_CARD === "1";
+const QA_PAY_PAYPAL = process.env.QA_PAY_PAYPAL === "1";
+const QA_PAY_RESULT = process.env.QA_PAY_RESULT || "confirmed";
+const QA_PAY_DELAY_MS = Number(process.env.QA_PAY_DELAY_MS || 6000);
+const TZ_NETWORKS = [
+  { key: "mpesa", label: "M-Pesa", prefixes: ["25574", "25575", "25576"] },
+  { key: "airtel", label: "Airtel Money", prefixes: ["25568", "25569", "25578"] },
+  { key: "mixx", label: "Mixx by Yas", prefixes: ["25565", "25567", "25571", "25577"] },
+  { key: "halopesa", label: "Halopesa", prefixes: ["25561", "25562"] },
+];
+/** GET /payments/methods rows, as the API sends them: always these three, in this order. */
+const payMethods = (cur) => {
+  const row = (key, label, currencies, configured, extra) => {
+    const code = !currencies.includes(cur) ? "currency_not_supported" : !configured ? "coming_soon" : null;
+    const reason = code === "currency_not_supported" ? `Available for payments in ${currencies.join(" or ")}` : code ? "Coming soon" : null;
+    return { key, label, available: code === null, configured, reason, reason_code: code, currencies, ...extra };
+  };
+  return [
+    row("mobile_money", "Mobile money", ["TZS"], QA_PAY_MM, { description: "M-Pesa, Airtel Money, Mixx by Yas, Halopesa", networks: TZ_NETWORKS, approval_timeout_seconds: 180 }),
+    row("card", "Card", ["TZS", "USD"], QA_PAY_CARD, { description: "Visa, Mastercard, powered by Stripe", brands: ["Visa", "Mastercard"] }),
+    row("paypal", "PayPal", ["USD"], QA_PAY_PAYPAL, { description: "Pay with your PayPal account", brands: ["PayPal"] }),
+  ];
+};
+/** Payments started in this QA session: id → { started, payment }. */
+const qaPayments = new Map();
+let qaPaymentSeq = 40;
+const qaPayment = (id, status, over = {}) => ({
+  id, status, method: "mobile_money", provider: "sandbox", amount: "39000.00", amount_minor: 3_900_000, currency: "TZS",
+  plan: { id: 1, name: "Single Artist" }, plan_id: 1, failure_reason: null, expires_at: null,
+  payer_phone_masked: "+255 75X XXX 456", network: "M-Pesa", confirmed_at: null, created_at: now, ...over,
+});
 const meta = (total, per = 20) => ({ current_page: 1, last_page: Math.max(1, Math.ceil(total / per)), per_page: per, total });
 
 export const user = {
@@ -27,9 +72,9 @@ export const user = {
   onboarding_completed_at: "2026-02-01T00:00:00Z",
   email_verified_at: "2026-02-01T00:00:00Z",
   email_verified: true,
-  has_active_subscription: true,
+  has_active_subscription: !NO_PLAN,
   has_creator_profile: true,
-  subscription_status: "active",
+  subscription_status: NO_PLAN ? "inactive" : "active",
   subscription_expires_at: "2027-02-01T00:00:00Z",
   locale: "en",
   preferred_currency: "TZS",
@@ -208,10 +253,36 @@ const stores = [
   ["boomplay", "Boomplay", "streaming", "available"],
   ["audiomack", "Audiomack", "streaming", "available"],
   ["deezer", "Deezer", "streaming", "available"],
+  ["tidal", "Tidal", "streaming", "available"],
+  ["amazon_music", "Amazon Music", "streaming", "available"],
+  ["soundcloud", "SoundCloud", "streaming", "available"],
+  ["pandora", "Pandora", "streaming", "available"],
+  ["anghami", "Anghami", "streaming", "available"],
+  ["netease", "NetEase", "streaming", "available"],
+  ["tencent", "Tencent Music", "streaming", "available"],
+  ["joox", "JOOX", "streaming", "available"],
+  ["qobuz", "Qobuz", "streaming", "available"],
+  ["line_music", "Line Music", "streaming", "available"],
+  ["claro_musica", "Claro Música", "streaming", "available"],
   ["shazam", "Shazam", "discovery", "available"],
+  ["kkbox", "KKBox", "streaming", "available"],
+  ["napster", "Napster", "streaming", "available"],
+  ["iheartradio", "iHeartRadio", "streaming", "available"],
+  ["jiosaavn", "JioSaavn", "streaming", "available"],
+  ["gaana", "Gaana", "streaming", "available"],
+  ["yandex", "Yandex Music", "streaming", "available"],
+  ["vk_music", "VK Music", "streaming", "available"],
+  ["snapchat", "Snapchat", "social", "available", false, "full_publishing"],
+  ["roblox", "Roblox (beta)", "social", "available", false, "roblox_eligibility"],
+  ["triller", "Triller", "social", "available"],
+  ["peloton", "Peloton", "fitness", "available"],
+  ["kuack", "Kuack Media", "streaming", "available"],
+  ["medianet", "MediaNet", "streaming", "available"],
+  ["seven_digital", "7digital", "download", "available"],
+  ["awa", "AWA", "streaming", "available"],
   ["mdundo", "Mdundo", "streaming", "coming_soon"],
   ["youtube_content_id", "YouTube Content ID", "rights", "coming_soon"],
-].map(([slug, name, category, status], i) => ({ id: i + 1, slug, name, category, status }));
+].map(([slug, name, category, status, default_selected = true, confirmation = null], i) => ({ id: i + 1, slug, name, category, status, default_selected, confirmation }));
 
 const balances = [
   { currency: "TZS", available_minor: 184_250_00, held_minor: 50_000_00, pending_minor: 12_300_00, lifetime_earnings_minor: 412_800_00, withdrawn_minor: 178_550_00 },
@@ -463,13 +534,15 @@ const help = {
 };
 
 const planOffer = (id, currency) => {
+  if (NO_OFFERS) return null;
   if (id === 1) return { headline: "Joining is free", type: "free", list_minor: currency === "USD" ? 1500 : 3_900_000, final_minor: 0, final: "0.00", currency, ends_at: "2026-12-31T20:59:59Z", free_days: 30, referral_applied: false };
   if (id === 2) return { headline: "Launch offer", type: "percent_off", list_minor: currency === "USD" ? 2300 : 5_900_000, final_minor: currency === "USD" ? 1725 : 4_425_000, final: currency === "USD" ? "17.25" : "44250.00", currency, ends_at: "2026-12-31T20:59:59Z", free_days: null, referral_applied: false };
   return null;
 };
 const plans = [
-  { id: 1, name: "Single Artist", price: "39000.00", currency: "TZS", price_usd: "15.00", prices: [{ currency: "TZS", amount: "39000.00" }, { currency: "USD", amount: "15.00" }], duration: 365, description: "For independent artists releasing their own music.", max_artists: 1, is_active: true, order: 1, features: ["Unlimited releases for a year", "Delivery to all major stores and platforms", "Keep 100% of your rights"] },
-  { id: 2, name: "2 Artists", price: "59000.00", currency: "TZS", price_usd: "23.00", prices: [{ currency: "TZS", amount: "59000.00" }, { currency: "USD", amount: "23.00" }], duration: 365, description: "For duos and artists who manage a second act.", max_artists: 2, is_active: true, order: 2, features: ["Everything in Single Artist", "Separate analytics per artist", "Royalty splits between collaborators"] },
+  { id: 1, name: "Single Artist", price: "39000.00", currency: "TZS", price_usd: "15.00", prices: [{ currency: "TZS", amount: "39000.00" }, { currency: "USD", amount: "15.00" }], duration: 365, description: "For independent artists releasing their own music.", max_artists: 1, is_active: true, order: 1, features: ["Unlimited releases for a year", "Delivery to all major stores and platforms", "Keep 100% of your rights", "Royalty wallet with mobile money and bank withdrawals", "Streams and audience analytics"] },
+  { id: 2, name: "2 Artists", price: "59000.00", currency: "TZS", price_usd: "23.00", prices: [{ currency: "TZS", amount: "59000.00" }, { currency: "USD", amount: "23.00" }], duration: 365, description: "For duos and artists who manage a second act.", max_artists: 2, is_active: true, order: 2, features: ["Everything in Single Artist", "Unlimited releases for both artists", "Separate analytics per artist", "Royalty splits between collaborators"] },
+  { id: 3, name: "Label", price: "99000.00", currency: "TZS", price_usd: null, prices: [{ currency: "TZS", amount: "99000.00" }], duration: 365, description: "For labels and managers with a roster of artists.", max_artists: 5, is_active: true, order: 3, features: ["Everything in 2 Artists", "Up to 5 artist profiles", "Unlimited releases for every artist", "Priority support"] },
 ];
 
 const splits = {
@@ -593,13 +666,55 @@ const routes = [
     })],
   ["GET", /^\/subscription$/, () =>
     ok({
-      subscription_status: "active",
-      plan: plans[1],
-      expires_at: "2027-02-01T00:00:00Z",
+      subscription_status: NO_PLAN ? "inactive" : "active",
+      plan: NO_PLAN ? null : plans.find((p) => p.id === PLAN_ID) ?? plans[1],
+      expires_at: NO_PLAN ? null : "2027-02-01T00:00:00Z",
+      default_currency: QA_CURRENCY,
       pending_payment: null,
-      payment_instructions: { methods: ["mpesa_tz", "airtel_tz", "mixx_tz", "bank"], note: "Pay using the details shown in the app, then enter your payment reference.", details: { mpesa_lipa_number: "5123456", account_name: "2kTunes Ltd" } },
+      payment_instructions: {
+        methods: ["mpesa_tz", "airtel_tz", "mixx_tz", "bank"],
+        methods_by_currency: { TZS: ["mpesa_tz", "airtel_tz", "mixx_tz", "bank"], USD: ["bank"] },
+        note: "Pay using the details shown in the app, then enter your payment reference.",
+        details: { mpesa_lipa_number: "5123456", account_name: "2kTunes Ltd" },
+        payment_methods: { TZS: payMethods("TZS"), USD: payMethods("USD") },
+      },
     })],
-  ["GET", /^\/plans$/, (_m, q) => ok({ plans: plans.map((p) => ({ ...p, currencies: p.prices.map((x) => x.currency), offer: planOffer(p.id, (q.get("currency") || p.currency).toUpperCase()) })) })],
+  ["GET", /^\/payments\/methods$/, (_m, q) => {
+    const cur = (q.get("currency") || "TZS").toUpperCase();
+    return ok({ currency: cur, methods: payMethods(cur) });
+  }],
+  ["POST", /^\/subscribe$/, (_m, _q, body) => {
+    const p = plans.find((x) => x.id === Number(body?.plan_id)) ?? plans[0];
+    const cur = (body?.currency || p.currency).toUpperCase();
+    const list = Math.round(Number((p.prices.find((x) => x.currency === cur) ?? p.prices[0]).amount) * 100);
+    // The best automatic offer applies, as in OfferService::quote (no code handling here).
+    const minor = planOffer(p.id, cur)?.final_minor ?? list;
+    const id = ++qaPaymentSeq;
+    const base = { amount: (minor / 100).toFixed(2), amount_minor: minor, currency: cur, plan: { id: p.id, name: p.name }, plan_id: p.id };
+    const quote = { list_minor: minor, final_minor: minor, discount_minor: 0, currency: cur, list: base.amount, final: base.amount, offer: null, referral_applied: false, free_days: null };
+    if (body?.method === "mobile_money") {
+      const payment = qaPayment(id, "awaiting_approval", base);
+      qaPayments.set(String(id), { started: Date.now(), payment });
+      return ok({ message: "Approve the payment on your phone.", subscription_status: "pending_payment", action: "await_phone_approval", redirect_url: null, payment, quote, user }, 202);
+    }
+    if (body?.method === "card" || body?.method === "paypal") {
+      const payment = qaPayment(id, "processing", { ...base, method: body.method, provider: body.method === "card" ? "stripe" : "paypal", payer_phone_masked: null, network: null });
+      qaPayments.set(String(id), { started: Date.now(), payment });
+      const back = `/dashboard/plan?payment=${id}&result=success${body.method === "paypal" ? "&token=QA-ORDER" : ""}`;
+      return ok({ message: "Continue to payment.", subscription_status: "pending_payment", action: "redirect", redirect_url: back, payment, quote, user }, 202);
+    }
+    return ok({ message: "Payment submitted.", subscription_status: "pending_payment", action: "await_review", redirect_url: null, payment: { id, plan_id: p.id, amount_minor: minor, currency: cur, method: body?.payment_method ?? "bank", payer_reference: body?.payment_reference ?? "", status: "pending", created_at: now }, quote, user }, 202);
+  }],
+  ["GET", /^\/subscription\/payments\/(\d+)$/, (m) => {
+    const entry = qaPayments.get(m[1]) ?? { started: Date.now() - QA_PAY_DELAY_MS * 2, payment: qaPayment(Number(m[1]), "processing", { method: "card", provider: "stripe" }) };
+    const settled = Date.now() - entry.started >= QA_PAY_DELAY_MS && QA_PAY_RESULT !== "pending";
+    const status = settled ? (QA_PAY_RESULT === "failed" ? "failed" : "confirmed") : entry.payment.status;
+    return ok({ payment: { ...entry.payment, status }, subscription: { status: status === "confirmed" ? "active" : "inactive", expires_at: status === "confirmed" ? "2027-10-15T10:00:00Z" : null }, user });
+  }],
+  ["POST", /^\/subscription\/payments\/(\d+)\/cancel$/, (m) => ok({ payment: qaPayment(Number(m[1]), "cancelled") })],
+  ["POST", /^\/subscription\/payments\/(\d+)\/paypal-capture$/, (m) =>
+    ok({ payment: qaPayment(Number(m[1]), "confirmed", { method: "paypal", provider: "paypal", currency: "USD", amount: "15.00", amount_minor: 1500 }), subscription: { status: "active", expires_at: "2027-10-15T10:00:00Z" }, user })],
+  ["GET", /^\/plans$/, (_m, q) => ok({ default_currency: QA_CURRENCY, plans: plans.map((p) => (PLANS_REF ? { ...p, price_usd: null, prices: p.prices.slice(0, 1) } : p)).map((p) => ({ ...p, currencies: p.prices.map((x) => x.currency), offer: planOffer(p.id, (q.get("currency") || p.currency).toUpperCase()) })) })],
   ["GET", /^\/offers\/active$/, () => ok({ offers: activeOffers })],
   ["POST", /^\/offers\/validate$/, (_m, _q, body) => {
     const p = plans.find((x) => x.id === Number(body?.plan_id)) ?? plans[0];
@@ -651,6 +766,8 @@ const routes = [
           },
     })],
   ["GET", /^\/releases\/(\d+)\/splits$/, (m) => ok({ sheets: m[1] === "7" ? splits.sheets : [] })],
+  // Creating a draft from /dashboard/new-release (Save as draft, first title, cover or song).
+  ["POST", /^\/releases$/, (_m, _q, body) => ok({ release: { ...releases[2], ...(body ?? {}), id: releases[2].id, status: "draft", is_editable: true } }, 201)],
   ["PATCH", /^\/releases\/(\d+)$/, (m) => ok({ release: releases.find((x) => String(x.id) === m[1]) ?? releases[2] })],
   ["GET", /^\/artists$/, () => ok({ artists, user: { id: 1, plan: plans[1] }, limit: 1 })],
   ["GET", /^\/splits$/, () => ok(splits)],

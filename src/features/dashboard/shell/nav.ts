@@ -1,4 +1,5 @@
 import {
+  BadgeCheck,
   BarChart3,
   Bell,
   BookOpen,
@@ -6,7 +7,6 @@ import {
   Disc3,
   Gift,
   HandCoins,
-  LayoutDashboard,
   LifeBuoy,
   Megaphone,
   Palette,
@@ -45,10 +45,10 @@ export const NAV: NavGroup[] = [
   {
     label: "dash.group_music",
     items: [
-      { to: "/dashboard", label: "dash.nav_overview", icon: LayoutDashboard, end: true },
       { to: "/dashboard/music", label: "dash.nav_music", icon: Disc3 },
       { to: "/dashboard/new-release", label: "dash.nav_new_release", icon: PlusCircle },
       { to: "/dashboard/artists", label: "dash.nav_artists", icon: UserRound },
+      { to: "/dashboard/profiles", label: "dash.nav_profiles", icon: BadgeCheck },
       { to: "/dashboard/splits", label: "dash.nav_splits", icon: PieChart },
     ],
   },

@@ -35,6 +35,8 @@
   /* ── Fonts ──────────────────────────────────────────────────────────── */
   --font-sans: "Figtree", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-tunes: "Figtree", ui-sans-serif, system-ui, sans-serif;
+  /* Handwritten accent (Plan page tagline only). */
+  --font-hand: "Kalam", "Segoe Print", "Bradley Hand", cursive;
 
   /* ── 1a. Brand scale ───────────────────────────────────────────────── */
   --color-brand-50: #faf6fe;
@@ -145,6 +147,170 @@
   --animate-drift: drift 22s ease-in-out infinite;
   --animate-eq: eq 1.1s ease-in-out infinite;
   --animate-pulse-ring: pulse-ring 2.4s var(--ease-tunes) infinite;
+}
+
+/*
+ * NEW RELEASE PAGE (and the dashboard top bar): values sampled from the
+ * owner's reference design (2kTunes-design/new-release-reference.png).
+ * The accent stays the brand purple #841DC6; the deeper purples below are
+ * the reference's top bar and primary button.
+ */
+@theme {
+  --color-nr-nav: #26143f;
+  --color-nr-nav-edge: #1d0b36;
+  --color-nr-nav-active: #c9aef3;
+  --color-nr-primary: #4c3172;
+  --color-nr-primary-hover: #3f275f;
+  --color-nr-primary-disabled: #dbc7f7;
+  --color-nr-page: #fcfafe;
+  --color-nr-line: #ebe7f3;
+  --color-nr-line-strong: #bfbbcd;
+  --color-nr-pick: #f0e7fd;
+  --color-nr-pick-line: #bf9af2;
+  --color-nr-soft: #f6f2fc;
+  --color-nr-muted: #5b5478;
+  --color-nr-subtle: #6d6590;
+  --color-nr-go: #23b480;
+  --color-nr-go-soft: #e6f4ef;
+}
+
+/* Calm form controls on the new release page: 40 px, 1 px border, 8 px radius, no shadows. */
+.nr-page :is(input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not([type="range"]), select) {
+  min-height: 2.5rem;
+  height: 2.5rem;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  box-shadow: none;
+}
+.nr-page textarea {
+  border-radius: 8px;
+  font-size: 0.875rem;
+  box-shadow: none;
+}
+.nr-page :is(input, select, textarea):not([type="checkbox"]):not([type="radio"]):not(:focus) {
+  border-color: var(--color-nr-line);
+}
+.nr-page label,
+.nr-page legend {
+  color: var(--color-text);
+}
+/* Field labels (they point at their control instead of wrapping it): 13 px, closer to the input. */
+.nr-page label[for]:not(:has(input, select, textarea)) {
+  margin-bottom: 0.45rem;
+  font-size: 0.8125rem;
+  line-height: 1.25;
+}
+.nr-page *:not(:focus) {
+  box-shadow: none !important;
+}
+.nr-page :is(input, select, textarea):focus {
+  box-shadow: 0 0 0 3px rgb(132 29 198 / 0.14) !important;
+}
+@media (max-width: 639px) {
+  /* 16 px keeps iOS from zooming into a field on focus. */
+  .nr-page :is(input, select, textarea) {
+    font-size: 1rem;
+  }
+}
+
+/* Soft lavender wash and light streaks in the top right corner (CSS only). */
+.nr-backdrop {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 60rem;
+  overflow: hidden;
+  pointer-events: none;
+  background:
+    radial-gradient(22rem 9rem at 90% 9rem, rgb(198 182 255 / 0.55), transparent 70%),
+    radial-gradient(40rem 16rem at 100% 4rem, rgb(222 208 255 / 0.75), transparent 72%),
+    radial-gradient(18rem 12rem at 0% 58rem, rgb(226 214 252 / 0.7), transparent 70%),
+    linear-gradient(180deg, var(--color-nr-page), #f9f7fd);
+}
+.nr-backdrop::before,
+.nr-backdrop::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+}
+/* A glossy ribbon sweeping down to the right edge. */
+.nr-backdrop::before {
+  width: 34rem;
+  height: 8.5rem;
+  right: -9rem;
+  top: 2.4rem;
+  transform: rotate(13deg);
+  border: 2px solid rgb(255 255 255 / 0.95);
+  border-left-color: transparent;
+  background: linear-gradient(100deg, transparent 35%, rgb(190 170 255 / 0.35) 70%, rgb(246 214 255 / 0.55) 92%);
+  box-shadow: inset 0 -10px 18px -8px rgb(255 255 255 / 0.9) !important;
+}
+/* A second, thinner loop below it. */
+.nr-backdrop::after {
+  width: 26rem;
+  height: 7rem;
+  right: -10rem;
+  top: 8.6rem;
+  transform: rotate(-6deg);
+  border: 1.5px solid rgb(255 255 255 / 0.9);
+  border-right-color: transparent;
+  border-bottom-color: transparent;
+  background: radial-gradient(60% 80% at 70% 60%, rgb(206 190 255 / 0.4), transparent 70%);
+}
+@media (max-width: 1023px) {
+  .nr-backdrop {
+    height: 36rem;
+  }
+}
+
+/* Plan page: lavender wash on the left, faint curved light streaks (CSS only). */
+.plan-backdrop {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 66rem;
+  overflow: hidden;
+  pointer-events: none;
+  /* Fade out so the wash never ends in a hard line. */
+  mask-image: linear-gradient(180deg, #000 75%, transparent);
+  background:
+    radial-gradient(28rem 22rem at -6% 50%, rgb(214 204 252 / 0.75), transparent 70%),
+    radial-gradient(40rem 16rem at 102% 5rem, rgb(232 222 255 / 0.85), transparent 72%),
+    radial-gradient(34rem 22rem at 104% 70%, rgb(236 230 255 / 0.7), transparent 70%),
+    linear-gradient(180deg, #fbf9fe, #f9f8fd 70%, #fbfbfe);
+}
+.plan-backdrop::before,
+.plan-backdrop::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+}
+/* A soft ribbon curving up from the bottom left. */
+.plan-backdrop::before {
+  width: 46rem;
+  height: 22rem;
+  left: -22rem;
+  top: 30rem;
+  transform: rotate(-18deg);
+  border: 2px solid rgb(255 255 255 / 0.9);
+  border-bottom-color: transparent;
+  border-left-color: transparent;
+  background: radial-gradient(60% 70% at 70% 30%, rgb(204 190 252 / 0.45), transparent 70%);
+}
+/* A thin light streak sweeping across the top right. */
+.plan-backdrop::after {
+  width: 42rem;
+  height: 30rem;
+  right: -20rem;
+  top: -4rem;
+  transform: rotate(18deg);
+  border: 1.5px solid rgb(255 255 255 / 0.95);
+  border-right-color: transparent;
+  border-top-color: transparent;
+  background: radial-gradient(55% 60% at 30% 70%, rgb(222 210 255 / 0.4), transparent 70%);
+}
+@media (max-width: 1023px) {
+  .plan-backdrop {
+    height: 40rem;
+  }
 }
 
 /* ── Dark scope: deep purple, never black ─────────────────────────── */
@@ -406,9 +572,11 @@ span.bg-white.text-ink.rounded-full:not(.theme-dark *) {
 
 /* ── Layout ─────────────────────────────────────────────────────────── */
 
+/* Wide pages with slim side margins: 16px on phones, 24px on tablets, 32px
+   up to 1600px of content. The dashboard uses the same width (DashboardLayout). */
 @utility shell {
   width: 100%;
-  max-width: 76rem;
+  max-width: 100rem;
   margin-inline: auto;
   padding-inline: 1rem;
   @media (min-width: 640px) {

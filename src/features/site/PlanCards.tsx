@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Check, Package } from "lucide-react";
 import { Button, Skeleton } from "@/components/ui";
-import { currenciesOf, formatMoney, priceIn, usePlans, type Plan } from "@/lib/api/plans";
+import { currenciesOf, formatMoney, isYearly, priceIn, usePlans, type Plan } from "@/lib/api/plans";
 import { useLanguage } from "@/lib/LanguageContext";
 import { cn } from "@/lib/utils";
 import { OfferPrice } from "@/features/growth/OfferPrice";
@@ -131,20 +131,29 @@ function PlanCard({ plan, currency }: { plan: Plan; currency: string }) {
   const free = price.amount === 0;
   const offer = plan.offer && plan.offer.currency === price.currency && !free ? plan.offer : null;
   const fmt = (minor: number, cur: string) => formatMoney(minor / 100, cur, locale);
+  // Sold per year, shown per month (yearly ÷ 12) with the yearly charge underneath.
+  const yearly = isYearly(plan.duration) && !free;
+  const monthlyOffer = offer && yearly ? { ...offer, list_minor: offer.list_minor / 12, final_minor: offer.final_minor / 12 } : offer;
+  const billed = offer ? offer.final_minor / 100 : price.amount;
 
   return (
     <li className={cn("group lift relative flex min-w-0 flex-col overflow-hidden rounded-card p-5 max-sm:w-[84%] max-sm:max-w-[21rem] sm:p-7", card)}>
       <span aria-hidden className="absolute inset-x-0 top-0 h-1 bg-[linear-gradient(90deg,#6e16a8,#9e4fe0,#f7931e)] opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
       <h3 className="text-[1.125rem] font-bold tracking-[-0.015em]">{plan.name}</h3>
       {plan.description && <p className={cn("mt-1.5 text-body-sm", muted)}>{plan.description}</p>}
-      {offer ? (
-        <OfferPrice offer={offer} format={fmt} period={period} mutedClass={muted} className="mt-4 sm:mt-6" />
+      {monthlyOffer ? (
+        <OfferPrice offer={monthlyOffer} format={fmt} period={yearly ? t("pricing.per_month") : period} mutedClass={muted} className="mt-4 sm:mt-6" />
       ) : (
         <p className="mt-4 flex flex-wrap items-baseline gap-x-2 gap-y-1 sm:mt-6">
           <span className="text-[1.75rem] font-extrabold sm:text-[2rem] leading-none tracking-[-0.03em] tabular-nums">
-            {free ? t("pricing.free") : formatMoney(price.amount, price.currency, locale)}
+            {free ? t("pricing.free") : formatMoney(yearly ? price.amount / 12 : price.amount, price.currency, locale)}
           </span>
-          {!free && <span className={cn("text-body-sm", muted)}>{period}</span>}
+          {!free && <span className={cn("text-body-sm", muted)}>{yearly ? t("pricing.per_month") : period}</span>}
+        </p>
+      )}
+      {yearly && billed > 0 && (
+        <p className={cn("mt-1.5 text-body-sm", muted)}>
+          {t("pricing.billed_yearly", { amount: formatMoney(billed, price.currency, locale) })}
         </p>
       )}
       {price.currency !== currency && (

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Handshake, Info, Plus, Split } from "lucide-react";
-import { Button, Card, DataTable, EmptyState, useToast } from "@/components/ui";
+import { Button, Card, DataTable, EmptyState, Tab, TabList, TabPanel, Tabs, useToast } from "@/components/ui";
 import {
   ConfirmDialog,
   DefinitionList,
@@ -22,13 +22,16 @@ import { useLanguage } from "@/lib/LanguageContext";
 import { formatBp } from "@/lib/money";
 import { useCopy } from "@/lib/useCopy";
 import { COPY } from "./copy";
-import { NewSplitDialog } from "./NewSplitDialog";
+import { SplitEditor } from "./SplitEditor";
 
 /**
  * /dashboard/splits
  *
+ *   Tab "Set up splits": the per track editor (SplitEditor).
+ *   Tab "Your splits and invitations": sheets you own and invitations to you.
+ *
  *   ?invite=<token>   answer an emailed invitation (the param is removed after)
- *   ?release=<id>     open the "New split sheet" form with that release chosen
+ *   ?release=<id>     open the editor with that release already picked
  */
 export default function SplitsPage() {
   const c = useCopy(COPY);
@@ -36,7 +39,8 @@ export default function SplitsPage() {
   const [params, setParams] = useSearchParams();
   const token = params.get("invite");
   const releaseParam = Number(params.get("release")) || null;
-  const [formOpen, setFormOpen] = useState(() => releaseParam !== null);
+  const [tab, setTab] = useState<string>(() => (token && !releaseParam ? "current" : "setup"));
+  const [editorKey, setEditorKey] = useState(0);
   const data = useResource((signal) => fetchSplits({ signal }), []);
 
   const dropParam = (key: string) => {
@@ -45,24 +49,11 @@ export default function SplitsPage() {
     setParams(next, { replace: true });
   };
 
-  const closeForm = () => {
-    setFormOpen(false);
-    if (releaseParam) dropParam("release");
-  };
-
   return (
     <div>
-      <PageHeader
-        title={c.title}
-        description={c.description}
-        actions={
-          <Button leftIcon={<Plus />} onClick={() => setFormOpen(true)}>
-            {c.newSheet}
-          </Button>
-        }
-      />
+      <PageHeader title={c.title} description={c.description} />
 
-      <div className="space-y-8">
+      <div className="space-y-6">
         {token && (
           <InviteBanner
             token={token}
@@ -75,44 +66,63 @@ export default function SplitsPage() {
           />
         )}
 
-        <Card variant="outline" padding="sm" className="flex gap-3">
-          <Info className="mt-0.5 h-5 w-5 shrink-0 text-accent-text" aria-hidden />
-          <div className="min-w-0">
-            <h2 className="text-body-sm font-bold text-text">{c.howTitle}</h2>
-            <ul className="mt-1.5 list-disc space-y-1 pl-4 text-body-sm text-text-muted">
-              <li>{c.how1}</li>
-              <li>{c.how2}</li>
-              <li>{c.how3}</li>
-              <li>{c.how4}</li>
-            </ul>
-          </div>
-        </Card>
+        <Tabs value={tab} onValueChange={setTab} variant="underline">
+          <TabList aria-label={c.tabsLabel}>
+            <Tab value="setup">{c.tabSetup}</Tab>
+            <Tab value="current">{c.tabCurrent}</Tab>
+          </TabList>
 
-        {data.loading ? (
-          <PageLoading rows={2} />
-        ) : data.error || !data.data ? (
-          <LoadError error={data.error} onRetry={data.reload} />
-        ) : (
-          <>
-            <Invitations invitations={data.data.invitations} onChanged={data.reload} />
-            <MySheets sheets={data.data.sheets} onNew={() => setFormOpen(true)} />
-          </>
-        )}
+          <TabPanel value="setup" keepMounted>
+            <div className="space-y-6 pt-5">
+              <SplitEditor
+                key={editorKey}
+                initialReleaseId={editorKey === 0 ? releaseParam : null}
+                onDone={() => {
+                  if (releaseParam) dropParam("release");
+                  setEditorKey((k) => k + 1);
+                  data.reload();
+                  setTab("current");
+                }}
+              />
+              <HowItWorks />
+            </div>
+          </TabPanel>
+
+          <TabPanel value="current">
+            <div className="space-y-8 pt-5">
+              {data.loading ? (
+                <PageLoading rows={2} />
+              ) : data.error || !data.data ? (
+                <LoadError error={data.error} onRetry={data.reload} />
+              ) : (
+                <>
+                  <Invitations invitations={data.data.invitations} onChanged={data.reload} />
+                  <MySheets sheets={data.data.sheets} onNew={() => setTab("setup")} />
+                </>
+              )}
+            </div>
+          </TabPanel>
+        </Tabs>
       </div>
-
-      {formOpen && (
-        <NewSplitDialog
-          open
-          onClose={closeForm}
-          initialReleaseId={releaseParam}
-          onCreated={(_sheet, message) => {
-            toast({ title: message, tone: "success" });
-            closeForm();
-            data.reload();
-          }}
-        />
-      )}
     </div>
+  );
+}
+
+function HowItWorks() {
+  const c = useCopy(COPY);
+  return (
+    <Card variant="outline" padding="sm" className="flex gap-3">
+      <Info className="mt-0.5 h-5 w-5 shrink-0 text-accent-text" aria-hidden />
+      <div className="min-w-0">
+        <h2 className="text-body-sm font-bold text-text">{c.howTitle}</h2>
+        <ul className="mt-1.5 list-disc space-y-1 pl-4 text-body-sm text-text-muted">
+          <li>{c.how1}</li>
+          <li>{c.how2}</li>
+          <li>{c.how3}</li>
+          <li>{c.how4}</li>
+        </ul>
+      </div>
+    </Card>
   );
 }
 
@@ -304,7 +314,7 @@ function MySheets({ sheets, onNew }: { sheets: SplitSheet[]; onNew: () => void }
           description={c.mineEmptyBody}
           action={
             <Button leftIcon={<Plus />} onClick={onNew}>
-              {c.newSheet}
+              {c.newSplit}
             </Button>
           }
         />

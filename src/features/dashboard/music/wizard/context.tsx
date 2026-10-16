@@ -1,7 +1,8 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { type Dispatch, type SetStateAction, createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { AlertCircle, Check, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui";
 import { useErrorMessage } from "@/lib/api/errors";
+import type { ReleasePatch } from "@/lib/api/catalog";
 import type { Artist, Release, ReleaseConfig, ReleaseValidation, Store } from "@/lib/api/types";
 import { useCopy } from "@/lib/useCopy";
 import { COPY } from "../copy";
@@ -9,23 +10,45 @@ import type { SaveStatus } from "./useAutosave";
 import type { WizardStep } from "./validation";
 
 /**
- * Shared state for the release wizard steps: the draft, reference data and
- * an aggregated autosave indicator (every step reports its savers here).
+ * Shared state for the one-page release form: the draft, reference data and
+ * an aggregated autosave indicator (every section reports its savers here).
  */
+
+/**
+ * What a section contributes to the draft when it is created in the
+ * background: its fields, and `commit` to mark them as saved afterwards.
+ */
+export type DraftPart = () => { patch: ReleasePatch; commit: () => void };
 
 type Saver = { status: SaveStatus; error: unknown; flush: () => Promise<boolean> };
 
 type Ctx = {
   release: Release | null;
-  setRelease: (r: Release) => void;
+  /** Accepts a value or an updater (song blocks update the track list concurrently). */
+  setRelease: Dispatch<SetStateAction<Release | null>>;
   /** Re-read the draft from the server (after track/artwork changes). */
   refresh: () => Promise<Release | null>;
   config: ReleaseConfig;
   stores: Store[];
   artists: Artist[];
+  /** How many artist profiles the plan allows (GET /artists `limit`); null when unknown. */
+  artistLimit: number | null;
   validation: ReleaseValidation | null;
-  refreshValidation: () => Promise<void>;
+  /** Re-read the server report; resolves with it (null if it couldn't load). */
+  refreshValidation: (id?: number) => Promise<ReleaseValidation | null>;
+  /** Scroll to a section and focus its heading. */
   goTo: (step: WizardStep) => void;
+  /** True once someone tried to submit: every section shows its problems. */
+  attempted: boolean;
+  setAttempted: (v: boolean) => void;
+  /**
+   * The draft, creating it silently first if it doesn't exist yet (from every
+   * registered part). Resolves null if creating it failed.
+   */
+  ensureRelease: () => Promise<Release | null>;
+  /** The last error from creating the draft, shown near the title. */
+  createError: unknown;
+  registerDraftPart: (key: string, part: DraftPart | null) => void;
   registerSaver: (key: string, saver: Saver | null) => void;
   /** Flush every pending autosave; resolves false if any failed. */
   flushAll: () => Promise<boolean>;
@@ -77,6 +100,17 @@ export function WizardProvider({
 
 const SaverList = createContext<Saver[]>([]);
 
+/** Contribute a section's fields to the background draft creation. */
+export function useDraftPart(key: string, part: DraftPart) {
+  const { registerDraftPart } = useWizard();
+  const ref = useRef(part);
+  ref.current = part;
+  useEffect(() => {
+    registerDraftPart(key, () => ref.current());
+    return () => registerDraftPart(key, null);
+  }, [key, registerDraftPart]);
+}
+
 /** Publish an autosave's state to the page indicator. */
 export function useReportSaver(key: string, saver: Saver) {
   const { registerSaver } = useWizard();
@@ -87,7 +121,7 @@ export function useReportSaver(key: string, saver: Saver) {
   useEffect(() => () => registerSaver(key, null), [key, registerSaver]);
 }
 
-/** "Saving… / All changes saved / Couldn't save — Retry", announced politely. */
+/** "Saving… / All changes saved / Couldn't save: Retry", announced politely. */
 export function SaveIndicator() {
   const c = useCopy(COPY);
   const toMessage = useErrorMessage();

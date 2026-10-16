@@ -48,6 +48,7 @@ import {
 import { COPY } from "./copy";
 import { ReleaseCover, formatDuration, isSmartLinkPublic, smartLinkUrl } from "./shared";
 import { SERVER_STEP } from "./wizard/validation";
+import { featuredOf } from "./wizard/TracksStep";
 
 type TabKey = "overview" | "tracks" | "stores" | "smartlink" | "splits" | "history" | "issues";
 const TAKEDOWN_FROM = new Set(["delivered", "partially_delivered", "live"]);
@@ -369,7 +370,7 @@ function TracksTab({ r }: { r: Release }) {
                   {t.version && <span className="font-normal text-text-subtle"> ({t.version})</span>}
                 </p>
                 <p className="mt-0.5 text-caption text-text-subtle">
-                  {[t.primary_artist, t.featured_artists?.length ? `feat. ${t.featured_artists.join(", ")}` : null]
+                  {[t.primary_artist, t.featured_artists?.length ? `feat. ${featuredOf(t.featured_artists).map((f) => f.name).join(", ")}` : null]
                     .filter(Boolean)
                     .join(" ")}
                 </p>

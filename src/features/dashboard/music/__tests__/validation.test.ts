@@ -24,19 +24,20 @@ const info = (over: Partial<InfoValues> = {}): InfoValues => ({
   release_title: "Bahari",
   artist_id: 3,
   artist_name: "",
-  version: "",
   primary_genre: "Bongo Flava",
   secondary_genre: "",
   language: "sw",
   release_date: "2026-11-01",
+  release_asap: false,
   previously_released: false,
   original_release_date: "",
   record_label: "",
+  album_price: "",
+  upc: "",
   c_line_year: "2026",
   c_line_owner: "Neema Said",
   p_line_year: "2026",
   p_line_owner: "Neema Said",
-  upc: "",
   ...over,
 });
 
@@ -87,6 +88,11 @@ describe("validateInfo (step 1)", () => {
       minLeadDays: 7,
     });
     expect(codes(issues)).toEqual(["c_line_year:year_invalid", "p_line_year:year_invalid", "c_line_owner:required", "upc:upc_invalid"]);
+  });
+
+  it("needs no date when the release goes out as soon as possible", () => {
+    expect(validateInfo(info({ release_asap: true, release_date: "" }), { today: TODAY, minLeadDays: 7 })).toEqual([]);
+    expect(codes(validateInfo(info({ release_asap: false, release_date: "" }), { today: TODAY, minLeadDays: 7 }))).toEqual(["release_date:required"]);
   });
 });
 

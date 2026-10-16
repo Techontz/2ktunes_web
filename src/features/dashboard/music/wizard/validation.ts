@@ -89,26 +89,29 @@ export function isValidIsrc(isrc: string): boolean {
 
 export const WRITER_ROLES = ["songwriter", "composer", "lyricist"];
 
-/* ── Step 1: release info (basics + rights + schedule) ─────────────── */
+/* ── Release fields (upload page sections 3 to 12) ──────────────────── */
 
 export type InfoValues = {
   release_type: ReleaseType | "";
   release_title: string;
   artist_id: number | null;
   artist_name: string;
-  version: string;
   primary_genre: string;
   secondary_genre: string;
   language: string;
   release_date: string;
+  /** "As soon as possible": no date needed. */
+  release_asap: boolean;
   previously_released: boolean;
   original_release_date: string;
   record_label: string;
+  album_price: string;
+  /** Blank means we create one. */
+  upc: string;
   c_line_year: string;
   c_line_owner: string;
   p_line_year: string;
   p_line_owner: string;
-  upc: string;
 };
 
 export function validateInfo(
@@ -123,29 +126,26 @@ export function validateInfo(
   if (blank(v.primary_genre)) out.push({ field: "primary_genre", code: "required" });
   if (blank(v.language)) out.push({ field: "language", code: "required" });
 
-  if (blank(v.release_date)) {
-    out.push({ field: "release_date", code: "required" });
-  } else if (!v.previously_released) {
-    const earliest = addDays(today, minLeadDays);
-    if (v.release_date < earliest) {
-      out.push({ field: "release_date", code: "date_too_soon", params: { days: minLeadDays, date: earliest } });
+  if (!v.release_asap) {
+    if (blank(v.release_date)) {
+      out.push({ field: "release_date", code: "required" });
+    } else if (!v.previously_released) {
+      const earliest = addDays(today, minLeadDays);
+      if (v.release_date < earliest) {
+        out.push({ field: "release_date", code: "date_too_soon", params: { days: minLeadDays, date: earliest } });
+      }
     }
   }
   if (v.previously_released) {
     if (blank(v.original_release_date)) out.push({ field: "original_release_date", code: "required" });
     else if (v.original_release_date > today) out.push({ field: "original_release_date", code: "date_in_future" });
   }
-
   const maxYear = Number(today.slice(0, 4)) + 1;
   for (const f of ["c_line_year", "p_line_year"] as const) {
     if (blank(v[f])) out.push({ field: f, code: "required" });
-    else if (!/^\d{4}$/.test(v[f]) || Number(v[f]) < 1900 || Number(v[f]) > maxYear) {
-      out.push({ field: f, code: "year_invalid", params: { max: maxYear } });
-    }
+    else if (!/^\d{4}$/.test(v[f]) || Number(v[f]) < 1900 || Number(v[f]) > maxYear) out.push({ field: f, code: "year_invalid", params: { max: maxYear } });
   }
-  for (const f of ["c_line_owner", "p_line_owner"] as const) {
-    if (blank(v[f])) out.push({ field: f, code: "required" });
-  }
+  for (const f of ["c_line_owner", "p_line_owner"] as const) if (blank(v[f])) out.push({ field: f, code: "required" });
   if (!blank(v.upc) && !isValidUpc(v.upc)) out.push({ field: "upc", code: "upc_invalid" });
   return out;
 }

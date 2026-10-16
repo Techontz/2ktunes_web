@@ -10,6 +10,7 @@ import { useLanguage } from "@/lib/LanguageContext";
 // Public shell + home — eager: this is what a first-time visitor lands on.
 import SiteLayout from "@/features/site/layout/SiteLayout";
 import HomePage from "@/features/site/pages/HomePage";
+import { RequirePlan } from "@/features/dashboard/plan/RequirePlan";
 
 /* Public inner pages: one chunk each, fetched on navigation. */
 const DistributionPage = lazy(() => import("@/features/site/pages/DistributionPage"));
@@ -40,7 +41,6 @@ const EmailVerifiedPage = lazy(() =>
 
 /* Dashboard — code-split per route; nobody who never signs in downloads it. */
 const DashboardLayout = lazy(() => import("@/features/dashboard/shell/DashboardLayout"));
-const OverviewPage = lazy(() => import("@/features/dashboard/overview/OverviewPage"));
 const MusicPage = lazy(() => import("@/features/dashboard/music/MusicPage"));
 const ReleaseDetailPage = lazy(() => import("@/features/dashboard/music/ReleaseDetailPage"));
 const ReleaseWizardPage = lazy(() => import("@/features/dashboard/music/wizard/ReleaseWizardPage"));
@@ -57,6 +57,7 @@ const WalletPage = lazy(() => import("@/features/dashboard/wallet/WalletPage"));
 const PlanPage = lazy(() => import("@/features/dashboard/plan/PlanPage"));
 const SplitsPage = lazy(() => import("@/features/dashboard/splits/SplitsPage"));
 const ArtistsDashboardPage = lazy(() => import("@/features/dashboard/artists/ArtistsPage"));
+const ArtistProfilesPage = lazy(() => import("@/features/dashboard/profiles/ArtistProfilesPage"));
 const NotificationsPage = lazy(() => import("@/features/dashboard/notifications/NotificationsPage"));
 const SupportPage = lazy(() => import("@/features/dashboard/support/SupportPage"));
 const TicketDetailPage = lazy(() => import("@/features/dashboard/support/TicketDetailPage"));
@@ -163,11 +164,12 @@ export default function App() {
                   </RequireAuth>
                 }
               >
-                <Route index element={<OverviewPage />} />
+                {/* No separate home: My music is where artists land. */}
+                <Route index element={<Navigate to="music" replace />} />
                 <Route path="music" element={<MusicPage />} />
                 <Route path="music/:id" element={<ReleaseDetailPage />} />
-                <Route path="music/:id/edit" element={<ReleaseWizardPage />} />
-                <Route path="new-release" element={<ReleaseWizardPage />} />
+                <Route path="music/:id/edit" element={<RequirePlan><ReleaseWizardPage /></RequirePlan>} />
+                <Route path="new-release" element={<RequirePlan><ReleaseWizardPage /></RequirePlan>} />
                 <Route path="promotion" element={<DashPromotionPage />} />
                 <Route path="promotion/campaigns/:id" element={<CampaignDetailPage />} />
                 <Route path="creators" element={<DashCreatorsPage />} />
@@ -181,6 +183,7 @@ export default function App() {
                 <Route path="plan" element={<PlanPage />} />
                 <Route path="splits" element={<SplitsPage />} />
                 <Route path="artists" element={<ArtistsDashboardPage />} />
+                <Route path="profiles" element={<ArtistProfilesPage />} />
                 <Route path="notifications" element={<NotificationsPage />} />
                 <Route path="support" element={<SupportPage />} />
                 <Route path="support/:id" element={<TicketDetailPage />} />

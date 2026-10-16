@@ -173,6 +173,12 @@ export async function fetchPlans(signal?: AbortSignal, currency?: string): Promi
 }
 
 /** Formats a price with Intl; TZS (and other zero-minor-unit use) drops decimals. */
+/** Plans are sold per year (365 or 366 days); cards show the price ÷ 12 per month. */
+export function isYearly(duration: number | string | null | undefined): boolean {
+  const d = Number(duration);
+  return d === 365 || d === 366;
+}
+
 export function formatMoney(amount: number, currency: string, locale = "en-TZ"): string {
   const whole = Number.isInteger(amount) || currency === "TZS" || currency === "UGX" || currency === "KES";
   try {

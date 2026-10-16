@@ -6,7 +6,8 @@
  * over this — that is how a guarded deep link survives a round trip through
  * /auth.
  */
-export const DASHBOARD_HOME = "/dashboard";
+/** My music, like DistroKid: the catalog is what artists come back for. */
+export const DASHBOARD_HOME = "/dashboard/music";
 
 /** Where a freshly registered account goes first. */
 export const ONBOARDING_PATH = "/onboarding";

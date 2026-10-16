@@ -1,11 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import { FileAudio, RotateCcw, Upload, X } from "lucide-react";
 import { Button, ProgressBar } from "@/components/ui";
-import { attachAudio } from "@/lib/api/catalog";
+import { attachAtmos, attachAudio } from "@/lib/api/catalog";
 import { useErrorMessage } from "@/lib/api/errors";
 import type { ReleaseConfig, Track } from "@/lib/api/types";
 import { isRetryable, uploadResumable, type UploadPhase } from "@/lib/upload/chunkedUpload";
 import { useCopy } from "@/lib/useCopy";
+import { cn } from "@/lib/utils";
 import { COPY } from "../copy";
 import { formatBytes, formatDuration, useIssueText } from "../shared";
 import { validateAudioFile } from "./validation";
@@ -27,11 +28,20 @@ export function AudioUploader({
   track,
   cfg,
   onAttached,
+  ensureTrack,
+  variant = "audio",
 }: {
-  track: Track;
+  /** null for a song block that isn't on the server yet. */
+  track: Track | null;
   cfg: ReleaseConfig["audio"];
   onAttached: (t: Track) => void;
+  /** Creates the track (and the draft) on demand before uploading. */
+  ensureTrack?: () => Promise<Track | null>;
+  /** "atmos": the Dolby Atmos master (ADM BWF WAV, upload kind `atmos`). */
+  variant?: "audio" | "atmos";
 }) {
+  const atmos = variant === "atmos";
+  const formats = atmos ? ["wav"] : cfg.formats;
   const c = useCopy(COPY);
   const toMessage = useErrorMessage();
   const issueText = useIssueText();
@@ -55,7 +65,7 @@ export function AudioUploader({
   };
 
   const start = async (f: File) => {
-    const problems = validateAudioFile(f, cfg);
+    const problems = validateAudioFile(f, { ...cfg, formats });
     if (problems.length) {
       setState({ kind: "error", message: problems.map((p) => issueText(p)).join(" "), retryable: false });
       return;
@@ -64,9 +74,12 @@ export function AudioUploader({
     abort.current = new AbortController();
     setState({ kind: "running", phase: "hashing", pct: 0 });
     try {
+      // A new song block gets its track (and the draft) first.
+      const target = track ?? (await ensureTrack?.()) ?? null;
+      if (!target) throw new Error(c.audioFailed);
       const session = await uploadResumable({
         file: f,
-        kind: "audio",
+        kind: atmos ? "atmos" : "audio",
         signal: abort.current.signal,
         onProgress: (p) => {
           const pct = p.total ? Math.round((p.loaded / p.total) * 100) : 0;
@@ -76,7 +89,7 @@ export function AudioUploader({
       });
       setState({ kind: "running", phase: "attaching", pct: 100 });
       say("attaching", 100);
-      const updated = await attachAudio(track.id, session.id);
+      const updated = atmos ? await attachAtmos(target.id, session.id) : await attachAudio(target.id, session.id);
       onAttached(updated);
       setState({ kind: "done", warnings: session.inspection?.warnings ?? [] });
       setAnnounce(c.audioDone);
@@ -93,11 +106,30 @@ export function AudioUploader({
     }
   };
 
-  const a = track.audio;
+  const a = (atmos ? track?.atmos : track?.audio) ?? null;
+  const [over, setOver] = useState(false);
   const running = state.kind === "running";
 
   return (
-    <div className="space-y-3">
+    <div
+      className={cn(
+        "space-y-3 rounded-[8px] border border-dashed p-4 transition-colors",
+        a ? "border-nr-line bg-white" : "border-[#d6cce8] bg-nr-soft",
+        over && "border-accent bg-accent-soft",
+      )}
+      onDragOver={(e) => {
+        e.preventDefault();
+        setOver(true);
+      }}
+      onDragLeave={() => setOver(false)}
+      onDrop={(e) => {
+        e.preventDefault();
+        setOver(false);
+        const f = e.dataTransfer.files?.[0];
+        if (f && !running) void start(f);
+      }}
+    >
+      {!a && !running && <p className="text-body-sm text-text-muted">{atmos ? c.atmosHint : c.audioDrop}</p>}
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex min-w-0 items-center gap-2 text-body-sm">
           <FileAudio className="h-4 w-4 shrink-0 text-text-subtle" aria-hidden />
@@ -116,13 +148,13 @@ export function AudioUploader({
               </span>
             </span>
           ) : (
-            <span className="text-warning">{c.trackNoAudio}</span>
+            <span className={atmos ? "text-text-subtle" : "text-warning"}>{atmos ? c.atmosNone : c.trackNoAudio}</span>
           )}
         </div>
         <input
           ref={input}
           type="file"
-          accept={cfg.formats.map((f) => `.${f}`).join(",")}
+          accept={formats.map((f) => `.${f}`).join(",")}
           className="sr-only"
           tabIndex={-1}
           aria-hidden
@@ -137,7 +169,7 @@ export function AudioUploader({
           </Button>
         ) : (
           <Button variant={a ? "secondary" : "primary"} size="sm" leftIcon={<Upload />} onClick={() => input.current?.click()}>
-            {a ? c.audioReplace : c.audioChoose}
+            {atmos ? (a ? c.atmosReplace : c.atmosChoose) : a ? c.audioReplace : c.audioChoose}
           </Button>
         )}
       </div>

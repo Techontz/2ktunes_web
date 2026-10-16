@@ -1,6 +1,7 @@
 import { request } from "./client";
 import type { OfferQuote } from "./growth";
 import type { AuthUser } from "./auth";
+import type { PayMethodKey, PlanPayment } from "./payments";
 import type {
   Analytics,
   AnalyticsRange,
@@ -160,6 +161,10 @@ export function planPrices(plan: Plan): { currency: string; amount: string }[] {
 
 export function subscribe(payload: {
   plan_id: number;
+  /** How to pay. Omitted means manual (older behaviour). */
+  method?: PayMethodKey;
+  /** Mobile money: the Tanzanian number that gets the prompt. */
+  phone?: string;
   payment_method?: PaymentMethodCode;
   payment_reference?: string;
   /** The currency the artist chose to pay in; omitted means the plan's main one. */
@@ -171,7 +176,10 @@ export function subscribe(payload: {
     message: string;
     /** 200 "active" when the quoted price is 0 (free plan, free offer or 100% off); 202 "pending_payment" otherwise. */
     subscription_status: "active" | "pending_payment";
-    payment: SubscriptionPayment | null;
+    /** What the app does next. Older APIs omit it. */
+    action?: "await_phone_approval" | "redirect" | "await_review" | "none";
+    redirect_url?: string | null;
+    payment: (SubscriptionPayment & Partial<PlanPayment>) | null;
     quote?: OfferQuote | null;
     user: AuthUser;
   }>("/subscribe", { method: "POST", body: payload });

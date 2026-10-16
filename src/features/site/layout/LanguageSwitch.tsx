@@ -9,7 +9,8 @@ import { cn } from "@/lib/utils";
  * menu lists each language by its own name so a reader finds theirs without
  * knowing the current one.
  */
-export function LanguageSwitch({ className }: { className?: string }) {
+/** `bare`: no box around the trigger (the dashboard top bar). */
+export function LanguageSwitch({ className, bare = false }: { className?: string; bare?: boolean }) {
   const { language, setLanguage, t } = useLanguage();
   const [open, setOpen] = useState(false);
   const [focusIdx, setFocusIdx] = useState(0);
@@ -80,11 +81,14 @@ export function LanguageSwitch({ className }: { className?: string }) {
             openMenu();
           }
         }}
-        className="inline-flex h-9 items-center gap-1.5 rounded-control border border-border-subtle bg-tint/[0.03] px-2.5 text-[0.75rem] font-bold tracking-[0.04em] text-text transition-colors hover:bg-tint/[0.06] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-text"
+        className={cn(
+          "inline-flex items-center gap-1.5 rounded-control text-text transition-colors hover:bg-tint/[0.06] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-text",
+          bare ? "h-10 px-2 text-[0.8125rem] font-medium" : "h-9 border border-border-subtle bg-tint/[0.03] px-2.5 text-[0.75rem] font-bold tracking-[0.04em]",
+        )}
       >
-        <Globe className="h-3.5 w-3.5 text-text-subtle" aria-hidden />
+        <Globe className={cn(bare ? "h-[1.1rem] w-[1.1rem] text-text" : "h-3.5 w-3.5 text-text-subtle")} strokeWidth={bare ? 1.75 : 2} aria-hidden />
         <span lang={current.code.toLowerCase()}>{current.short}</span>
-        <ChevronDown className={cn("h-3.5 w-3.5 text-text-subtle transition-transform", open && "rotate-180")} aria-hidden />
+        <ChevronDown className={cn("h-3.5 w-3.5 transition-transform", bare ? "text-text" : "text-text-subtle", open && "rotate-180")} aria-hidden />
       </button>
       {open && (
         <ul

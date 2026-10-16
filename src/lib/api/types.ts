@@ -1,3 +1,5 @@
+import type { PayMethodInfo } from "./payments";
+
 /**
  * Response types for the 2kTunes API, mirrored from DOCS/API.md and verified
  * against the Laravel controllers/resources in 2ktunes_app_backend.
@@ -164,13 +166,19 @@ export type SubscriptionInfo = {
   subscription_status: "active" | "inactive" | "pending_payment" | "expired" | string;
   plan: Plan | null;
   expires_at: string | null;
+  /** TZS for people in Tanzania, USD otherwise (older APIs omit it). */
+  default_currency?: string;
   pending_payment: SubscriptionPayment | null;
   payment_instructions: {
+    /** Manual payment: how the artist says they paid. */
     methods: string[];
     /** Which of `methods` accept each currency (mobile money is TZS only). */
     methods_by_currency?: Record<string, string[]>;
     note: string;
     details: Record<string, string>;
+    /** Every way to pay, per currency, in display order (older APIs omit it). */
+    payment_methods?: Record<string, PayMethodInfo[]>;
+    manual_enabled?: boolean;
   };
 };
 
@@ -235,7 +243,30 @@ export type ReleaseStatus =
   | "taken_down"
   | "rejected";
 
-export type Credit = { id?: number; role: string; name: string; detail?: string | null };
+export type Credit = {
+  id?: number;
+  role: string;
+  name: string;
+  detail?: string | null;
+  /** Songwriter name parts (DOCS/DISTRIBUTION_PARITY.md 1.1); `name` is them joined. */
+  first_name?: string | null;
+  middle_name?: string | null;
+  last_name?: string | null;
+};
+
+/** A featured artist or remixer named in a song title. Older tracks send plain strings (read as featuring). */
+export type FeaturedArtist = { name: string; role: "featuring" | "remixer" };
+
+type AudioFacts = {
+  original_name: string | null;
+  format: string | null;
+  size: number | null;
+  duration_ms: number | null;
+  sample_rate: number | null;
+  bit_depth: number | null;
+  channels: number | null;
+  sha256: string | null;
+};
 
 export type Track = {
   id: number;
@@ -244,7 +275,8 @@ export type Track = {
   title: string;
   version: string | null;
   primary_artist: string | null;
-  featured_artists: string[];
+  featured_artists: (string | FeaturedArtist)[];
+  version_type?: "normal" | "radio_edit" | "other" | null;
   isrc: string | null;
   isrc_generated: boolean;
   language: string | null;
@@ -258,16 +290,15 @@ export type Track = {
   ownership: "original" | "cover" | "remix" | "public_domain" | null;
   primary_genre: string | null;
   audio_url: string | null;
-  audio: {
-    original_name: string | null;
-    format: string | null;
-    size: number | null;
-    duration_ms: number | null;
-    sample_rate: number | null;
-    bit_depth: number | null;
-    channels: number | null;
-    sha256: string | null;
-  } | null;
+  audio: AudioFacts | null;
+  dolby_atmos?: boolean;
+  /** The Dolby Atmos master (ADM BWF WAV), when one is attached. */
+  atmos?: AudioFacts | null;
+  cover_original_artist?: string | null;
+  cover_original_title?: string | null;
+  cover_original_writers?: string | null;
+  /** Price tier from release-config `track_prices`. */
+  track_price?: string | null;
   credits?: Credit[];
 };
 
@@ -311,11 +342,15 @@ export type Release = {
   additional_artists: { name: string; role: string }[];
   release_type: ReleaseType;
   release_date: string | null;
+  /** "As soon as possible" instead of a date. */
+  release_asap?: boolean;
   release_time: string | null;
   release_timezone: string | null;
   original_release_date: string | null;
   previously_released: boolean;
   record_label: string | null;
+  /** Price tier from release-config `album_prices` (2+ songs). */
+  album_price?: string | null;
   language: string | null;
   primary_genre: string | null;
   secondary_genre: string | null;
@@ -378,7 +413,19 @@ export type Store = {
   name: string;
   category: string;
   status: "available" | "coming_soon";
+  /** false: unticked on a new release (the artist opts in). Missing means true. */
+  default_selected?: boolean;
+  /** Ticking the store opens this confirmation; its agreements become required. */
+  confirmation?: StoreConfirmation | null;
 };
+
+export type StoreConfirmation = "full_publishing" | "roblox_eligibility";
+
+export type ConfigListItem =
+  | string
+  | number
+  | { value?: string | number; key?: string; id?: string; label?: string; name?: string; required?: boolean; required_with_platform?: string | null };
+export type ConfigList = ConfigListItem[] | Record<string, string | number>;
 
 export type ReleaseConfig = {
   artwork: { min_px: number; max_px: number; max_kb: number; mimes: string[]; must_be_square: boolean };
@@ -400,6 +447,22 @@ export type ReleaseConfig = {
   upc_generation: boolean;
   required_agreements: string[];
   upload_chunk_size: number;
+  /*
+   * Upload page lists (DOCS/DISTRIBUTION_PARITY.md section 5). Optional until
+   * the backend ships them; the page falls back to local defaults. Each is a
+   * list of strings, a list of {value|key, label} objects or a {value: label} map.
+   */
+  version_types?: ConfigList;
+  featured_roles?: ConfigList;
+  writer_roles?: ConfigList;
+  performer_roles?: ConfigList;
+  producer_roles?: ConfigList;
+  track_prices?: ConfigList;
+  album_prices?: ConfigList;
+  /** Agreement keys in order, with a required flag. */
+  agreements?: ConfigList;
+  ownership_types?: ConfigList;
+  claim_services?: ConfigList;
   marketplace: {
     platforms: string[];
     categories: string[];
@@ -426,9 +489,23 @@ export type Artist = {
   tiktok_link?: string | null;
   boomplay_link?: string | null;
   audiomack_link?: string | null;
+  /* Store profiles (DOCS/DISTRIBUTION_PARITY.md section 2) */
+  spotify_profile?: StoreProfileChoice | null;
+  spotify_artist_id?: string | null;
+  apple_music_profile?: StoreProfileChoice | null;
+  apple_music_artist_id?: string | null;
+  youtube_music_profile?: StoreProfileChoice | null;
+  youtube_channel_url?: string | null;
+  instagram_profile?: SocialProfileChoice | null;
+  facebook_profile?: SocialProfileChoice | null;
+  /** True once a release by this artist reached the stores: profiles are linked. */
+  has_delivered_release?: boolean;
   releases_count?: number;
   created_at: string;
 };
+
+export type StoreProfileChoice = "existing" | "new";
+export type SocialProfileChoice = "group" | "none";
 
 export type ArtistsResponse = {
   artists: Artist[];
@@ -438,7 +515,7 @@ export type ArtistsResponse = {
 
 /* ───────────────────────────── Uploads ───────────────────────────── */
 
-export type UploadKind = "audio" | "artwork" | "attachment";
+export type UploadKind = "audio" | "artwork" | "attachment" | "atmos";
 
 export type UploadSession = {
   id: string;

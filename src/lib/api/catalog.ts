@@ -3,6 +3,7 @@ import type {
   Artist,
   ArtistsResponse,
   Credit,
+  FeaturedArtist,
   Paginated,
   Release,
   ReleaseConfig,
@@ -91,6 +92,8 @@ export type ReleasePatch = Partial<{
   version: string | null;
   additional_artists: { name: string; role: "primary_artist" | "featured_artist" | "remixer" }[];
   release_date: string | null;
+  release_asap: boolean;
+  album_price: string | null;
   release_time: string | null;
   release_timezone: string | null;
   original_release_date: string | null;
@@ -171,7 +174,8 @@ export type TrackPatch = Partial<{
   title: string;
   version: string | null;
   primary_artist: string | null;
-  featured_artists: string[];
+  featured_artists: (string | FeaturedArtist)[];
+  version_type: "normal" | "radio_edit" | "other";
   isrc: string | null;
   language: string | null;
   lyrics: string | null;
@@ -183,6 +187,11 @@ export type TrackPatch = Partial<{
   publisher: string | null;
   ownership: "original" | "cover" | "remix" | "public_domain";
   primary_genre: string | null;
+  dolby_atmos: boolean;
+  cover_original_artist: string | null;
+  cover_original_title: string | null;
+  cover_original_writers: string | null;
+  track_price: string | null;
   credits: Credit[];
 }>;
 
@@ -210,6 +219,15 @@ export async function reorderTracks(releaseId: number, order: number[]): Promise
 
 export async function attachAudio(trackId: number, uploadId: string): Promise<Track> {
   const res = await request<{ track: Track }>(`/tracks/${trackId}/audio`, {
+    method: "POST",
+    body: { upload_id: uploadId },
+  });
+  return res.track;
+}
+
+/** POST /tracks/{id}/atmos {upload_id}: attach a Dolby Atmos master (upload kind `atmos`). */
+export async function attachAtmos(trackId: number, uploadId: string): Promise<Track> {
+  const res = await request<{ track: Track }>(`/tracks/${trackId}/atmos`, {
     method: "POST",
     body: { upload_id: uploadId },
   });
@@ -279,6 +297,14 @@ export type ArtistInput = Partial<{
   tiktok_link: string | null;
   boomplay_link: string | null;
   audiomack_link: string | null;
+  spotify_profile: "existing" | "new" | null;
+  spotify_artist_id: string | null;
+  apple_music_profile: "existing" | "new" | null;
+  apple_music_artist_id: string | null;
+  youtube_music_profile: "existing" | "new" | null;
+  youtube_channel_url: string | null;
+  instagram_profile: "group" | "none" | null;
+  facebook_profile: "group" | "none" | null;
 }>;
 
 export async function createArtist(data: ArtistInput & { name: string }): Promise<Artist> {

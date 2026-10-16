@@ -1,89 +1,129 @@
-import { useEffect, useState, type FormEvent } from "react";
-import { ChevronDown, Gift, Tag, X } from "lucide-react";
-import { Button, Dialog, Field, Input, RadioCardGroup, Select } from "@/components/ui";
-import { CopyButton, FormAlert, useAction } from "@/features/dashboard/components";
+import { useEffect, useRef, useState, type FormEvent, type ReactNode } from "react";
+import { CheckCircle2, ChevronDown, Gift, Smartphone, Tag, X, XCircle } from "lucide-react";
+import { Button, Dialog, Field, Input } from "@/components/ui";
+import { FormAlert, useAction } from "@/features/dashboard/components";
 import { OfferBadge } from "@/features/growth/OfferPrice";
 import { planPrices, subscribe } from "@/lib/api/account";
 import { errorCodeOf, useErrorMessage } from "@/lib/api/errors";
 import { validateOffer, type OfferQuote } from "@/lib/api/growth";
-import type { PaymentMethodCode, Plan, SubscriptionInfo } from "@/lib/api/types";
+import {
+  cancelPlanPayment,
+  checkoutRedirect,
+  COMING_SOON_METHODS,
+  detectTzNetwork,
+  fetchPlanPayment,
+  formatTzPhone,
+  normaliseTzPhone,
+  TZ_NETWORKS,
+  type PayMethodInfo,
+  type PayMethodKey,
+  type PlanPayment,
+} from "@/lib/api/payments";
+import type { Plan, SubscriptionInfo } from "@/lib/api/types";
+import { formatDate } from "@/lib/dates";
 import { useLanguage } from "@/lib/LanguageContext";
-import { formatDecimal, formatMinor } from "@/lib/money";
+import { formatMoney, isYearly } from "@/lib/api/plans";
+import { formatDecimal, formatMinor, minorToDecimal } from "@/lib/money";
 import { useCopy } from "@/lib/useCopy";
-import { COPY } from "./copy";
+import { cn } from "@/lib/utils";
+import { MastercardMark, MobileMoneyMarks, PayPalMark, VisaMark } from "./BrandMarks";
+import { COPY, type PlanCopy } from "./copy";
+import { CurrencyToggle } from "./CurrencyToggle";
 
 const FORM_ID = "pay-for-plan-form";
-
-/** `details` is a PHP array: `{}` when set, but `[]` when every value is empty. */
-function paymentDetails(info: SubscriptionInfo["payment_instructions"] | undefined): [string, string][] {
-  const d = info?.details;
-  if (!d || Array.isArray(d) || typeof d !== "object") return [];
-  return Object.entries(d).filter(([, v]) => typeof v === "string" && v.trim() !== "");
-}
+const POLL_MS = 3000;
+const USER_METHODS: PayMethodKey[] = ["mobile_money", "card", "paypal"];
 
 /**
- * Buy a plan. The exact price comes from POST /offers/validate (automatic
- * offers, the invited-friend price and an optional promo code; offers never
- * stack). A quoted price of 0 activates at once (200 active, no payment
- * step); otherwise the artist pays the discounted amount and enters the
- * reference for Finance (202 pending_payment).
+ * The three ways to pay, in order, for a currency (GET /subscription →
+ * payment_instructions.payment_methods). Older APIs send none: all three
+ * then show as "Coming soon".
+ */
+function methodRows(info: SubscriptionInfo["payment_instructions"] | undefined, currency: string): PayMethodInfo[] {
+  const rows = (info?.payment_methods?.[currency] ?? []).filter((r) => USER_METHODS.includes(r.key));
+  return USER_METHODS.map((k) => {
+    const row = rows.find((r) => r.key === k);
+    if (row) return row;
+    const fallback = COMING_SOON_METHODS.find((r) => r.key === k)!;
+    return fallback.currencies.includes(currency) ? fallback : { ...fallback, reason_code: "currency_not_supported" as const };
+  });
+}
+
+type Stage =
+  | { kind: "choose" }
+  | { kind: "redirecting" }
+  | { kind: "waiting"; payment: PlanPayment; msisdn: string; deadline: number }
+  | { kind: "success"; until: string | null }
+  | { kind: "failed"; reason: "failed" | "expired" };
+
+/**
+ * Buy a plan. Title, the amount (with the TZS | USD toggle and the offer
+ * applied through POST /offers/validate), "Have a code?", then the three
+ * ways to pay:
+ *   - Mobile money (TZS): push to the phone, poll until confirmed;
+ *   - Card: Stripe Checkout (redirect);
+ *   - PayPal (USD): redirect.
+ * A method whose provider is not connected yet reads "Coming soon". A quoted
+ * price of 0 activates at once. Manual payments are not offered here.
  */
 export function PayForPlanDialog({
   plan,
   instructions,
+  currency: currencyProp,
+  onCurrencyChange,
   onClose,
-  onSubmitted,
   onActivated,
+  onPaid,
 }: {
   plan: Plan | null;
   instructions: SubscriptionInfo["payment_instructions"] | undefined;
+  /** The currency picked on the page; the dialog starts there when the plan is sold in it. */
+  currency?: string;
+  onCurrencyChange?: (currency: string) => void;
   onClose: () => void;
-  onSubmitted: () => void;
   /** The subscription went active at once (free offer or 100% discount). */
   onActivated?: (plan: Plan) => void;
+  /** An automatic payment was confirmed (the dialog stays open on the success screen). */
+  onPaid?: (plan: Plan) => void;
 }) {
   const c = useCopy(COPY);
-  const { t, locale, language } = useLanguage();
+  const { t, locale } = useLanguage();
   const toMessage = useErrorMessage();
   const [currency, setCurrency] = useState("");
-  const [method, setMethod] = useState("");
-  const [reference, setReference] = useState("");
-  const [errors, setErrors] = useState<{ method?: string; reference?: string }>({});
+  const [method, setMethod] = useState<PayMethodKey | "">("");
+  const [phone, setPhone] = useState("");
+  const [phoneError, setPhoneError] = useState<string | null>(null);
   const [codeOpen, setCodeOpen] = useState(false);
   const [code, setCode] = useState("");
   const [applied, setApplied] = useState("");
   const [codeError, setCodeError] = useState<string | null>(null);
   const [quote, setQuote] = useState<OfferQuote | null>(null);
   const [quoting, setQuoting] = useState(false);
+  const [stage, setStage] = useState<Stage>({ kind: "choose" });
   const action = useAction(subscribe);
   const { reset } = action;
 
   const open = !!plan;
   const prices = plan ? planPrices(plan) : [];
   const chosen = prices.find((p) => p.currency === currency) ?? prices[0];
-  const allMethods = (instructions?.methods ?? []).filter((m) => !!m);
-  // Older APIs don't send methods_by_currency: assume mobile money is TZS only.
-  const methodsFor = (cur: string | undefined) => {
-    const allowed = instructions?.methods_by_currency?.[cur ?? ""];
-    if (allowed) return allMethods.filter((m) => allowed.includes(m));
-    return cur && cur !== "TZS" ? allMethods.filter((m) => m === "bank" || m === "card") : allMethods;
-  };
-  const methods = methodsFor(chosen?.currency);
-  const details = paymentDetails(instructions);
+  const rows = methodRows(instructions, chosen?.currency ?? "TZS");
+  const firstAvailable = (list: PayMethodInfo[]) => list.find((m) => m.available)?.key ?? "";
+  const mmRow = rows.find((r) => r.key === "mobile_money");
+  const networks = mmRow?.networks?.length ? mmRow.networks : TZ_NETWORKS;
 
   useEffect(() => {
     if (!open) return;
-    const first = prices[0]?.currency ?? "";
-    const firstMethods = methodsFor(first);
-    setCurrency(first);
-    setMethod(firstMethods.length === 1 ? firstMethods[0] : "");
-    setReference("");
-    setErrors({});
+    const cur = prices.find((p) => p.currency === currencyProp)?.currency ?? prices[0]?.currency ?? "";
+    setCurrency(cur);
+    setMethod(firstAvailable(methodRows(instructions, cur)));
+    setPhone("");
+    setPhoneError(null);
     setCodeOpen(false);
     setCode("");
     setApplied("");
     setCodeError(null);
     setQuote(null);
+    setStage({ kind: "choose" });
     reset();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, plan?.id]);
@@ -116,11 +156,21 @@ export function PayForPlanDialog({
   const q = quote && quote.currency === chosen.currency ? quote : null;
   const isFree = !!q && q.final_minor <= 0;
   const dueText = q ? formatMinor(q.final_minor, q.currency, locale) : formatDecimal(chosen.amount, chosen.currency, locale);
+  // Plans are priced per year; the cards lead with this monthly equivalent.
+  const dueAmount = q ? Number(minorToDecimal(q.final_minor, q.currency)) : Number(chosen.amount);
+  const monthlyText = formatMoney(dueAmount / 12, chosen.currency, locale);
+  const shortDue = formatMoney(dueAmount, chosen.currency, locale);
+  const selected = rows.find((r) => r.key === method && r.available) ?? null;
+  const anyConfigured = rows.some((r) => r.configured !== false && r.reason_code !== "coming_soon");
+  const otherCurrency = prices.map((p) => p.currency).find((cur) => cur !== chosen.currency);
 
   const pickCurrency = (cur: string) => {
     setCurrency(cur);
-    const next = methodsFor(cur);
-    setMethod((m) => (next.includes(m) ? m : next.length === 1 ? next[0] : ""));
+    onCurrencyChange?.(cur);
+    const nextRows = methodRows(instructions, cur);
+    setMethod((m) => (nextRows.some((r) => r.key === m && r.available) ? m : firstAvailable(nextRows)));
+    setPhoneError(null);
+    reset();
   };
 
   const applyCode = async () => {
@@ -142,91 +192,186 @@ export function PayForPlanDialog({
     }
   };
 
+  const base = { plan_id: plan.id, currency: chosen.currency, ...(applied ? { code: applied } : {}) };
+
   const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (isFree) {
-      const res = await action.run({ plan_id: plan.id, currency: chosen.currency, ...(applied ? { code: applied } : {}) });
-      if (res.ok) {
-        if (res.value.subscription_status === "active") onActivated?.(plan);
-        else onSubmitted();
+      const res = await action.run(base);
+      if (res.ok && res.value.subscription_status === "active") onActivated?.(plan);
+      return;
+    }
+    if (!selected) return;
+
+    if (selected.key === "mobile_money") {
+      const msisdn = normaliseTzPhone(phone);
+      const err = !msisdn ? c.phoneInvalid : !detectTzNetwork(msisdn, networks) ? c.phoneNetworkUnknown : null;
+      setPhoneError(err);
+      if (!msisdn || err) return;
+      const res = await action.run({ ...base, method: "mobile_money", phone: msisdn });
+      if (!res.ok) return;
+      if (res.value.subscription_status === "active") {
+        onActivated?.(plan);
+        return;
+      }
+      if (res.value.payment?.id) {
+        const timeout = (mmRow?.approval_timeout_seconds ?? 180) * 1000;
+        setStage({ kind: "waiting", payment: res.value.payment as PlanPayment, msisdn, deadline: Date.now() + timeout });
       }
       return;
     }
-    const next: typeof errors = {};
-    if (!method) next.method = c.methodRequired;
-    if (!reference.trim()) next.reference = c.referenceRequired;
-    setErrors(next);
-    if (next.method || next.reference) return;
 
-    const res = await action.run({
-      plan_id: plan.id,
-      currency: chosen.currency,
-      ...(applied ? { code: applied } : {}),
-      payment_method: method as PaymentMethodCode,
-      payment_reference: reference.trim(),
-    });
-    if (res.ok) {
-      if (res.value.subscription_status === "active") onActivated?.(plan);
-      else onSubmitted();
+    // Card (Stripe Checkout) or PayPal: leave for the provider's page.
+    const res = await action.run({ ...base, method: selected.key });
+    if (!res.ok) return;
+    if (res.value.subscription_status === "active") {
+      onActivated?.(plan);
       return;
     }
-    if ("error" in res && errorCodeOf(res.error) === "payment_reference_required") {
-      setErrors({ reference: c.referenceRequired });
+    if (res.value.redirect_url) {
+      setStage({ kind: "redirecting" });
+      checkoutRedirect.go(res.value.redirect_url);
     }
   };
 
   const fe = action.fieldErrors;
   const code422 = errorCodeOf(action.errorObj);
-  const formError =
-    action.error && code422 !== "payment_reference_required" && !fe.payment_reference && !fe.payment_method
-      ? (c.codeErrors[code422 ?? ""] ?? action.error)
-      : null;
-
-  // The API writes the note in English; Swahili and French readers get our translation.
-  const note = language !== "EN" || !instructions?.note ? c.payNote : instructions.note;
-  const labelFor = (key: string) =>
-    c.detailLabels[key] ?? key.replace(/_/g, " ").replace(/^\w/, (m) => m.toUpperCase());
+  const formError = action.error && !fe.phone ? (c.payErrors[code422 ?? ""] ?? c.codeErrors[code422 ?? ""] ?? action.error) : null;
   const headline = q?.offer?.headline ?? (q?.referral_applied ? c.referralApplied : null);
 
+  const submitLabel = isFree
+    ? c.activateFree
+    : selected?.key === "mobile_money"
+      ? c.payMobile(dueText)
+      : selected?.key === "card"
+        ? c.payCard(dueText)
+        : selected?.key === "paypal"
+          ? c.payPayPal(dueText)
+          : c.comingSoon;
+
+  const backToChoose = () => {
+    reset();
+    setStage({ kind: "choose" });
+  };
+
+  /* ── After choosing ─────────────────────────────────────────────── */
+
+  if (stage.kind === "waiting") {
+    return (
+      <WaitingForPhone
+        open={open}
+        planName={plan.name}
+        stage={stage}
+        amountText={formatMinor(stage.payment.amount_minor, stage.payment.currency, locale)}
+        c={c}
+        closeLabel={t("common.close")}
+        onClose={onClose}
+        onResult={(next) => {
+          setStage(next);
+          if (next.kind === "success") onPaid?.(plan);
+        }}
+        onCancelled={backToChoose}
+      />
+    );
+  }
+
+  if (stage.kind === "success" || stage.kind === "failed") {
+    const ok = stage.kind === "success";
+    return (
+      <Dialog
+        open={open}
+        onClose={onClose}
+        title={ok ? c.successTitle : stage.reason === "expired" ? c.payExpiredTitle : c.failedTitle}
+        closeLabel={t("common.close")}
+        footer={
+          ok ? (
+            <Button onClick={onClose}>{c.done}</Button>
+          ) : (
+            <>
+              <Button variant="ghost" onClick={onClose}>
+                {t("common.close")}
+              </Button>
+              <Button onClick={backToChoose}>{c.tryAgain}</Button>
+            </>
+          )
+        }
+      >
+        <div role="status" className="flex flex-col items-center gap-3 py-4 text-center">
+          <span
+            className={cn(
+              "grid h-16 w-16 place-items-center rounded-full",
+              ok ? "bg-success-soft text-success" : "bg-danger-soft text-danger",
+            )}
+          >
+            {ok ? <CheckCircle2 className="h-8 w-8" aria-hidden /> : <XCircle className="h-8 w-8" aria-hidden />}
+          </span>
+          <p className="max-w-sm text-body text-text">
+            {ok
+              ? stage.until
+                ? c.successBody(plan.name, formatDate(stage.until, locale))
+                : c.successBodyNoDate(plan.name)
+              : stage.reason === "expired"
+                ? c.payExpiredBody
+                : c.failedBody}
+          </p>
+        </div>
+      </Dialog>
+    );
+  }
+
+  /* ── Choosing how to pay ─────────────────────────────────────────── */
+
+  const busy = action.pending || stage.kind === "redirecting";
+  const noneAvailable = !isFree && !rows.some((r) => r.available);
   return (
     <Dialog
       open={open}
-      onClose={action.pending ? () => {} : onClose}
-      dismissible={!action.pending}
+      onClose={busy ? () => {} : onClose}
+      dismissible={!busy}
       title={isFree ? c.activateTitle(plan.name) : c.payTitle(plan.name)}
-      description={isFree ? (q?.free_days ? c.freeDaysNow(q.free_days) : c.freeNow) : c.payDesc(dueText)}
+      description={
+        isFree
+          ? q?.free_days
+            ? c.freeDaysNow(q.free_days)
+            : c.freeNow
+          : isYearly(plan.duration)
+            ? c.paySubtitle(shortDue, plan.name)
+            : c.paySubtitlePeriod(shortDue, plan.name)
+      }
       closeLabel={t("common.close")}
       footer={
         <>
-          <Button variant="ghost" onClick={onClose} disabled={action.pending}>
+          <Button variant="ghost" onClick={onClose} disabled={busy}>
             {t("act.cancel")}
           </Button>
-          <Button type="submit" form={FORM_ID} loading={action.pending} disabled={quoting && !!applied && !q}>
-            {isFree ? c.activateFree : c.submit}
+          <Button type="submit" form={FORM_ID} loading={busy} disabled={(quoting && !!applied && !q) || (!isFree && !selected)}>
+            {stage.kind === "redirecting" ? c.redirecting : submitLabel}
           </Button>
         </>
       }
     >
       <div className="space-y-5">
-        {/* Price summary */}
-        <section aria-live="polite" className="rounded-card border border-border-subtle bg-surface-sunken px-4 py-3">
-          {headline && q && q.discount_minor > 0 && <OfferBadge className="mb-2">{headline}</OfferBadge>}
-          <dl className="space-y-1 text-body-sm">
-            {q && q.discount_minor > 0 && (
-              <div className="flex items-baseline justify-between gap-3">
-                <dt className="text-text-muted">{c.listPrice}</dt>
-                <dd className="tabular-nums text-text-muted">
-                  <s>{formatMinor(q.list_minor, q.currency, locale)}</s>
-                </dd>
-              </div>
+        {/* Amount, with the currency switch right next to it. */}
+        <section aria-live="polite" className="rounded-[14px] border border-border bg-surface-sunken px-4 py-3.5">
+          <div className="flex items-center justify-between gap-3">
+            <span className="text-body-sm font-semibold text-text-muted">{c.amountDue}</span>
+            {prices.length > 1 && (
+              <CurrencyToggle label={c.currency} value={chosen.currency} options={prices.map((p) => p.currency)} onChange={pickCurrency} size="sm" />
             )}
-            <div className="flex items-baseline justify-between gap-3">
-              <dt className="font-semibold text-text">{c.amountDue}</dt>
-              <dd className="text-h4 font-extrabold tabular-nums text-text" data-testid="amount-due">
-                {isFree ? (q?.free_days ? t("offer.free_days", { days: q.free_days }) : t("offer.free")) : dueText}
-              </dd>
-            </div>
-          </dl>
+          </div>
+          <p className="mt-2 text-[1.625rem] font-extrabold leading-tight tracking-[-0.02em] tabular-nums text-text" data-testid="amount-due">
+            {isFree ? (q?.free_days ? t("offer.free_days", { days: q.free_days }) : t("offer.free")) : dueText}
+          </p>
+          {q && q.discount_minor > 0 && (
+            <p className="mt-1 flex flex-wrap items-center gap-2 text-body-sm text-text-subtle">
+              {headline && <OfferBadge>{headline}</OfferBadge>}
+              <span>
+                <span className="sr-only">{c.listPrice}: </span>
+                <s>{formatMinor(q.list_minor, q.currency, locale)}</s>
+              </span>
+            </p>
+          )}
+          {!isFree && isYearly(plan.duration) && <p className="mt-1.5 text-caption text-text-subtle">{c.yearCovers(monthlyText)}</p>}
           {quoting && <p className="mt-1 text-caption text-text-subtle">{c.quoteLoading}</p>}
         </section>
 
@@ -295,77 +440,280 @@ export function PayForPlanDialog({
           {(codeOpen || applied) && <p className="text-caption text-text-subtle">{c.codeNoStack}</p>}
         </section>
 
-        <form id={FORM_ID} onSubmit={onSubmit} noValidate className="space-y-4">
-          {prices.length > 1 && (
-            <RadioCardGroup
-              legend={c.currency}
-              name="plan-currency"
-              value={chosen.currency}
-              onChange={pickCurrency}
-              columns={2}
-              options={prices.map((p) => ({
-                value: p.currency,
-                label: formatDecimal(p.amount, p.currency, locale),
-                description: methodsFor(p.currency).some((m) => m.endsWith("_tz")) ? c.currencyMobileMoney : c.currencyBankOnly,
-              }))}
-            />
-          )}
+        <form id={FORM_ID} onSubmit={onSubmit} noValidate className="space-y-3">
           {!isFree && (
             <>
-              <section aria-labelledby="pay-how" className="space-y-3">
-                <h3 id="pay-how" className="text-body font-semibold text-text">
-                  {c.howToPay}
-                </h3>
-                <p>{note}</p>
-                {details.length > 0 ? (
-                  <dl className="space-y-2">
-                    {details.map(([key, value]) => (
-                      <div
-                        key={key}
-                        role="group"
-                        aria-label={labelFor(key)}
-                        className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 rounded-control border border-border-subtle bg-white/[0.02] px-3.5 py-2.5"
-                      >
-                        <div className="min-w-0">
-                          <dt className="text-caption text-text-subtle">{labelFor(key)}</dt>
-                          <dd className="break-all font-mono text-body-sm font-semibold text-text">{value}</dd>
-                        </div>
-                        <CopyButton value={value} />
-                      </div>
-                    ))}
-                  </dl>
-                ) : (
-                  <FormAlert tone="info">
-                    <p>{c.noDetails}</p>
-                    <Button to="/dashboard/support" variant="secondary" size="sm" className="mt-2">
-                      {c.contactSupport}
-                    </Button>
-                  </FormAlert>
-                )}
-              </section>
-              <Field label={c.method} required error={errors.method ?? fe.payment_method}>
-                <Select value={method} onChange={(e) => setMethod(e.target.value)} placeholder={c.methodPlaceholder}>
-                  {methods.map((m) => (
-                    <option key={m} value={m}>
-                      {c.methods[m] ?? m}
-                    </option>
-                  ))}
-                </Select>
-              </Field>
-              <Field label={c.reference} hint={c.referenceHint} required error={errors.reference ?? fe.payment_reference}>
-                <Input
-                  value={reference}
-                  onChange={(e) => setReference(e.target.value)}
-                  maxLength={64}
-                  autoComplete="off"
-                  autoCapitalize="characters"
-                  spellCheck={false}
-                />
-              </Field>
+              <MethodList
+                rows={rows}
+                value={selected?.key ?? ""}
+                onChange={(k) => {
+                  setMethod(k);
+                  setPhoneError(null);
+                  reset();
+                }}
+                c={c}
+                detail={(key) =>
+                  key === "mobile_money" ? (
+                    <Field label={c.phoneLabel} hint={c.phoneHint} required error={phoneError ?? fe.phone}>
+                      <PhoneInput value={phone} onChange={setPhone} networks={networks} />
+                    </Field>
+                  ) : null
+                }
+              />
+              {noneAvailable && (
+                <p className="text-body-sm text-text-muted">
+                  {anyConfigured && otherCurrency ? c.switchCurrencyNote(otherCurrency) : c.comingSoonNote}
+                </p>
+              )}
             </>
           )}
           {formError && <FormAlert>{formError}</FormAlert>}
         </form>
+      </div>
+    </Dialog>
+  );
+}
+
+/* ───────────────────────────── Method list ───────────────────────────── */
+
+function marksFor(key: PayMethodKey): ReactNode {
+  if (key === "mobile_money") return <MobileMoneyMarks />;
+  if (key === "card")
+    return (
+      <span className="flex items-center gap-1.5">
+        <VisaMark />
+        <MastercardMark />
+      </span>
+    );
+  return <PayPalMark />;
+}
+
+function MethodList({
+  rows,
+  value,
+  onChange,
+  c,
+  detail,
+}: {
+  rows: PayMethodInfo[];
+  value: string;
+  onChange: (key: PayMethodKey) => void;
+  c: PlanCopy;
+  /** Shown right under the selected row (the phone number for mobile money). */
+  detail?: (key: PayMethodKey) => ReactNode;
+}) {
+  return (
+    <fieldset className="min-w-0">
+      <legend className="mb-2.5 text-body-sm font-semibold text-text">{c.methodsTitle}</legend>
+      <div className="space-y-2">
+        {rows.map((r) => {
+          const on = value === r.key;
+          const comingSoon = r.reason_code === "coming_soon";
+          const wrongCurrency = r.reason_code === "currency_not_supported";
+          const note = wrongCurrency ? c.availableIn(r.currencies.join(" / ")) : r.key === "card" ? c.poweredByStripe : null;
+          const extra = on ? detail?.(r.key) : null;
+          return (
+            <div key={r.key}>
+              <label
+                className={cn(
+                  "flex items-start gap-3 rounded-[12px] border px-4 py-3.5 transition-colors",
+                  on ? "border-accent bg-accent-soft" : "border-border bg-surface",
+                  r.available ? "cursor-pointer hover:border-accent/50" : "cursor-not-allowed",
+                  "has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-accent",
+                )}
+              >
+                <input
+                  type="radio"
+                  name="pay-method"
+                  value={r.key}
+                  checked={on}
+                  disabled={!r.available}
+                  onChange={() => onChange(r.key)}
+                  className="sr-only"
+                  aria-describedby={`pay-method-${r.key}-desc`}
+                />
+                <span
+                  aria-hidden
+                  className={cn(
+                    "mt-0.5 grid h-[1.125rem] w-[1.125rem] shrink-0 place-items-center rounded-full border",
+                    on ? "border-accent" : r.available ? "border-border-strong" : "border-border",
+                  )}
+                >
+                  {on && <span className="h-2.5 w-2.5 rounded-full bg-accent" />}
+                </span>
+                <span className="min-w-0 flex-1">
+                  <span className="flex flex-wrap items-center gap-2">
+                    <span className={cn("text-[0.9375rem] font-semibold", wrongCurrency ? "text-text-muted" : "text-text")}>
+                      {c.methodLabels[r.key] ?? r.label}
+                    </span>
+                    {comingSoon && (
+                      <span className="rounded-full border border-border px-2 py-px text-[0.6875rem] font-semibold text-text-muted">
+                        {c.comingSoon}
+                      </span>
+                    )}
+                  </span>
+                  <span className={cn("mt-2 block", wrongCurrency && "opacity-50 grayscale")}>{marksFor(r.key)}</span>
+                  <span id={`pay-method-${r.key}-desc`} className="sr-only">
+                    {c.methodSubs[r.key]}
+                  </span>
+                  {note && <span className="mt-1.5 block text-[0.8125rem] text-text-subtle">{note}</span>}
+                </span>
+              </label>
+              {extra && <div className="px-1 pb-1 pt-3">{extra}</div>}
+            </div>
+          );
+        })}
+      </div>
+    </fieldset>
+  );
+}
+
+/* ───────────────────────────── Phone input ───────────────────────────── */
+
+function PhoneInput({
+  value,
+  onChange,
+  networks,
+}: {
+  value: string;
+  onChange: (v: string) => void;
+  networks: { key: string; label: string; prefixes: string[] }[];
+}) {
+  const network = detectTzNetwork(value, networks);
+  return (
+    <Input
+      type="tel"
+      inputMode="tel"
+      autoComplete="tel-national"
+      placeholder="754 123 456"
+      value={value}
+      onChange={(e) => onChange(e.target.value.replace(/[^\d+\s-]/g, "").slice(0, 16))}
+      // "0754123456" or "+255754123456" → "754 123 456" next to the +255 prefix.
+      onBlur={() => {
+        const n = normaliseTzPhone(value);
+        if (n) onChange(`${n.slice(3, 6)} ${n.slice(6, 9)} ${n.slice(9)}`);
+      }}
+      leading={<span className="text-[0.9375rem] font-semibold text-text-muted">+255</span>}
+      className="pl-[3.75rem] tracking-[0.02em]"
+      trailing={
+        network ? (
+          <span data-testid="network" className="mr-2 rounded-full bg-accent-soft px-2.5 py-1 text-[0.75rem] font-bold text-accent-text">
+            {network.label}
+          </span>
+        ) : undefined
+      }
+    />
+  );
+}
+
+/* ──────────────────────────── Waiting for PIN ─────────────────────────── */
+
+function WaitingForPhone({
+  open,
+  planName,
+  stage,
+  amountText,
+  c,
+  closeLabel,
+  onClose,
+  onResult,
+  onCancelled,
+}: {
+  open: boolean;
+  planName: string;
+  stage: Extract<Stage, { kind: "waiting" }>;
+  amountText: string;
+  c: PlanCopy;
+  closeLabel: string;
+  onClose: () => void;
+  onResult: (next: Extract<Stage, { kind: "success" | "failed" }>) => void;
+  onCancelled: () => void;
+}) {
+  const [now, setNow] = useState(() => Date.now());
+  const [cancelling, setCancelling] = useState(false);
+  const done = useRef(false);
+  const onResultRef = useRef(onResult);
+  onResultRef.current = onResult;
+
+  // Countdown.
+  useEffect(() => {
+    const id = window.setInterval(() => setNow(Date.now()), 1000);
+    return () => window.clearInterval(id);
+  }, []);
+
+  // Poll every 3 s until the payment settles.
+  useEffect(() => {
+    let live = true;
+    const tick = async () => {
+      try {
+        const res = await fetchPlanPayment(stage.payment.id);
+        if (!live || done.current) return;
+        const s = res.payment.status;
+        if (s === "confirmed") {
+          done.current = true;
+          onResultRef.current({ kind: "success", until: res.subscription?.expires_at ?? null });
+        } else if (s === "failed" || s === "cancelled" || s === "expired") {
+          done.current = true;
+          onResultRef.current({ kind: "failed", reason: s === "expired" ? "expired" : "failed" });
+        }
+      } catch {
+        /* a dropped request: try again on the next tick */
+      }
+    };
+    const id = window.setInterval(() => void tick(), POLL_MS);
+    return () => {
+      live = false;
+      window.clearInterval(id);
+    };
+  }, [stage.payment.id]);
+
+  const left = Math.max(0, Math.ceil((stage.deadline - now) / 1000));
+  const clock = `${Math.floor(left / 60)}:${String(left % 60).padStart(2, "0")}`;
+
+  const cancel = async () => {
+    setCancelling(true);
+    done.current = true;
+    try {
+      const res = await cancelPlanPayment(stage.payment.id);
+      if (res.payment.status === "confirmed") {
+        onResult({ kind: "success", until: null });
+        return;
+      }
+    } catch {
+      /* nothing was charged without approval; go back either way */
+    }
+    onCancelled();
+  };
+
+  return (
+    <Dialog
+      open={open}
+      onClose={onClose}
+      title={c.checkPhoneTitle}
+      closeLabel={closeLabel}
+      footer={
+        <Button variant="secondary" onClick={() => void cancel()} loading={cancelling}>
+          {c.cancelWaiting}
+        </Button>
+      }
+    >
+      <div className="flex flex-col items-center gap-4 py-3 text-center">
+        <span className="relative grid h-20 w-20 place-items-center">
+          <span aria-hidden className="absolute inset-0 rounded-full bg-accent/15 motion-safe:animate-ping motion-safe:[animation-duration:2s]" />
+          <span className="relative grid h-20 w-20 place-items-center rounded-full bg-accent-soft text-accent-text">
+            <Smartphone className="h-9 w-9" strokeWidth={1.75} aria-hidden />
+          </span>
+        </span>
+        <p className="max-w-sm text-body text-text">{c.checkPhoneBody(amountText, formatTzPhone(stage.msisdn))}</p>
+        <p className="text-caption font-semibold uppercase tracking-[0.08em] text-text-subtle">{planName}</p>
+        {/* Not a live region: a ticking clock must not be read out every second. */}
+        <p className="tabular-nums text-[1.75rem] font-extrabold tracking-[-0.02em] text-text">
+          <span className="sr-only">{c.expiresIn(clock)}</span>
+          <span aria-hidden>{clock}</span>
+        </p>
+        <p role="status" className="text-body-sm text-text-muted">
+          {c.waiting}
+        </p>
       </div>
     </Dialog>
   );

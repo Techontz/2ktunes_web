@@ -61,7 +61,7 @@ function renderApp(route: string, { token = "ok" }: { token?: string | null } = 
                 element={
                   <RequireAuth>
                     <Routes>
-                      <Route index element={<p>dashboard home</p>} />
+                      <Route path="music" element={<p>dashboard home</p>} />
                       <Route path="wallet" element={<Wallet />} />
                     </Routes>
                   </RequireAuth>
@@ -98,7 +98,7 @@ describe("email verification gate", () => {
     mockApi({});
     renderApp("/verify-email");
     await screen.findByText("dashboard home");
-    expect(where()).toBe("/dashboard");
+    expect(where()).toBe("/dashboard/music");
   });
 
   it("goes straight to /verify-email after registering", async () => {
@@ -237,7 +237,7 @@ describe("/email-verified", () => {
     await screen.findByRole("heading", { name: "Email confirmed" });
     const cont = await screen.findByRole("link", { name: "Continue" });
     await waitFor(() => expect(api.calls("GET /profile").length).toBeGreaterThanOrEqual(2));
-    await waitFor(() => expect(cont).toHaveAttribute("href", "/dashboard"));
+    await waitFor(() => expect(cont).toHaveAttribute("href", "/dashboard/music"));
     await userEvent.click(cont);
     await screen.findByText("dashboard home");
   });

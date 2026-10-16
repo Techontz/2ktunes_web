@@ -6,6 +6,7 @@ import { formatMinor } from "@/lib/money";
 import { mockApi } from "@/test/api";
 import { renderPage } from "@/test/render";
 import type { SubscriptionInfo } from "@/lib/api/types";
+import { checkoutRedirect } from "@/lib/api/payments";
 import PlanPage from "@/features/dashboard/plan/PlanPage";
 import { PlanCards } from "@/features/site/PlanCards";
 import { pickBannerOffer } from "@/features/site/layout/OfferBar";
@@ -62,8 +63,10 @@ describe("Public pricing with offers", () => {
     });
     renderPage(<PlanCards />, { signedIn: false });
     expect(await screen.findByText("Launch offer")).toBeInTheDocument();
-    expect(screen.getByText("TZS 15,000").closest("s")).toBeNull();
-    expect(screen.getByText("TZS 20,000").closest("s")).not.toBeNull();
+    // Per month (yearly / 12), with the yearly charge underneath.
+    expect(screen.getByText("TZS 1,250").closest("s")).toBeNull();
+    expect(screen.getByText("TZS 1,667").closest("s")).not.toBeNull();
+    expect(screen.getByText("TZS 15,000 billed yearly")).toBeInTheDocument();
     expect(api.calls("GET /plans")[0].query.get("currency")).toBe("TZS");
   });
 
@@ -106,15 +109,21 @@ describe("Plan page offers and promo codes", () => {
     });
     renderPage(<PlanPage />, { route: "/dashboard/plan" });
     expect(await screen.findByText("Launch offer")).toBeInTheDocument();
-    expect(screen.getByText("TZS 50,000.00").closest("s")).not.toBeNull();
-    expect(screen.getByText("TZS 40,000.00")).toBeInTheDocument();
+    // Per month (yearly / 12), with the yearly charge underneath.
+    expect(screen.getByText("TZS 4,167").closest("s")).not.toBeNull();
+    expect(screen.getByText("TZS 3,333")).toBeInTheDocument();
+    expect(screen.getByText("TZS 40,000 billed yearly")).toBeInTheDocument();
   });
 
   it("validates a promo code and pays the discounted amount", async () => {
     const user = userEvent.setup();
+    const go = vi.spyOn(checkoutRedirect, "go").mockImplementation(() => {});
+    // Card is connected (Stripe); mobile money and PayPal are not yet.
+    const card = { key: "card" as const, label: "Card", available: true, configured: true, reason: null, reason_code: null, currencies: ["TZS", "USD"] };
+    const withCard = { ...sub, payment_instructions: { ...sub.payment_instructions, payment_methods: { TZS: [card] } } };
     const api = mockApi({
       "GET /plans": { plans: [PRO] },
-      "GET /subscription": sub,
+      "GET /subscription": withCard,
       "POST /offers/validate": ({ body }) => {
         const code = (body as { code?: string }).code;
         if (code === "NOPE") return { status: 422, body: { status: false, code: "offer_code_invalid", message: "Invalid code." } };
@@ -122,7 +131,10 @@ describe("Plan page offers and promo codes", () => {
           ? quote({ final_minor: 3_000_000, discount_minor: 2_000_000, final: "30000.00", offer: { id: 9, headline: "Studio deal", type: "percent_off", ends_at: null } })
           : quote();
       },
-      "POST /subscribe": { status: 202, body: { status: true, message: "ok", subscription_status: "pending_payment", payment: null, user: {} } },
+      "POST /subscribe": {
+        status: 202,
+        body: { status: true, message: "ok", subscription_status: "pending_payment", action: "redirect", redirect_url: "https://checkout.stripe.com/c/pay/cs_test_9", payment: null, user: {} },
+      },
     });
     renderPage(<PlanPage />, { route: "/dashboard/plan" });
     await user.click(await screen.findByRole("button", { name: "Choose the Pro plan" }));
@@ -142,17 +154,12 @@ describe("Plan page offers and promo codes", () => {
     expect(d.getByTestId("amount-due")).toHaveTextContent("TZS 30,000.00");
     expect(api.calls("POST /offers/validate").at(-1)?.body).toEqual({ plan_id: 2, currency: "TZS", code: "studio20" });
 
-    await user.selectOptions(d.getByLabelText(/Payment method/), "mpesa_tz");
-    await user.type(d.getByLabelText(/Payment reference/), "QK1");
-    await user.click(d.getByRole("button", { name: "Submit payment" }));
+    // The discounted amount is what the card is charged.
+    await user.click(d.getByRole("button", { name: "Pay TZS 30,000.00 with card" }));
     await vi.waitFor(() => expect(api.calls("POST /subscribe")).toHaveLength(1));
-    expect(api.calls("POST /subscribe")[0].body).toEqual({
-      plan_id: 2,
-      currency: "TZS",
-      code: "studio20",
-      payment_method: "mpesa_tz",
-      payment_reference: "QK1",
-    });
+    expect(api.calls("POST /subscribe")[0].body).toEqual({ plan_id: 2, currency: "TZS", code: "studio20", method: "card" });
+    await vi.waitFor(() => expect(go).toHaveBeenCalledWith("https://checkout.stripe.com/c/pay/cs_test_9"));
+    go.mockRestore();
   });
 
   it("activates at once when the quoted price is 0, with no payment step", async () => {

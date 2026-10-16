@@ -34,6 +34,14 @@ import {
   uploadArtistAvatar,
   type ArtistInput,
 } from "@/lib/api/catalog";
+import {
+  isYoutubeChannelUrl,
+  parseAppleArtistId,
+  parseSpotifyArtistId,
+  type ArtistStoreProfiles,
+  type ProfileChoice,
+  type SocialChoice,
+} from "@/lib/api/distribution";
 import type { Artist } from "@/lib/api/types";
 import { useResource } from "@/lib/api/useResource";
 import { useAuth } from "@/lib/auth/AuthProvider";
@@ -265,7 +273,42 @@ type FormState = {
   bio: string;
   country: string;
   primary_genre: string;
-} & Record<LinkKey, string>;
+} & Record<LinkKey, string> &
+  StoreForm;
+
+/* Store profile questions (DOCS/DISTRIBUTION_PARITY.md section 2). */
+type StoreForm = {
+  spotify_profile: ProfileChoice | "";
+  spotify_url: string;
+  apple_music_profile: ProfileChoice | "";
+  apple_music_url: string;
+  youtube_music_profile: ProfileChoice | "";
+  youtube_channel_url: string;
+  instagram_profile: SocialChoice | "";
+  facebook_profile: SocialChoice | "";
+};
+const STORE_SERVICES = [
+  { key: "spotify", choice: "spotify_profile", url: "spotify_url" },
+  { key: "apple_music", choice: "apple_music_profile", url: "apple_music_url" },
+  { key: "youtube_music", choice: "youtube_music_profile", url: "youtube_channel_url" },
+] as const;
+const SOCIAL_SERVICES = [
+  { key: "instagram", choice: "instagram_profile" },
+  { key: "facebook", choice: "facebook_profile" },
+] as const;
+
+function storeFormFrom(a: (Artist & ArtistStoreProfiles) | null): StoreForm {
+  return {
+    spotify_profile: a?.spotify_profile ?? "",
+    spotify_url: a?.spotify_artist_id ? `https://open.spotify.com/artist/${a.spotify_artist_id}` : "",
+    apple_music_profile: a?.apple_music_profile ?? "",
+    apple_music_url: a?.apple_music_artist_id ? `https://music.apple.com/artist/${a.apple_music_artist_id}` : "",
+    youtube_music_profile: a?.youtube_music_profile ?? "",
+    youtube_channel_url: a?.youtube_channel_url ?? "",
+    instagram_profile: a?.instagram_profile ?? "",
+    facebook_profile: a?.facebook_profile ?? "",
+  };
+}
 
 const URL_RE = /^https?:\/\/[^\s.]+\.[^\s]+$/i;
 
@@ -274,7 +317,7 @@ function ArtistDialog({
   onClose,
   onSaved,
 }: {
-  artist: Artist | null;
+  artist: (Artist & ArtistStoreProfiles) | null;
   onClose: () => void;
   onSaved: (a: Artist, created: boolean) => void;
 }) {
@@ -294,10 +337,11 @@ function ArtistDialog({
       LinkKey,
       string
     >;
-    return { ...base, ...links };
+    return { ...base, ...links, ...storeFormFrom(artist) };
   });
   const [local, setLocal] = useState<Record<string, string>>({});
 
+  const linked = artist?.has_delivered_release === true;
   const save = useAction(async (payload: ArtistInput & { name: string }) =>
     artist ? updateArtist(artist.id, payload) : createArtist(payload),
   );
@@ -319,6 +363,22 @@ function ArtistDialog({
       const v = form[k].trim();
       if (v && !URL_RE.test(v)) errs[k] = c.urlInvalid;
     }
+    const spotifyId = parseSpotifyArtistId(form.spotify_url);
+    const appleId = parseAppleArtistId(form.apple_music_url);
+    if (!linked) {
+      if (form.spotify_profile === "existing") {
+        if (!form.spotify_url.trim()) errs.spotify_url = c.storeLinkRequired;
+        else if (!spotifyId) errs.spotify_url = c.spotifyLinkInvalid;
+      }
+      if (form.apple_music_profile === "existing") {
+        if (!form.apple_music_url.trim()) errs.apple_music_url = c.storeLinkRequired;
+        else if (!appleId) errs.apple_music_url = c.appleLinkInvalid;
+      }
+      if (form.youtube_music_profile === "existing") {
+        if (!form.youtube_channel_url.trim()) errs.youtube_channel_url = c.storeLinkRequired;
+        else if (!isYoutubeChannelUrl(form.youtube_channel_url)) errs.youtube_channel_url = c.youtubeLinkInvalid;
+      }
+    }
     setLocal(errs);
     if (Object.keys(errs).length) return;
 
@@ -329,6 +389,19 @@ function ArtistDialog({
       primary_genre: form.primary_genre || null,
     };
     for (const k of LINK_KEYS) payload[k] = form[k].trim() || null;
+    if (!linked) {
+      const store: ArtistStoreProfiles = {
+        spotify_profile: form.spotify_profile || null,
+        spotify_artist_id: form.spotify_profile === "existing" ? spotifyId : null,
+        apple_music_profile: form.apple_music_profile || null,
+        apple_music_artist_id: form.apple_music_profile === "existing" ? appleId : null,
+        youtube_music_profile: form.youtube_music_profile || null,
+        youtube_channel_url: form.youtube_music_profile === "existing" ? form.youtube_channel_url.trim() : null,
+        instagram_profile: form.instagram_profile || null,
+        facebook_profile: form.facebook_profile || null,
+      };
+      Object.assign(payload, store);
+    }
 
     const res = await save.run(payload);
     if (res.ok) {
@@ -402,6 +475,56 @@ function ArtistDialog({
         <Field label={c.bio} hint={c.bioHint} error={err("bio")} optional optionalLabel={t("common.optional")}>
           <Textarea value={form.bio} onChange={(e) => set("bio", e.target.value)} maxLength={3000} rows={4} />
         </Field>
+
+        <fieldset className="min-w-0">
+          <legend className="text-[0.875rem] font-semibold text-text-muted">{c.storeLegend}</legend>
+          {linked ? (
+            <p className="mt-1 rounded-control border border-success/30 bg-success-soft px-3.5 py-2.5 text-body-sm text-text">
+              {c.storeLinked}
+            </p>
+          ) : (
+            <>
+              <p className="mb-3 mt-1 text-[0.8125rem] text-text-subtle">{c.storeHint}</p>
+              <div className="grid gap-4 sm:grid-cols-2">
+                {STORE_SERVICES.map((sv) => (
+                  <div key={sv.key} className="min-w-0 space-y-2">
+                    <Field label={c.storeServices[sv.key]} error={err(sv.choice)}>
+                      <Select value={form[sv.choice]} onChange={(e) => set(sv.choice, e.target.value)}>
+                        <option value="">{c.storeUnset}</option>
+                        <option value="existing">{c.storeExisting}</option>
+                        <option value="new">{c.storeNew}</option>
+                      </Select>
+                    </Field>
+                    {form[sv.choice] === "existing" && (
+                      <Field
+                        label={sv.key === "spotify" ? c.spotifyLink : sv.key === "apple_music" ? c.appleLink : c.youtubeLink}
+                        error={err(sv.url)}
+                        required
+                      >
+                        <Input
+                          inputMode="url"
+                          placeholder={sv.key === "spotify" ? "https://open.spotify.com/artist/" : "https://"}
+                          value={form[sv.url]}
+                          onChange={(e) => set(sv.url, e.target.value)}
+                          maxLength={255}
+                        />
+                      </Field>
+                    )}
+                  </div>
+                ))}
+                {SOCIAL_SERVICES.map((sv) => (
+                  <Field key={sv.key} label={c.storeServices[sv.key]} error={err(sv.choice)}>
+                    <Select value={form[sv.choice]} onChange={(e) => set(sv.choice, e.target.value)}>
+                      <option value="">{c.storeUnset}</option>
+                      <option value="group">{c.storeGroup}</option>
+                      <option value="none">{c.storeNone}</option>
+                    </Select>
+                  </Field>
+                ))}
+              </div>
+            </>
+          )}
+        </fieldset>
 
         <fieldset className="min-w-0">
           <legend className="text-[0.875rem] font-semibold text-text-muted">{c.linksLegend}</legend>

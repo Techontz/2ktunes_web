@@ -52,7 +52,7 @@ function renderApp(route: string, { token }: { token?: string } = {}) {
               element={
                 <RequireAuth>
                   <Routes>
-                    <Route index element={<p>dashboard home</p>} />
+                    <Route path="music" element={<p>dashboard home</p>} />
                     <Route path="wallet" element={<Wallet />} />
                     <Route path="settings" element={<SignOut />} />
                   </Routes>
@@ -97,14 +97,14 @@ describe("session handling", () => {
     mockApi({});
     renderApp(`/auth?next=${encodeURIComponent("//evil.example")}`, { token: "ok" });
     await screen.findByText("dashboard home");
-    expect(where()).toBe("/dashboard");
+    expect(where()).toBe("/dashboard/music");
   });
 
   it("does not loop when ?next points back at /auth", async () => {
     mockApi({});
     renderApp(`/auth?next=${encodeURIComponent("/auth?next=/auth")}`, { token: "ok" });
     await screen.findByText("dashboard home");
-    expect(where()).toBe("/dashboard");
+    expect(where()).toBe("/dashboard/music");
   });
 
   it("logout revokes the token server-side and clears local session state", async () => {

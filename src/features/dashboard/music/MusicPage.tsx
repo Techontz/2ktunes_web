@@ -1,14 +1,17 @@
 import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { Disc3, Plus, Search } from "lucide-react";
-import { Button, DataTable, EmptyState, Field, Input, Select, type Column } from "@/components/ui";
-import { fetchReleases } from "@/lib/api/catalog";
+import { Button, EmptyState, Field, Input, Select, Skeleton } from "@/components/ui";
+import { fetchReleases, fetchStores } from "@/lib/api/catalog";
 import type { Release, ReleaseGroup } from "@/lib/api/types";
 import { useResource } from "@/lib/api/useResource";
 import { formatDate } from "@/lib/dates";
 import { useLanguage } from "@/lib/LanguageContext";
 import { useCopy } from "@/lib/useCopy";
+import { cn } from "@/lib/utils";
+import { useAuth } from "@/lib/auth/AuthProvider";
 import { ChipGroup, LoadError, PageHeader, Pagination, StatusPill } from "../components";
+import { PlanPicker } from "../plan/PlanPicker";
 import { COPY } from "./copy";
 import { ReleaseCover } from "./shared";
 
@@ -17,7 +20,9 @@ const FILTERS: Filter[] = ["all", "drafts", "in_review", "distributing", "live",
 type Sort = "newest" | "oldest" | "release_date" | "title";
 
 /**
- * Catalog — GET /releases with status groups (summary counts), search, type
+ * My music (catalog), laid out like DistroKid's list: one row per release
+ * with a status dot, cover, title / type / artist and the stores it goes to.
+ * GET /releases with status groups (summary counts), search, type
  * and sort, all mirrored in the URL (?status=drafts is linked from the
  * overview's action items).
  */
@@ -61,6 +66,8 @@ export default function MusicPage() {
   );
 
   const summary = state.data?.summary;
+  const { user } = useAuth();
+  const needsPlan = !!user && !user.has_active_subscription;
   const labels: Record<Filter, string> = {
     all: c.filterAll,
     drafts: c.filterDrafts,
@@ -71,41 +78,33 @@ export default function MusicPage() {
   };
   const filtered = status !== "all" || !!q || !!type;
 
-  const columns: Column<Release>[] = [
-    {
-      key: "release",
-      header: c.colRelease,
-      primary: true,
-      cell: (r) => (
-        <Link
-          to={`/dashboard/music/${r.id}`}
-          className="flex min-w-0 items-center gap-3 rounded-[8px] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-text"
-        >
-          <ReleaseCover src={r.cover_image} title={r.release_title} size="sm" />
-          <span className="min-w-0">
-            <span className="block truncate font-semibold text-text">
-              {r.release_title || "-"}
-              {r.version ? <span className="font-normal text-text-subtle"> ({r.version})</span> : null}
-            </span>
-            <span className="block truncate text-caption text-text-subtle">{r.artist_name || "-"}</span>
-          </span>
-        </Link>
-      ),
-    },
-    { key: "type", header: c.colType, cell: (r) => r.release_type },
-    { key: "tracks", header: c.colTracks, cell: (r) => c.tracksCount(r.tracks_count ?? 0), hideOnMobile: true },
-    { key: "date", header: c.colDate, cell: (r) => formatDate(r.release_date, locale) },
-    { key: "status", header: c.colStatus, cell: (r) => <StatusPill status={r.status} /> },
-  ];
+  const stores = useResource(() => fetchStores(), []);
+  const storeName = (slug: string) => stores.data?.find((x) => x.slug === slug)?.name ?? slug;
+  const rows = state.data?.releases ?? [];
+
+  // No active plan: the plan picker comes first (uploads are locked until then).
+  // Releases from an earlier plan still list below it.
+  if (needsPlan && !state.loading && !(summary && summary.all > 0)) {
+    return (
+      <div className="rounded-card border border-border-subtle bg-[radial-gradient(90%_55%_at_50%_0%,rgb(132_29_198/0.22),transparent_70%)] px-4 py-10 sm:px-8 sm:py-14">
+        <PlanPicker />
+      </div>
+    );
+  }
 
   return (
     <>
+      {needsPlan && (
+        <div className="mb-8 rounded-card border border-border-subtle bg-[radial-gradient(90%_55%_at_50%_0%,rgb(132_29_198/0.22),transparent_70%)] px-4 py-10 sm:px-8 sm:py-14">
+          <PlanPicker />
+        </div>
+      )}
       <PageHeader
         title={c.listTitle}
         description={c.listDescription}
         actions={
           <Button to="/dashboard/new-release" leftIcon={<Plus />}>
-            {c.newRelease}
+            {c.uploadMusic}
           </Button>
         }
       />
@@ -150,47 +149,112 @@ export default function MusicPage() {
         <LoadError error={state.error} onRetry={state.reload} />
       ) : (
         <div aria-busy={state.refreshing || undefined} className={state.refreshing ? "opacity-70 transition-opacity" : undefined}>
-          <DataTable
-            caption={c.listTitle}
-            rows={state.data?.releases ?? []}
-            columns={columns}
-            getRowKey={(r) => r.id}
-            loading={state.loading}
-            empty={
-              filtered ? (
-                <EmptyState
-                  icon={<Search />}
-                  title={c.emptyFilteredTitle}
-                  description={c.emptyFilteredBody}
-                  action={
-                    <Button
-                      variant="secondary"
-                      onClick={() => {
-                        setSearch("");
-                        setParams(new URLSearchParams(), { replace: true });
-                      }}
-                    >
-                      {c.filterAll}
-                    </Button>
-                  }
-                />
-              ) : (
-                <EmptyState
-                  icon={<Disc3 />}
-                  title={c.emptyAllTitle}
-                  description={c.emptyAllBody}
-                  action={
-                    <Button to="/dashboard/new-release" leftIcon={<Plus />}>
-                      {c.newRelease}
-                    </Button>
-                  }
-                />
-              )
-            }
-          />
+          {state.loading ? (
+            <ul aria-hidden className="divide-y divide-border-subtle overflow-hidden rounded-card border border-border-subtle bg-surface-raised">
+              {[0, 1, 2].map((i) => (
+                <li key={i} className="flex items-center gap-4 px-4 py-4 sm:px-6">
+                  <Skeleton className="h-16 w-16 rounded-[10px] sm:h-20 sm:w-20" />
+                  <div className="flex-1 space-y-2">
+                    <Skeleton className="h-4 w-40" />
+                    <Skeleton className="h-3 w-24" />
+                  </div>
+                </li>
+              ))}
+            </ul>
+          ) : rows.length === 0 ? (
+            filtered ? (
+              <EmptyState
+                icon={<Search />}
+                title={c.emptyFilteredTitle}
+                description={c.emptyFilteredBody}
+                action={
+                  <Button
+                    variant="secondary"
+                    onClick={() => {
+                      setSearch("");
+                      setParams(new URLSearchParams(), { replace: true });
+                    }}
+                  >
+                    {c.filterAll}
+                  </Button>
+                }
+              />
+            ) : (
+              <EmptyState
+                icon={<Disc3 />}
+                title={c.emptyAllTitle}
+                description={c.emptyAllBody}
+                action={
+                  <Button to="/dashboard/new-release" leftIcon={<Plus />}>
+                    {c.uploadMusic}
+                  </Button>
+                }
+              />
+            )
+          ) : (
+            <ul aria-label={c.listTitle} className="divide-y divide-border-subtle overflow-hidden rounded-card border border-border-subtle bg-surface-raised">
+              {rows.map((r) => (
+                <ReleaseRow key={r.id} release={r} storeName={storeName} locale={locale} />
+              ))}
+            </ul>
+          )}
           <Pagination meta={state.data?.meta} onPage={(p) => update({ page: String(p) })} />
         </div>
       )}
     </>
+  );
+}
+
+const DOT: Record<string, string> = {
+  live: "bg-success",
+  draft: "bg-text-subtle/50",
+  changes_requested: "bg-warning",
+  rejected: "bg-danger",
+  takedown_requested: "bg-danger",
+  taken_down: "bg-danger",
+};
+
+function ReleaseRow({ release: r, storeName, locale }: { release: Release; storeName: (slug: string) => string; locale: string }) {
+  const c = useCopy(COPY);
+  const typeLabel = r.release_type === "Single" ? c.typeSingle : r.release_type === "EP" ? c.typeEP : c.typeAlbum;
+  const platforms = r.platforms ?? [];
+  const shown = platforms.slice(0, 3).map(storeName);
+  return (
+    <li>
+      <Link
+        to={`/dashboard/music/${r.id}`}
+        className="group flex items-center gap-3 px-4 py-4 transition-colors hover:bg-tint/[0.025] focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-accent-text sm:gap-5 sm:px-6"
+      >
+        <span aria-hidden className={cn("hidden h-2.5 w-2.5 shrink-0 rounded-full sm:block", DOT[r.status] ?? "bg-accent")} />
+        <ReleaseCover src={r.cover_image} title={r.release_title} size="md" className="sm:h-20 sm:w-20" />
+        <span className="min-w-0 flex-1">
+          <span className="block truncate text-[1.0625rem] font-semibold text-text group-hover:text-accent-text">
+            {r.release_title || "-"}
+            {r.version ? <span className="font-normal text-text-subtle"> ({r.version})</span> : null}
+          </span>
+          <span className="block truncate text-body-sm text-text-subtle">
+            {typeLabel} · {c.tracksCount(r.tracks_count ?? 0)}
+          </span>
+          <span className="block truncate text-body-sm text-text-subtle">{r.artist_name || "-"}</span>
+          <span className="mt-1.5 block md:hidden">
+            <StatusPill status={r.status} />
+          </span>
+        </span>
+        <span className="hidden w-56 shrink-0 text-body-sm text-text-muted lg:block">
+          {platforms.length ? (
+            <>
+              {shown.join(", ")}
+              {platforms.length > 3 && <span className="text-text-subtle"> {c.storesMore(platforms.length - 3)}</span>}
+            </>
+          ) : (
+            <span className="text-text-subtle">{c.storesNone}</span>
+          )}
+        </span>
+        <span className="hidden w-32 shrink-0 text-body-sm text-text-muted sm:block">{formatDate(r.release_date, locale)}</span>
+        <span className="hidden w-44 shrink-0 justify-end md:flex">
+          <StatusPill status={r.status} />
+        </span>
+      </Link>
+    </li>
   );
 }
