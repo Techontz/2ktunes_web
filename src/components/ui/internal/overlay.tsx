@@ -60,6 +60,10 @@ export function useScrollLock(active: boolean) {
   }, [active]);
 }
 
+/** Open traps, innermost last: only the top one handles keys, so a dialog
+ * opened over another (an error pop-up) closes alone on Escape. */
+const trapStack: object[] = [];
+
 /**
  * Traps Tab inside `containerRef`, closes on Escape, moves focus in on open
  * and restores it to the previously focused element on close.
@@ -78,6 +82,8 @@ export function useFocusTrap(
     const container = containerRef.current;
     if (!container) return;
     const previouslyFocused = document.activeElement as HTMLElement | null;
+    const token = {};
+    trapStack.push(token);
 
     const focusFirst = () => {
       const target =
@@ -88,6 +94,7 @@ export function useFocusTrap(
     const raf = requestAnimationFrame(focusFirst);
 
     const onKeyDown = (e: KeyboardEvent) => {
+      if (trapStack[trapStack.length - 1] !== token) return;
       if (e.key === "Escape") {
         e.stopPropagation();
         escapeRef.current?.();
@@ -119,6 +126,7 @@ export function useFocusTrap(
     return () => {
       cancelAnimationFrame(raf);
       document.removeEventListener("keydown", onKeyDown, true);
+      trapStack.splice(trapStack.indexOf(token), 1);
       if (previouslyFocused && document.contains(previouslyFocused)) {
         previouslyFocused.focus({ preventScroll: true });
       }

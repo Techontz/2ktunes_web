@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState, type FormEvent, type ReactNode } from "react";
-import { CheckCircle2, ChevronDown, Gift, Smartphone, Tag, X, XCircle } from "lucide-react";
+import { AlertCircle, CheckCircle2, ChevronDown, Gift, Smartphone, Tag, X, XCircle } from "lucide-react";
 import { Button, Dialog, Field, Input } from "@/components/ui";
 import { FormAlert, useAction } from "@/features/dashboard/components";
 import { OfferBadge } from "@/features/growth/OfferPrice";
 import { planPrices, subscribe } from "@/lib/api/account";
+import { ApiError } from "@/lib/api/client";
 import { errorCodeOf, useErrorMessage } from "@/lib/api/errors";
 import { validateOffer, type OfferQuote } from "@/lib/api/growth";
 import {
@@ -152,6 +153,12 @@ export function PayForPlanDialog({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [plan?.id, chosen?.currency, applied]);
 
+  // The error pop-up shows once per failed attempt, until dismissed.
+  const [declineShownFor, setDeclineShownFor] = useState<unknown>(null);
+  useEffect(() => {
+    if (action.errorObj) setDeclineShownFor(action.errorObj);
+  }, [action.errorObj]);
+
   if (!plan || !chosen) return null;
   const q = quote && quote.currency === chosen.currency ? quote : null;
   const isFree = !!q && q.final_minor <= 0;
@@ -236,6 +243,15 @@ export function PayForPlanDialog({
 
   const fe = action.fieldErrors;
   const code422 = errorCodeOf(action.errorObj);
+  // A refused push (low balance, wrong number, provider error) opens a pop-up
+  // over the dialog so the reason is seen at once, wherever the page is scrolled.
+  const declineDetails = action.errorObj instanceof ApiError ? action.errorObj.details : null;
+  const declineNetwork =
+    networks.find((n) => n.key === declineDetails?.network)?.label ?? c.methodLabels.mobile_money ?? "Mobile money";
+  const declineReason = typeof declineDetails?.reason === "string" && declineDetails.reason ? declineDetails.reason : null;
+  const declineMessage =
+    selected?.key === "mobile_money" && code422 && c.declineMessages[code422] ? c.declineMessages[code422](declineNetwork) : null;
+  const declineOpen = !!declineMessage && !!action.errorObj && declineShownFor === action.errorObj;
   const formError = action.error && !fe.phone ? (c.payErrors[code422 ?? ""] ?? c.codeErrors[code422 ?? ""] ?? action.error) : null;
   const headline = q?.offer?.headline ?? (q?.referral_applied ? c.referralApplied : null);
 
@@ -324,6 +340,7 @@ export function PayForPlanDialog({
   const busy = action.pending || stage.kind === "redirecting";
   const noneAvailable = !isFree && !rows.some((r) => r.available);
   return (
+    <>
     <Dialog
       open={open}
       onClose={busy ? () => {} : onClose}
@@ -477,10 +494,28 @@ export function PayForPlanDialog({
               )}
             </>
           )}
-          {formError && <FormAlert>{formError}</FormAlert>}
+          {(declineMessage ?? formError) && <FormAlert>{declineMessage ?? formError}</FormAlert>}
         </form>
       </div>
     </Dialog>
+    <Dialog
+      open={declineOpen}
+      onClose={() => setDeclineShownFor(null)}
+      role="alertdialog"
+      size="sm"
+      title={c.declineTitle}
+      closeLabel={t("common.close")}
+      footer={<Button onClick={() => setDeclineShownFor(null)}>{c.declineOk}</Button>}
+    >
+      <div className="flex items-start gap-3">
+        <AlertCircle className="mt-0.5 h-5 w-5 shrink-0 text-danger" aria-hidden />
+        <div className="min-w-0 space-y-2">
+          <p className="text-body text-text">{declineMessage}</p>
+          {declineReason && <p className="text-body-sm text-text-muted">{c.providerSaid(declineNetwork, declineReason)}</p>}
+        </div>
+      </div>
+    </Dialog>
+    </>
   );
 }
 

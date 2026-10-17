@@ -154,6 +154,15 @@ const EN = {
   returnFailed: "We could not confirm this payment",
   returnFailedBody: "You have not been charged. Choose a plan below to try again.",
   dismiss: "Dismiss",
+  declineTitle: "Payment not sent",
+  declineOk: "OK, got it",
+  declineMessages: {
+    insufficient_funds: (network: string) => `Your ${network} balance is too low for this payment. Top up and try again, or use another number.`,
+    invalid_phone: (network: string) => `This number cannot pay with ${network}. Check the number or use another one.`,
+    limit_exceeded: () => "This payment is above the allowed limit for this number. Try another number or pay by card.",
+    gateway_error: () => "We could not send the payment prompt to your phone. Please try again in a moment.",
+  } as Record<string, (network: string) => string>,
+  providerSaid: (network: string, reason: string) => `${network} said: "${reason}"`,
   payErrors: {
     method_unavailable: "This payment method is not available right now. Please choose another one.",
     method_currency_mismatch: "This payment method does not take this currency.",
@@ -309,6 +318,15 @@ const SW: typeof EN = {
   returnFailed: "Hatukuweza kuthibitisha malipo haya",
   returnFailedBody: "Hujatozwa chochote. Chagua kifurushi hapa chini ili kujaribu tena.",
   dismiss: "Funga",
+  declineTitle: "Malipo hayajatumwa",
+  declineOk: "Sawa, nimeelewa",
+  declineMessages: {
+    insufficient_funds: (network) => `Salio lako la ${network} halitoshi kwa malipo haya. Ongeza salio ujaribu tena, au tumia namba nyingine.`,
+    invalid_phone: (network) => `Namba hii haiwezi kulipa kwa ${network}. Hakiki namba au tumia nyingine.`,
+    limit_exceeded: () => "Malipo haya yamezidi kikomo cha namba hii. Jaribu namba nyingine au lipa kwa kadi.",
+    gateway_error: () => "Hatukuweza kutuma ombi la malipo kwenye simu yako. Tafadhali jaribu tena baada ya muda mfupi.",
+  },
+  providerSaid: (network, reason) => `${network} imesema: "${reason}"`,
   payErrors: {
     method_unavailable: "Njia hii ya malipo haipatikani kwa sasa. Tafadhali chagua nyingine.",
     method_currency_mismatch: "Njia hii ya malipo haipokei sarafu hii.",
@@ -464,6 +482,15 @@ const FR: typeof EN = {
   returnFailed: "Nous n'avons pas pu confirmer ce paiement",
   returnFailedBody: "Vous n'avez pas été débité. Choisissez une formule ci-dessous pour réessayer.",
   dismiss: "Fermer",
+  declineTitle: "Paiement non envoyé",
+  declineOk: "D'accord",
+  declineMessages: {
+    insufficient_funds: (network) => `Votre solde ${network} est insuffisant pour ce paiement. Rechargez et réessayez, ou utilisez un autre numéro.`,
+    invalid_phone: (network) => `Ce numéro ne peut pas payer avec ${network}. Vérifiez le numéro ou utilisez-en un autre.`,
+    limit_exceeded: () => "Ce paiement dépasse la limite autorisée pour ce numéro. Essayez un autre numéro ou payez par carte.",
+    gateway_error: () => "Nous n'avons pas pu envoyer la demande de paiement sur votre téléphone. Réessayez dans un instant.",
+  },
+  providerSaid: (network, reason) => `${network} a répondu : "${reason}"`,
   payErrors: {
     method_unavailable: "Ce moyen de paiement n'est pas disponible pour le moment. Choisissez-en un autre.",
     method_currency_mismatch: "Ce moyen de paiement n'accepte pas cette devise.",

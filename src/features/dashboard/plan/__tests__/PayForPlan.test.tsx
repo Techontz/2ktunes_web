@@ -217,6 +217,36 @@ describe("Pay for a plan", () => {
     await vi.waitFor(() => expect(m.calls("GET /profile").length).toBeGreaterThan(profileCalls));
   });
 
+  it("mobile money: a refused push opens a pop-up with the reason", async () => {
+    const user = userEvent.setup();
+    api({
+      "POST /subscribe": {
+        status: 422,
+        body: {
+          status: false,
+          code: "insufficient_funds",
+          message: "Your Halopesa balance is too low for this payment. Top up and try again.",
+          details: { payment_id: 9, network: "halopesa", reason: "Insufficient funds in your Halopesa account. Please top up and try again." },
+        },
+      },
+    });
+    renderPage(<PlanPage />, { route: "/dashboard/plan" });
+    const d = await openDialog(user);
+    await user.type(d.getByLabelText(/Mobile money number/), "0614100097");
+    await user.click(d.getByRole("button", { name: "Pay TZS 50,000.00" }));
+
+    const pop = await screen.findByRole("alertdialog", { name: "Payment not sent" });
+    expect(
+      within(pop).getByText("Your Halopesa balance is too low for this payment. Top up and try again, or use another number."),
+    ).toBeInTheDocument();
+    expect(within(pop).getByText('Halopesa said: "Insufficient funds in your Halopesa account. Please top up and try again."')).toBeInTheDocument();
+
+    await user.click(within(pop).getByRole("button", { name: "OK, got it" }));
+    expect(screen.queryByRole("alertdialog")).not.toBeInTheDocument();
+    // The pay dialog stays open with the reason, ready to try again.
+    expect(d.getByRole("button", { name: "Pay TZS 50,000.00" })).toBeInTheDocument();
+  });
+
   it("mobile money: a declined push offers Try again, and Cancel stops waiting", async () => {
     vi.useFakeTimers({ shouldAdvanceTime: true });
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
