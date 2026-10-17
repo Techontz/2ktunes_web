@@ -64,10 +64,12 @@ const NETWORKS = [
   { key: "halopesa", label: "Halopesa", className: "bg-[#F37021] text-white" },
 ];
 
-export function MobileMoneyMarks({ className }: { className?: string }) {
+/** `only`: network keys the server offers (MOBILE_MONEY_NETWORKS); all four when absent. */
+export function MobileMoneyMarks({ className, only }: { className?: string; only?: string[] }) {
+  const shown = only?.length ? NETWORKS.filter((n) => only.includes(n.key)) : NETWORKS;
   return (
     <span className={cn("flex flex-wrap items-center gap-1.5", className)}>
-      {NETWORKS.map((n) => (
+      {shown.map((n) => (
         <span
           key={n.key}
           className={cn("inline-flex h-6 items-center rounded-[5px] px-2 text-[0.6875rem] font-extrabold tracking-[0.01em]", n.className)}

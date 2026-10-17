@@ -205,7 +205,7 @@ export function PayForPlanDialog({
 
     if (selected.key === "mobile_money") {
       const msisdn = normaliseTzPhone(phone);
-      const err = !msisdn ? c.phoneInvalid : !detectTzNetwork(msisdn, networks) ? c.phoneNetworkUnknown : null;
+      const err = !msisdn ? c.phoneInvalid : !detectTzNetwork(msisdn, networks) ? c.phoneNetworkUnknown(networks.map((n) => n.label)) : null;
       setPhoneError(err);
       if (!msisdn || err) return;
       const res = await action.run({ ...base, method: "mobile_money", phone: msisdn });
@@ -476,8 +476,8 @@ export function PayForPlanDialog({
 
 /* ───────────────────────────── Method list ───────────────────────────── */
 
-function marksFor(key: PayMethodKey): ReactNode {
-  if (key === "mobile_money") return <MobileMoneyMarks />;
+function marksFor(key: PayMethodKey, networks?: string[]): ReactNode {
+  if (key === "mobile_money") return <MobileMoneyMarks only={networks} />;
   if (key === "card")
     return (
       <span className="flex items-center gap-1.5">
@@ -552,7 +552,7 @@ function MethodList({
                       </span>
                     )}
                   </span>
-                  <span className={cn("mt-2 block", wrongCurrency && "opacity-50 grayscale")}>{marksFor(r.key)}</span>
+                  <span className={cn("mt-2 block", wrongCurrency && "opacity-50 grayscale")}>{marksFor(r.key, r.networks?.map((n) => n.key))}</span>
                   <span id={`pay-method-${r.key}-desc`} className="sr-only">
                     {c.methodSubs[r.key]}
                   </span>

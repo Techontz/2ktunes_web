@@ -1,5 +1,10 @@
 /** Plan & subscription screen copy. */
 
+/** "A, B or C" */
+function joinOr(items: string[], or: string): string {
+  return items.length > 1 ? `${items.slice(0, -1).join(", ")} ${or} ${items[items.length - 1]}` : (items[0] ?? "");
+}
+
 const EN = {
   title: "Plan",
   intro: "Your 2kTunes plan decides how many artists you can manage and lets you send releases to stores.",
@@ -120,7 +125,7 @@ const EN = {
   phoneLabel: "Mobile money number",
   phoneHint: "We send a payment prompt to this phone.",
   phoneInvalid: "Enter a Tanzanian mobile number, like 0754 123 456.",
-  phoneNetworkUnknown: "Use an M-Pesa, Airtel Money, Mixx by Yas or Halopesa number.",
+  phoneNetworkUnknown: (labels: string[]) => `Use a number on ${joinOr(labels, "or")}.`,
   payMobile: (amount: string) => `Pay ${amount}`,
   payCard: (amount: string) => `Pay ${amount} with card`,
   payPayPal: (amount: string) => `Pay ${amount} with PayPal`,
@@ -274,7 +279,7 @@ const SW: typeof EN = {
   phoneLabel: "Namba ya pesa kwa simu",
   phoneHint: "Tutatuma ombi la malipo kwenye simu hii.",
   phoneInvalid: "Weka namba ya simu ya Tanzania, mfano 0754 123 456.",
-  phoneNetworkUnknown: "Tumia namba ya M-Pesa, Airtel Money, Mixx by Yas au Halopesa.",
+  phoneNetworkUnknown: (labels: string[]) => `Tumia namba ya ${joinOr(labels, "au")}.`,
   payMobile: (amount) => `Lipa ${amount}`,
   payCard: (amount) => `Lipa ${amount} kwa kadi`,
   payPayPal: (amount) => `Lipa ${amount} kwa PayPal`,
@@ -428,7 +433,7 @@ const FR: typeof EN = {
   phoneLabel: "Numéro mobile money",
   phoneHint: "Nous envoyons une demande de paiement sur ce téléphone.",
   phoneInvalid: "Saisissez un numéro mobile tanzanien, par ex. 0754 123 456.",
-  phoneNetworkUnknown: "Utilisez un numéro M-Pesa, Airtel Money, Mixx by Yas ou Halopesa.",
+  phoneNetworkUnknown: (labels: string[]) => `Utilisez un numéro ${joinOr(labels, "ou")}.`,
   payMobile: (amount) => `Payer ${amount}`,
   payCard: (amount) => `Payer ${amount} par carte`,
   payPayPal: (amount) => `Payer ${amount} avec PayPal`,
