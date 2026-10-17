@@ -451,6 +451,16 @@ export function PayForPlanDialog({
                   setPhoneError(null);
                   reset();
                 }}
+                switchTarget={(r) => {
+                  // A method only sold in another currency of this plan (mobile money in TZS):
+                  // tapping it switches the currency and selects it.
+                  const cur = r.currencies.find((x) => x !== chosen?.currency && prices.some((p) => p.currency === x));
+                  return cur && methodRows(instructions, cur).some((m) => m.key === r.key && m.available) ? cur : null;
+                }}
+                onSwitch={(k, cur) => {
+                  pickCurrency(cur);
+                  setMethod(k);
+                }}
                 c={c}
                 detail={(key) =>
                   key === "mobile_money" ? (
@@ -494,10 +504,15 @@ function MethodList({
   onChange,
   c,
   detail,
+  switchTarget,
+  onSwitch,
 }: {
   rows: PayMethodInfo[];
   value: string;
   onChange: (key: PayMethodKey) => void;
+  /** The currency to switch to when this unavailable row is tapped, or null. */
+  switchTarget?: (row: PayMethodInfo) => string | null;
+  onSwitch?: (key: PayMethodKey, currency: string) => void;
   c: PlanCopy;
   /** Shown right under the selected row (the phone number for mobile money). */
   detail?: (key: PayMethodKey) => ReactNode;
@@ -510,7 +525,9 @@ function MethodList({
           const on = value === r.key;
           const comingSoon = r.reason_code === "coming_soon";
           const wrongCurrency = r.reason_code === "currency_not_supported";
-          const note = wrongCurrency ? c.availableIn(r.currencies.join(" / ")) : r.key === "card" ? c.poweredByStripe : null;
+          const target = wrongCurrency ? (switchTarget?.(r) ?? null) : null;
+          const selectable = r.available || !!target;
+          const note = target ? c.switchToPay(target) : wrongCurrency ? c.availableIn(r.currencies.join(" / ")) : r.key === "card" ? c.poweredByStripe : null;
           const extra = on ? detail?.(r.key) : null;
           return (
             <div key={r.key}>
@@ -518,7 +535,7 @@ function MethodList({
                 className={cn(
                   "flex items-start gap-3 rounded-[12px] border px-4 py-3.5 transition-colors",
                   on ? "border-accent bg-accent-soft" : "border-border bg-surface",
-                  r.available ? "cursor-pointer hover:border-accent/50" : "cursor-not-allowed",
+                  selectable ? "cursor-pointer hover:border-accent/50" : "cursor-not-allowed",
                   "has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-accent",
                 )}
               >
@@ -527,8 +544,8 @@ function MethodList({
                   name="pay-method"
                   value={r.key}
                   checked={on}
-                  disabled={!r.available}
-                  onChange={() => onChange(r.key)}
+                  disabled={!selectable}
+                  onChange={() => (target ? onSwitch?.(r.key, target) : onChange(r.key))}
                   className="sr-only"
                   aria-describedby={`pay-method-${r.key}-desc`}
                 />
@@ -536,14 +553,14 @@ function MethodList({
                   aria-hidden
                   className={cn(
                     "mt-0.5 grid h-[1.125rem] w-[1.125rem] shrink-0 place-items-center rounded-full border",
-                    on ? "border-accent" : r.available ? "border-border-strong" : "border-border",
+                    on ? "border-accent" : selectable ? "border-border-strong" : "border-border",
                   )}
                 >
                   {on && <span className="h-2.5 w-2.5 rounded-full bg-accent" />}
                 </span>
                 <span className="min-w-0 flex-1">
                   <span className="flex flex-wrap items-center gap-2">
-                    <span className={cn("text-[0.9375rem] font-semibold", wrongCurrency ? "text-text-muted" : "text-text")}>
+                    <span className={cn("text-[0.9375rem] font-semibold", wrongCurrency && !target ? "text-text-muted" : "text-text")}>
                       {c.methodLabels[r.key] ?? r.label}
                     </span>
                     {comingSoon && (
@@ -552,7 +569,7 @@ function MethodList({
                       </span>
                     )}
                   </span>
-                  <span className={cn("mt-2 block", wrongCurrency && "opacity-50 grayscale")}>{marksFor(r.key, r.networks?.map((n) => n.key))}</span>
+                  <span className={cn("mt-2 block", wrongCurrency && !target && "opacity-50 grayscale")}>{marksFor(r.key, r.networks?.map((n) => n.key))}</span>
                   <span id={`pay-method-${r.key}-desc`} className="sr-only">
                     {c.methodSubs[r.key]}
                   </span>

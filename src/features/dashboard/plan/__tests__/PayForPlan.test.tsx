@@ -138,16 +138,21 @@ describe("Pay for a plan", () => {
     expect(d.getByRole("img", { name: "Mastercard" })).toBeInTheDocument();
     expect(d.getByRole("img", { name: "PayPal" })).toBeInTheDocument();
     expect(d.getByText("Powered by Stripe")).toBeInTheDocument();
-    expect(d.getByRole("radio", { name: /PayPal/ })).toBeDisabled();
-    expect(d.getByText("Available for payments in USD")).toBeInTheDocument();
+    // PayPal is USD only: in TZS it offers to switch.
+    expect(d.getByText("Tap to pay in USD")).toBeInTheDocument();
 
     await user.click(d.getByRole("radio", { name: "USD" }));
-    expect(d.getByRole("radio", { name: /Mobile money/ })).toBeDisabled();
-    expect(d.getByText("Available for payments in TZS")).toBeInTheDocument();
+    expect(d.getByText("Tap to pay in TZS")).toBeInTheDocument();
     expect(d.getByRole("radio", { name: /PayPal/ })).toBeEnabled();
     // Mobile money can't be used in USD: the first available method is picked instead.
     expect(d.getByRole("radio", { name: /Card/ })).toBeChecked();
     expect(d.getByRole("button", { name: "Pay USD 20.00 with card" })).toBeInTheDocument();
+
+    // Tapping mobile money switches the payment to TZS and selects it.
+    await user.click(d.getByRole("radio", { name: /Mobile money/ }));
+    expect(d.getByRole("radio", { name: "TZS" })).toHaveAttribute("aria-checked", "true");
+    expect(d.getByRole("radio", { name: /Mobile money/ })).toBeChecked();
+    expect(d.getByLabelText(/Mobile money number/)).toBeInTheDocument();
   });
 
   it("shows every method as Coming soon until it is connected", async () => {
